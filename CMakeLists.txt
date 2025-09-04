@@ -1,0 +1,46 @@
+cmake_minimum_required(VERSION 3.18.4)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+	message(STATUS "This is a release build")
+else()
+	message(STATUS "This is a debug build")
+endif()
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+project(marblemaze)
+
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(thirdparty/glfw-3.4)
+add_subdirectory(thirdparty/glad)
+add_subdirectory(thirdparty/stb_image)
+add_subdirectory(thirdparty/stb_truetype)
+
+file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+
+add_executable(marblemaze)
+set_property(TARGET marblemaze PROPERTY CXX_STANDARD 17)
+
+add_compile_options(-Wall -Wextra -Wpedantic)
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+	target_compile_definitions(marblemaze PUBLIC _RES_PATH="./res/")
+	target_compile_definitions(marblemaze PUBLIC _DEBUG=0)
+else()
+	target_compile_definitions(marblemaze PUBLIC _RES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/")
+	target_compile_definitions(marblemaze PUBLIC _DEBUG=1)
+endif()
+
+target_sources(marblemaze PRIVATE "${SOURCE_FILES}")
+target_include_directories(marblemaze PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/")
+target_link_libraries(marblemaze PRIVATE glfw glad stb_image stb_truetype)
+

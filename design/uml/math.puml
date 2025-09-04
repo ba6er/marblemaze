@@ -1,0 +1,28 @@
+@startuml
+set separator ::
+
+class lin::Vec3 {
+	+normalize() : Vec3
+	+cross(vec) : Vec3
+	+dot(vec) : float
+	+length() : float
+	..
+	+x: float
+	+y: float
+	+z: float
+}
+
+class lin::Mat4 {
+	{static} +Identity() : Mat4
+	{static} +Scale(scaleVec) : Mat4
+	{static} +Rotate(angle, normalVec) : Mat4
+	{static} +Translate(translationVec) : Mat4
+	..
+	{static} +LookAt(eye, target, up) : Mat4
+	{static} +Project2d(left, right, bottom, top, near, far) : Mat4
+	{static} +Project3d(fov, aspect, near, far) : Mat4
+	..
+	+x1, ... , w4: float
+}
+
+@enduml

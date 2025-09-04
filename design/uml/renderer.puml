@@ -1,0 +1,70 @@
+@startuml
+set separator ::
+
+class ren::RenderAssetManager {
+	+createShader(name) : &Shader
+	+createTexture(name) : &Texture
+	+createMaterial(name) : &Material
+	+createMesh(name) : &Mesh
+	+destroy()
+	..
+	+getShader(name) : &Shader
+	+getTexture(name) : &Texture
+	+getMaterial(name) : &Material
+	+getMesh(name) : &Mesh
+	--
+	-shaders: map<str, Shader>
+	-textures: map<str, Texture>
+	-materials: map<str, Material>
+	-meshes: map<str, Mesh>
+}
+
+class ren::Renderable {
+	+create(&mesh, &material)
+	..
+	+mesh: &Mesh
+	+material: &Material
+	+transform: Mat4
+}
+
+class ren::Camera {
+	+project2d(left, right, bottom, top, near, far)
+	+project3d(fov, aspect, near, far)
+	..
+	+setPosition(pos)
+	+setTarget(target)
+	+setUp(up)
+	..
+	+getViewMatrix() : Mat4
+	+getProjectionMatrix() : Mat4
+	--
+	-updateViewMatrix()
+	..
+	-pos: Vec3
+	-target: Vec3
+	-up: Vec3
+	..
+	-view: Mat4
+	-projection: Mat4
+}
+
+class ren::Light {
+	+position: Vec3
+	+color: Vec3
+	+range: float
+}
+hide Light methods
+
+class ren::Renderer {
+	{static} +render(&renderable)
+	{static} +render(&camera, &renderables[], &lights[])
+}
+hide Renderer fields
+
+Renderable <-left- RenderAssetManager
+
+Renderer <-down- Renderable
+Renderer <-left- Camera
+Renderer <-up- Light
+
+@enduml

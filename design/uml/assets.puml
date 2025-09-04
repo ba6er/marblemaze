@@ -1,0 +1,107 @@
+@startuml
+set separator ::
+
+class ren::Shader {
+	+create(vert, frag) : bool
+	+destroy()
+	..
+	+use()
+	..
+	+setUniform(name, value)
+	--
+	{static} -CheckCompileErrors(shader) : bool
+	{static} -CheckLinkingErrors(program) : bool
+	..
+	-id: uint
+}
+
+class ren::Texture {
+	+create(...)
+	+destroy()
+	..
+	+use(index)
+	..
+	+getWidth() : int
+	+getHeight() : int
+	+getId() : uint
+	--
+	-width: int
+	-height: int
+	-id: uint
+}
+
+class ren::Material {
+	+create(&shader)
+	..
+	+use()
+	..
+	+addTexture(index, &texture)
+	+setUniform(name, value)
+	--
+	-shader: &Shader
+	-textures: &Texture[]
+	-uniforms: map<str, variant>
+}
+
+class ren::Vertex {
+	+position: Vec3
+	+color: Vec4
+	+atlas: Vec2
+	+normal: Vec3
+	+tangent: Vec3
+}
+hide Vertex methods
+
+class ren::Mesh {
+	+create()
+	+destroy()
+	..
+	+addVertex(vertex)
+	..
+	+clear()
+	+draw()
+	--
+	-vao: uint
+	-vbo: uint
+	-vertices: Vertex[]
+}
+
+class ren::RenderAssetManager {
+	+createShader(name) : &Shader
+	+createTexture(name) : &Texture
+	+createMaterial(name) : &Material
+	+createMesh(name) : &Mesh
+	+destroy()
+	..
+	+getShader(name) : &Shader
+	+getTexture(name) : &Texture
+	+getMaterial(name) : &Material
+	+getMesh(name) : &Mesh
+	--
+	-shaders: map<str, Shader>
+	-textures: map<str, Texture>
+	-materials: map<str, Material>
+	-meshes: map<str, Mesh>
+}
+
+class main {
+	input: Input
+	ram: RenderAssetManager
+	game: Game
+}
+hide main circle
+hide main methods
+
+RenderAssetManager *-down- Shader
+RenderAssetManager *-down- Texture
+RenderAssetManager *-left- Material
+RenderAssetManager *-right- Mesh
+
+Material <-- Shader
+Material <-- Texture
+
+Mesh <-down- Vertex
+
+main *-- RenderAssetManager
+
+@enduml

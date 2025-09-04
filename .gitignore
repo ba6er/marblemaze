@@ -1,0 +1,5 @@
+build
+thirdparty/glfw-3.4
+
+.kdev4
+*.kdev4

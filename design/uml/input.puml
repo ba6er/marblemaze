@@ -1,0 +1,57 @@
+@startuml
+set separator ::
+
+enum in::KeyState {
+	Released
+	Pressed
+	JustReleased
+	JustPressed
+}
+hide KeyState methods
+
+enum in::KeyName {
+	Quit
+	MazeYawDecrease
+	MazeYawIncrease
+	MazePitchDecrease
+	MazePitchIncrease
+	CameraAngleDecrease
+	CameraAngleIncrease
+}
+hide KeyName methods
+
+class in::Input {
+	{static} +KeyboardValues : int[]
+	..
+	+getKey(key) : KeyState
+	+getMouseL() : KeyState
+	+getMouseR() : KeyState
+	..
+	+setKey(key, state)
+	+setMouseL(state)
+	+setMouseR(state)
+	..
+	+getMouseX() : float
+	+getMouseY() : float
+	+setMousePos(x, y)
+	--
+	-keyboard: KeyState[]
+	-mouseL: KeyState
+	-mouseR: KeyState
+	-mouseX: float
+	-mouseY: float
+}
+
+class main {
+	input: Input
+	ram: RenderAssetManager
+	game: Game
+}
+hide main circle
+hide main methods
+
+Input +-left- KeyState
+Input +-right- KeyName
+main *-down- Input
+
+@enduml

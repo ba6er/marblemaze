@@ -1,0 +1,49 @@
+@startuml
+set separator ::
+
+class gm::Game {
+	+onUpdate(deltaTime, currentTime, &input)
+	+onRender(deltaTime, currentTime)
+	..
+	-currentScene: Scene
+}
+
+class gm::Scene {
+	+updatePhysics(deltaTime)
+	..
+	+maze: Maze
+	+ball: Ball
+	..
+	+camera: Camera
+	+renderables: Renderable[]
+	+lights: Light[]
+}
+
+class gm::Maze {
+	+toMesh(&mesh)
+	..
+	+bricks: Vec3[]
+}
+
+class gm::Ball {
+	+toMesh(&mesh)
+	..
+	+position: Vec3
+	+velocity: Vec3
+}
+
+class main {
+	input: Input
+	ram: RenderAssetManager
+	game: Game
+}
+hide main circle
+hide main methods
+
+main *-- Game
+Game <-- Scene
+
+Scene *-left- Maze
+Scene *-right- Ball
+
+@enduml
