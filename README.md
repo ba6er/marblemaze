@@ -9,8 +9,24 @@ The game was made in C++, using GLFW for windowing and input, OpenGL for renderi
 Before building make sure to download GLFW from [here](https://github.com/glfw/glfw/archive/refs/tags/3.4.zip)
 and extract it in `thirdparty/glfw-3.4`  
 This project uses CMake, so make sure you have it installed as well.  
+
+## UNIX systems (Linux, Mac, BSD)
+
 You can build and run the project by running `./run.sh` in your terminal.  
-If you prefer to build the release build, run `./run.sh build-release`.  
+If you prefer to build the release version, run `./run.sh build-release`.  
+
+## Windows
+
+Importing into Visual Studio as a CMake project works well.  
+You can also build from the terminal by running:
+```
+cmake -S . -B build -DCMAKE_BUILD_TYPE="Debug"
+cd build
+make
+```
+For the release build, replace `Debug` with `Release`.
+
+**When building the release version, make sure to move `res` to the `build` directory!**
 
 
 # Design

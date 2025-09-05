@@ -10,10 +10,12 @@ fi
 case $1 in
 	"build-release")
 		cmake -S . -B build -DCMAKE_BUILD_TYPE="Release"
+		cd build && make
 		exit 0
 		;;
 	"build-debug")
 		cmake -S . -B build -DCMAKE_BUILD_TYPE="Debug"
+		cd build && make
 		exit 0
 		;;
 	"")
