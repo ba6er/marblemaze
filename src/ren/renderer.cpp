@@ -1,0 +1,24 @@
+#include <ren/renderer.hpp>
+
+using namespace ren;
+
+void Renderer::render(Renderable& renderable) {
+	renderable.material->use();
+	renderable.material->setUniform("transform", renderable.transform);
+	renderable.material->setUniform("view", lin::Mat4::Identity());
+	renderable.material->setUniform("projection", lin::Mat4::Identity());
+	renderable.mesh->draw();
+}
+
+void Renderer::render(Camera& camera, const std::vector<Renderable>& renderables) {
+	lin::Mat4 view = camera.getViewMatrix();
+	lin::Mat4 projection = camera.getProjectionMatrix();
+
+	for (auto& r : renderables) {
+		r.material->use();
+		r.material->setUniform("transform", r.transform);
+		r.material->setUniform("view", view);
+		r.material->setUniform("projection", projection);
+		r.mesh->draw();
+	}
+}
