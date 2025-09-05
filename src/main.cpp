@@ -60,31 +60,31 @@ int main() {
 		lagTime     += deltaTime;
 
 		// Input
-		for (int i = 0; i < in::Input::KEYBOARD_COUNT; i++) {
+		for (int i = 0; i < in::KEYBOARD_COUNT; i++) {
 			int keyState = glfwGetKey(window, in::Input::KeyboardValues[i]);
 			if (input.getKey(i) == keyState) {
 				continue;
 			}
 			if (keyState == GLFW_PRESS) {
-				input.setKey(i, input.getKey(i) == in::Input::JustPressed ? in::Input::Pressed : in::Input::JustPressed);
+				input.setKey(i, input.getKey(i) == in::JustPressed ? in::Pressed : in::JustPressed);
 			} else {
-				input.setKey(i, input.getKey(i) == in::Input::JustReleased ? in::Input::Released : in::Input::JustReleased);
+				input.setKey(i, input.getKey(i) == in::JustReleased ? in::Released : in::JustReleased);
 			}
 		}
 		int mouseLeftState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
 		if (input.getMouseL() != mouseLeftState) {
 			if (mouseLeftState == GLFW_PRESS) {
-				input.setMouseL(input.getMouseL() == in::Input::JustPressed ? in::Input::Pressed : in::Input::JustPressed);
+				input.setMouseL(input.getMouseL() == in::JustPressed ? in::Pressed : in::JustPressed);
 			} else {
-				input.setMouseL(input.getMouseL() == in::Input::JustReleased ? in::Input::Released : in::Input::JustReleased);
+				input.setMouseL(input.getMouseL() == in::JustReleased ? in::Released : in::JustReleased);
 			}
 		}
 		int mouseRightState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
 		if (input.getMouseR() != mouseRightState) {
 			if (mouseRightState == GLFW_PRESS) {
-				input.setMouseR(input.getMouseR() == in::Input::JustPressed ? in::Input::Pressed : in::Input::JustPressed);
+				input.setMouseR(input.getMouseR() == in::JustPressed ? in::Pressed : in::JustPressed);
 			} else {
-				input.setMouseR(input.getMouseR() == in::Input::JustReleased ? in::Input::Released : in::Input::JustReleased);
+				input.setMouseR(input.getMouseR() == in::JustReleased ? in::Released : in::JustReleased);
 			}
 		}
 		double mouseX, mouseY;

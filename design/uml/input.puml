@@ -50,8 +50,8 @@ class main {
 hide main circle
 hide main methods
 
-Input +-left- KeyState
-Input +-right- KeyName
+Input <-left- KeyState
+Input <-right- KeyName
 main *-down- Input
 
 @enduml

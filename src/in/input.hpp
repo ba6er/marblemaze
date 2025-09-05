@@ -3,23 +3,27 @@
 
 namespace in {
 
+	enum KeyState {
+		Released     = GLFW_RELEASE,
+		Pressed      = GLFW_PRESS,
+		JustReleased = 2,
+		JustPressed  = 3,
+	};
+
+	enum KeyName {
+		Quit,
+		MazeYawDecrease,
+		MazeYawIncrease,
+		MazePitchDecrease,
+		MazePitchIncrease,
+		CameraAngleDecrease,
+		CameraAngleIncrease,
+		KEYBOARD_COUNT,
+	};
+
 	class Input {
 
 	public:
-		enum KeyState {
-			Released, Pressed, JustReleased, JustPressed
-		};
-
-		enum KeyName {
-			Quit,
-			MazeYawDecrease,
-			MazeYawIncrease,
-			MazePitchDecrease,
-			MazePitchIncrease,
-			CameraAngleDecrease,
-			CameraAngleIncrease,
-			KEYBOARD_COUNT,
-		};
 
 		static constexpr int KeyboardValues[KEYBOARD_COUNT] = {
 			GLFW_KEY_ESCAPE, // Quit

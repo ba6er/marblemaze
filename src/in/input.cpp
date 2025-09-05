@@ -9,7 +9,7 @@ Input::Input() : mouseL(Released), mouseR(Released), mouseX(0), mouseY(0) {
 	}
 }
 
-Input::KeyState Input::getKey(int key) const {
+KeyState Input::getKey(int key) const {
 	if (key >= KEYBOARD_COUNT) {
 		DEBUG_WARNING("Key outside of possible values!");
 		return Released;
@@ -17,11 +17,11 @@ Input::KeyState Input::getKey(int key) const {
 	return keyboard[key];
 }
 
-Input::KeyState Input::getMouseL() const {
+KeyState Input::getMouseL() const {
 	return mouseL;
 }
 
-Input::KeyState Input::getMouseR() const {
+KeyState Input::getMouseR() const {
 	return mouseR;
 }
 
