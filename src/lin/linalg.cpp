@@ -4,6 +4,87 @@
 
 using namespace lin;
 
+Vec2 lin::Vec2::operator-() const {
+	Vec2 result = {-x, -y};
+	if (std::isnan(result.x) || std::isnan(result.y)) {
+		DEBUG_WARNING("Vector values are NaN!");
+	}
+	return result;
+}
+
+Vec2 lin::Vec2::operator+(Vec2 v) const {
+	Vec2 result = {x + v.x, y + v.y};
+	if (std::isnan(result.x) || std::isnan(result.y)) {
+		DEBUG_WARNING("Vector values are NaN!");
+	}
+	return result;
+}
+
+Vec2 lin::Vec2::operator-(Vec2 v) const {
+	Vec2 result = {x - v.x, y - v.y};
+	if (std::isnan(result.x) || std::isnan(result.y)) {
+		DEBUG_WARNING("Vector values are NaN!");
+	}
+	return result;
+}
+
+Vec2 lin::Vec2::operator*(float n) const {
+	Vec2 result = {x * n, y * n};
+	if (std::isnan(result.x) || std::isnan(result.y)) {
+		DEBUG_WARNING("Vector values are NaN!");
+	}
+	return result;
+}
+
+Vec2 lin::Vec2::operator/(float n) const {
+	Vec2 result = {x / n, y / n};
+	if (std::isnan(result.x) || std::isnan(result.y)) {
+		DEBUG_WARNING("Vector values are NaN!");
+	}
+	return result;
+}
+
+
+Vec4 lin::Vec4::operator-() const {
+	Vec4 result = {-x, -y, -z, -w};
+	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z) || std::isnan(result.w)) {
+		DEBUG_WARNING("Vector values are NaN!");
+	}
+	return result;
+}
+
+Vec4 lin::Vec4::operator+(Vec4 v) const {
+	Vec4 result = {x + v.x, y + v.y, z + v.z, w + v.w};
+	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z) || std::isnan(result.w)) {
+		DEBUG_WARNING("Vector values are NaN!");
+	}
+	return result;
+}
+
+Vec4 lin::Vec4::operator-(Vec4 v) const {
+	Vec4 result = {x - v.x, y - v.y, z - v.z, w - v.w};
+	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z) || std::isnan(result.w)) {
+		DEBUG_WARNING("Vector values are NaN!");
+	}
+	return result;
+}
+
+Vec4 lin::Vec4::operator*(float n) const {
+	Vec4 result = {x * n, y * n, z * n, w * n};
+	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z) || std::isnan(result.w)) {
+		DEBUG_WARNING("Vector values are NaN!");
+	}
+	return result;
+}
+
+Vec4 lin::Vec4::operator/(float n) const {
+	Vec4 result = {x / n, y / n, z / n, w / n};
+	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z) || std::isnan(result.w)) {
+		DEBUG_WARNING("Vector values are NaN!");
+	}
+	return result;
+}
+
 Vec3 Vec3::operator-() const {
 	Vec3 result = {-x, -y, -z};
 	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z)) {

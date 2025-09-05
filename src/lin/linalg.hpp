@@ -7,6 +7,30 @@ namespace lin {
 	constexpr float degToRad = pi / 180;
 	constexpr float radToDeg = 180 / pi;
 
+	class Vec2 {
+
+	public:
+		Vec2 operator-() const;
+		Vec2 operator+(Vec2 v) const;
+		Vec2 operator-(Vec2 v) const;
+		Vec2 operator*(float n) const;
+		Vec2 operator/(float n) const;
+
+		float x, y;
+	};
+
+	class Vec4 {
+
+	public:
+		Vec4 operator-() const;
+		Vec4 operator+(Vec4 v) const;
+		Vec4 operator-(Vec4 v) const;
+		Vec4 operator*(float n) const;
+		Vec4 operator/(float n) const;
+
+		float x, y, z, w;
+	};
+
 	class Vec3 {
 
 	public:

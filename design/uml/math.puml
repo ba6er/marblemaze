@@ -1,6 +1,20 @@
 @startuml
 set separator ::
 
+class lin::Vec2 {
+	+x: float
+	+y: float
+}
+hide Vec2 methods
+
+class lin::Vec4 {
+	+x: float
+	+y: float
+	+z: float
+	+w: float
+}
+hide Vec4 methods
+
 class lin::Vec3 {
 	+normalize() : Vec3
 	+cross(vec) : Vec3
