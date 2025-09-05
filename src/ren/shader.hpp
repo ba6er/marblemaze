@@ -10,6 +10,8 @@ namespace ren {
 	class Shader {
 
 	public:
+		Shader();
+
 		bool create(cstr vertex, cstr fragment);
 		void destroy();
 

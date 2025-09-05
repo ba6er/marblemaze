@@ -6,6 +6,8 @@ namespace ren {
 	class Texture {
 
 	public:
+		Texture();
+
 		void create(int width, int height, void* data, bool filtered);
 		void create(cstr fileName, bool filtered);
 		void create();

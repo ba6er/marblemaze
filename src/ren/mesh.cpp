@@ -4,6 +4,8 @@
 
 using namespace ren;
 
+Mesh::Mesh() : vao(0), vbo(0), numVerts(0), maxVerts(0), vertices(nullptr) {}
+
 void Mesh::create(int initVerts) {
 	numVerts = 0;
 	maxVerts = initVerts;

@@ -4,6 +4,8 @@
 
 using namespace ren;
 
+Shader::Shader() : id(0) {}
+
 bool Shader::create(cstr vertex, cstr fragment) {
 	// Vertex shader
 	std::ifstream vertIn(vertex);

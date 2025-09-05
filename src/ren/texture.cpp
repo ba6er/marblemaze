@@ -4,6 +4,8 @@
 
 using namespace ren;
 
+Texture::Texture() : width(0), height(0), id(0) {}
+
 void Texture::create(int width, int height, void* data, bool filtered) {
 	this->width = width;
 	this->height = height;

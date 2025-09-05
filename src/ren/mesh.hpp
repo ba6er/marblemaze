@@ -15,6 +15,8 @@ namespace ren {
 	class Mesh {
 
 	public:
+		Mesh();
+
 		void create(int initVerts = 6);
 		void destroy();
 

@@ -13,6 +13,11 @@ void Material::create(Shader& shader) {
 }
 
 void Material::use() const {
+	if (shader == nullptr) {
+		DEBUG_WARNING("No shader set for material");
+		return;
+	}
+
 	shader->use();
 	for (auto &u: uniforms) {
 		shader->setUniform(u.first.c_str(), u.second);
