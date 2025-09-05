@@ -56,6 +56,7 @@ class ren::Light {
 hide Light methods
 
 class ren::Renderer {
+	{static} +clear(red, green, blue)
 	{static} +render(&renderable)
 	{static} +render(&camera, &renderables[], &lights[])
 }
