@@ -1,6 +1,4 @@
 #pragma once
-
-#pragma once
 #include <lin/linalg.hpp>
 #include <ren/shader.hpp>
 #include <ren/texture.hpp>
