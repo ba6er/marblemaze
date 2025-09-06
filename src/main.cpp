@@ -49,6 +49,24 @@ int main() {
 	in::Input input;
 	ren::RenderAssetManager ram;
 
+	// TEMPORARY
+	ren::Shader& basicShader = ram.createShader("basic");
+	basicShader.create(_RES_PATH "shader/basic3d.vert", _RES_PATH "shader/basic3d.frag");
+
+	ren::Texture& copperTexture = ram.createTexture("copper");
+	copperTexture.create(_RES_PATH "graphics/copper.png", true);
+
+	ren::Material& copperMaterial = ram.createMaterial("copper");
+	copperMaterial.create(basicShader);
+	copperMaterial.addTexture(0, copperTexture);
+
+	ren::Mesh& triangle = ram.createMesh("triangle");
+	triangle.create(3);
+	triangle.addVertex({{0, 0, 0}, {1, 1, 1, 1}, {0, 0}});
+	triangle.addVertex({{1, 0, 0}, {1, 1, 1, 1}, {1, 0}});
+	triangle.addVertex({{1, 1, 0}, {1, 1, 1, 1}, {1, 1}});
+	// TEMPORARY
+
 	float tickTime     = 1.0f / fps;
 	float currentTime  = 0.0f;
 	float previousTime = 0.0f;
