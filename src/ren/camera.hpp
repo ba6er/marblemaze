@@ -6,6 +6,8 @@ namespace ren {
 	class Camera {
 
 	public:
+		Camera();
+
 		void project2d(float left, float right, float bottom, float top, float near, float far);
 		void project3d(float fov, float aspect, float near, float far);
 

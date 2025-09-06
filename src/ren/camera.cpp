@@ -2,6 +2,11 @@
 
 using namespace ren;
 
+Camera::Camera() : pos({0, 0, -1}), target({0, 0, 0}), up({0, 1, 0}), projection(lin::Mat4::Identity()) {
+	updateViewMatrix();
+}
+
+
 void Camera::project2d(float left, float right, float bottom, float top, float near, float far) {
 	projection = lin::Mat4::Project2d(left, right, bottom, top, near, far);
 }

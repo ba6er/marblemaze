@@ -18,7 +18,6 @@ void Material::use() const {
 		return;
 	}
 
-	shader->use();
 	for (auto &u: uniforms) {
 		shader->setUniform(u.first.c_str(), u.second);
 	}
@@ -31,6 +30,7 @@ void Material::use() const {
 		shader->setUniform(uniformName, i);
 		textures[i]->use(i);
 	}
+	shader->use();
 }
 
 void Material::addTexture(int index, Texture& texture) {

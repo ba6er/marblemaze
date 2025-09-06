@@ -9,7 +9,7 @@ void Renderer::clear(float red, float green, float blue) {
 }
 
 void Renderer::render(Renderable& renderable) {
-	renderable.material->setUniform("transform", renderable.transform);
+	renderable.material->setUniform("model", renderable.transform);
 	renderable.material->setUniform("view", lin::Mat4::Identity());
 	renderable.material->setUniform("projection", lin::Mat4::Identity());
 	renderable.material->use();
@@ -21,7 +21,7 @@ void Renderer::render(Camera& camera, const std::vector<Renderable>& renderables
 	lin::Mat4 projection = camera.getProjectionMatrix();
 
 	for (auto& r : renderables) {
-		r.material->setUniform("transform", r.transform);
+		r.material->setUniform("model", r.transform);
 		r.material->setUniform("view", view);
 		r.material->setUniform("projection", projection);
 		r.material->use();

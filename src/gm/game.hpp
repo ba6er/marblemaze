@@ -1,4 +1,5 @@
 #pragma once
+#include <gm/scene.hpp>
 #include <in/input.hpp>
 #include <ren/renderassetmanager.hpp>
 
@@ -10,5 +11,8 @@ namespace gm {
 		void onInit(ren::RenderAssetManager& ram);
 		bool onUpdate(float deltaTime, float currentTime, const in::Input& input);
 		void onRender(float deltaTime, float currentTime, ren::RenderAssetManager& ram);
+
+	private:
+		Scene currentScene;
 	};
 }
