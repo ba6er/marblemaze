@@ -67,7 +67,7 @@ int main() {
 	triangle.addVertex({{1, 1, 0}, {1, 1, 1, 1}, {1, 1}});
 	// TEMPORARY
 
-	game.onInit(ram);
+	game.onInit(width, height, ram);
 
 	float tickTime     = 1.0f / fps;
 	float currentTime  = 0.0f;
@@ -75,6 +75,9 @@ int main() {
 	float deltaTime    = 0.0f;
 	float lagTime      = 0.0f;
 	bool  isRunning    = true;
+
+	int frameWidth = width;
+	int frameHeight = height;
 
 	// Main loop
 	while(isRunning && !glfwWindowShouldClose(window)) {
@@ -115,6 +118,15 @@ int main() {
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 		input.setMousePos(mouseX, mouseY);
+
+		// Frame size
+		int newFrameWidth, newFrameHeight;
+		glfwGetFramebufferSize(window, &newFrameWidth, &newFrameHeight);
+		if (frameWidth != newFrameWidth || frameHeight != newFrameHeight) {
+			frameWidth = newFrameWidth;
+			frameHeight = newFrameHeight;
+			game.onResize(frameWidth, frameHeight);
+		}
 
 		// Update and render the game
 		while (lagTime > tickTime) {

@@ -28,3 +28,7 @@ void Renderer::render(Camera& camera, const std::vector<Renderable>& renderables
 		r.mesh->draw();
 	}
 }
+
+void Renderer::resizeFrame(int width, int height) {
+	glViewport(0, 0, width, height);
+}

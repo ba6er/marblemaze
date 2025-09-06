@@ -2,9 +2,10 @@
 set separator ::
 
 class gm::Game {
-	+onInit(&renderAssetManager)
+	+onInit(width, height, &renderAssetManager)
 	+onUpdate(deltaTime, currentTime, &input) : bool
 	+onRender(deltaTime, currentTime, &renderAssetManager)
+	+onResize(width, height)
 	..
 	-currentScene: Scene
 }

@@ -3,14 +3,21 @@
 
 using namespace gm;
 
-void Game::onInit(ren::RenderAssetManager& ram) {
+void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
+	ren::Renderer::resizeFrame(width, height);
+
 	currentScene.renderables.push_back(ren::Renderable());
 	currentScene.renderables[0].create(ram.getMesh("triangle"), ram.getMaterial("copper"));
 
-	currentScene.camera.project3d(72 * lin::degToRad, 1.33f, 0.001f, 999.9f);
-	currentScene.camera.setPosition({0, 0, -10});
+	currentScene.camera.project3d(72 * lin::degToRad, (float)width / (float)height, 0.001f, 999.9f);
+	currentScene.camera.setPosition({0, 0, 2});
 	currentScene.camera.setTarget({0, 0, 0});
 	currentScene.camera.setUp({0, 1, 0});
+}
+
+void Game::onResize(int width, int height) {
+	ren::Renderer::resizeFrame(width, height);
+	currentScene.camera.project3d(72 * lin::degToRad, (float)width / (float)height, 0.001f, 999.9f);
 }
 
 bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) {
