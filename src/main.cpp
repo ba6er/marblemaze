@@ -67,6 +67,8 @@ int main() {
 	triangle.addVertex({{1, 1, 0}, {1, 1, 1, 1}, {1, 1}});
 	// TEMPORARY
 
+	game.onInit(ram);
+
 	float tickTime     = 1.0f / fps;
 	float currentTime  = 0.0f;
 	float previousTime = 0.0f;
