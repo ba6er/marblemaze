@@ -2,15 +2,15 @@
 set separator ::
 
 class ren::Shader {
-	+create(vert, frag) : bool
+	+create(vert, frag)
 	+destroy()
 	..
 	+use()
 	..
 	+setUniform(name, value)
 	--
-	{static} -CheckCompileErrors(shader) : bool
-	{static} -CheckLinkingErrors(program) : bool
+	{static} -CheckCompileErrors(shader)
+	{static} -CheckLinkingErrors(program)
 	..
 	-id: uint
 }

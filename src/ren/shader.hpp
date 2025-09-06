@@ -12,7 +12,7 @@ namespace ren {
 	public:
 		Shader();
 
-		bool create(cstr vertex, cstr fragment);
+		void create(cstr vertex, cstr fragment);
 		void destroy();
 
 		void use() const;
@@ -20,8 +20,8 @@ namespace ren {
 		void setUniform(cstr name, const UniformType& value) const;
 
 	private:
-		static bool CheckCompileErrors(uint shader);
-		static bool CheckLinkingErrors(uint program);
+		static void CheckCompileErrors(uint shader);
+		static void CheckLinkingErrors(uint program);
 
 		uint id;
 	};

@@ -51,6 +51,6 @@ void FreeSystemResources();
     std::printf(__VA_ARGS__);                                                 \
     std::puts("\033[0m");                                                     \
     FreeSystemResources();                                                    \
-    std::exit(1)                                                              \
+    std::exit(1);                                                             \
   }                                                                           \
 }

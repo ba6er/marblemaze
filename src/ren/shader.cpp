@@ -6,7 +6,7 @@ using namespace ren;
 
 Shader::Shader() : id(0) {}
 
-bool Shader::create(cstr vertex, cstr fragment) {
+void Shader::create(cstr vertex, cstr fragment) {
 	// Vertex shader
 	std::ifstream vertIn(vertex);
 	std::string vertString((std::istreambuf_iterator<char>(vertIn)), std::istreambuf_iterator<char>());
@@ -15,9 +15,7 @@ bool Shader::create(cstr vertex, cstr fragment) {
 	uint vertShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertShader, 1, &vertSource, NULL);
 	glCompileShader(vertShader);
-	if (CheckCompileErrors(vertShader) == false) {
-		return false;
-	}
+	CheckCompileErrors(vertShader);
 
 	// Fragment shader
 	std::ifstream fragIn(fragment);
@@ -27,22 +25,18 @@ bool Shader::create(cstr vertex, cstr fragment) {
 	uint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragShader, 1, &frag_source, NULL);
 	glCompileShader(fragShader);
-	if (CheckCompileErrors(fragShader) == false) {
-		return false;
-	}
+	CheckCompileErrors(fragShader);
 
 	// Shader program
 	id = glCreateProgram();
 	glAttachShader(id, vertShader);
 	glAttachShader(id, fragShader);
 	glLinkProgram(id);
-	bool success = CheckLinkingErrors(id);
+	CheckLinkingErrors(id);
 
 	// Cleanup
 	glDeleteShader(vertShader);
 	glDeleteShader(fragShader);
-
-	return success;
 }
 
 void Shader::destroy() {
@@ -70,30 +64,28 @@ void Shader::setUniform(cstr name, const UniformType& value) const {
 	glUseProgram(0);
 }
 
-bool Shader::CheckCompileErrors(uint shader) {
+void Shader::CheckCompileErrors(uint shader) {
 	int success;
 	char infoLog[512];
 
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (success != 0) {
-		return true;
+		return;
 	}
 
 	glGetShaderInfoLog(shader, 512, NULL, infoLog);
-	DEBUG_ERROR("%s", infoLog);
-	return false;
+	DEBUG_ASSERT(0, "%s", infoLog);
 }
 
-bool Shader::CheckLinkingErrors(uint program) {
+void Shader::CheckLinkingErrors(uint program) {
 	int success;
 	char infoLog[512];
 
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
 	if (success != 0) {
-		return true;
+		return;
 	}
 
 	glGetProgramInfoLog(program, 512, NULL, infoLog);
-	DEBUG_ERROR("%s", infoLog);
-	return false;
+	DEBUG_ASSERT(0, "%s", infoLog);
 }
