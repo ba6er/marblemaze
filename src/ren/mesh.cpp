@@ -12,10 +12,7 @@ void Mesh::create(int initVerts) {
 
 	// Allocation
 	vertices = (Vertex*)std::calloc(maxVerts, sizeof(Vertex));
-	if (vertices == nullptr) {
-		DEBUG_ERROR("Failed to allocate memory for vertices");
-		return;
-	}
+	DEBUG_ASSERT(vertices != nullptr, "Failed to allocate memory for vertices");
 
 	// Generate VAO and VBO
 	glGenVertexArrays(1, &vao);
@@ -56,10 +53,7 @@ void Mesh::addVertex(Vertex v) {
 	if (numVerts == maxVerts) {
 		maxVerts *= 2;
 		vertices = (Vertex*)std::realloc(vertices, maxVerts * sizeof(Vertex));
-		if (vertices == nullptr) {
-			DEBUG_ERROR("Failed to re-allocate memory for vertices");
-			return;
-		}
+		DEBUG_ASSERT(vertices != nullptr, "Failed to re-allocate memory for vertices");
 
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
