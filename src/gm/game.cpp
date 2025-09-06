@@ -9,5 +9,5 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 	return true;
 }
 
-void Game::onRender(float deltaTime, float currentTime) {
+void Game::onRender(float deltaTime, float currentTime, ren::RenderAssetManager& ram) {
 }

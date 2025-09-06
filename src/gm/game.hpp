@@ -1,5 +1,6 @@
 #pragma once
 #include <in/input.hpp>
+#include <ren/renderassetmanager.hpp>
 
 namespace gm {
 
@@ -7,6 +8,6 @@ namespace gm {
 
 	public:
 		bool onUpdate(float deltaTime, float currentTime, const in::Input& input);
-		void onRender(float deltaTime, float currentTime);
+		void onRender(float deltaTime, float currentTime, ren::RenderAssetManager& ram);
 	};
 }

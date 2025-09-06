@@ -3,7 +3,7 @@ set separator ::
 
 class gm::Game {
 	+onUpdate(deltaTime, currentTime, &input)
-	+onRender(deltaTime, currentTime)
+	+onRender(deltaTime, currentTime, &renderAssetManager)
 	..
 	-currentScene: Scene
 }

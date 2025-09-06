@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <in/input.hpp>
 #include <gm/game.hpp>
+#include <ren/renderassetmanager.hpp>
 #include <util.hpp>
 
 constexpr cstr title  = "Marble Maze";
@@ -46,6 +47,7 @@ int main() {
 
 	gm::Game game;
 	in::Input input;
+	ren::RenderAssetManager ram;
 
 	float tickTime     = 1.0f / fps;
 	float currentTime  = 0.0f;
@@ -99,12 +101,14 @@ int main() {
 			isRunning = game.onUpdate(tickTime, currentTime, input);
 			lagTime -= tickTime;
 		}
-		game.onRender(deltaTime, currentTime);
+		game.onRender(deltaTime, currentTime, ram);
 
 		// Update system
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	ram.destroy();
 
 	// Free GLFW objects
 	glfwDestroyWindow(window);
