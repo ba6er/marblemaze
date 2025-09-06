@@ -5,16 +5,24 @@
 #include <ren/renderassetmanager.hpp>
 #include <util.hpp>
 
-constexpr cstr title  = "Marble Maze";
-constexpr int  width  = 720;
-constexpr int  height = 480;
-constexpr int  fps    = 60;
-
 static void callbackError(int code, cstr text) {
 	DEBUG_WARNING("GLFW error: %d, %s", code, text);
 }
 
+constexpr static cstr title  = "Marble Maze";
+constexpr static int  width  = 720;
+constexpr static int  height = 480;
+constexpr static int  fps    = 60;
+
+static GLFWwindow* window;
+
+static gm::Game game;
+static in::Input input;
+static ren::RenderAssetManager ram;
+
 int main() {
+	DEBUG_TRACE("Initializing system");
+
 	// Initialize GLFW
 	glfwInit();
 	glfwSetErrorCallback(callbackError);
@@ -24,7 +32,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	// Create the GLFW window
-	GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
+	window = glfwCreateWindow(width, height, title, NULL, NULL);
 	if (window == nullptr) {
 		glfwTerminate();
 		return 1;
@@ -44,10 +52,6 @@ int main() {
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
-
-	gm::Game game;
-	in::Input input;
-	ren::RenderAssetManager ram;
 
 	// TEMPORARY
 	ren::Shader& basicShader = ram.createShader("basic");
@@ -140,10 +144,18 @@ int main() {
 		glfwPollEvents();
 	}
 
+	FreeSystemResources();
+	return 0;
+}
+
+// Declared in util.hpp
+void FreeSystemResources() {
+	DEBUG_TRACE("Freeing system resources");
+
+	// Free render assets
 	ram.destroy();
 
 	// Free GLFW objects
 	glfwDestroyWindow(window);
 	glfwTerminate();
-	return 0;
 }

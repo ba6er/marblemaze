@@ -14,17 +14,13 @@ typedef unsigned long long int uint64;
 typedef unsigned long int      uint32;
 typedef unsigned short int     uint16;
 
+// Free system resources, implemented in main.cpp
+void FreeSystemResources();
+
 // Debug
 
-#ifndef _DEBUG // Debug disabled
-
-#define DEBUG_TRACE(...)
-#define DEBUG_WARNING(...)
-#define DEBUG_ERROR(...)
-
-#else // Debug enabled
-
 #include <cstdio>
+#include <cstdlib>
 
 #define DEBUG_TRACE(...)                         \
 {                                                \
@@ -47,4 +43,14 @@ typedef unsigned short int     uint16;
   std::puts("\033[0m");                                                    \
 }
 
-#endif // Debug
+#define DEBUG_ASSERT(x, ...)                                                  \
+{                                                                             \
+  if (!(x))                                                                   \
+  {                                                                           \
+    std::printf("\x1b[31mAssert in %s, line %d:\n", __FILE_NAME__, __LINE__); \
+    std::printf(__VA_ARGS__);                                                 \
+    std::puts("\033[0m");                                                     \
+    FreeSystemResources();                                                    \
+    std::exit(1)                                                              \
+  }                                                                           \
+}
