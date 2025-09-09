@@ -215,8 +215,8 @@ Mat4 Mat4::Rotate(float a, float nx, float ny, float nz) {
 		0.0f,                   0.0f,                   0.0f,                   1.0f};
 }
 
-Mat4 Mat4::Rotate(float a, Vec3 normal) {
-	return Rotate(a, normal.x, normal.y, normal.z);
+Mat4 Mat4::Rotate(float a, Vec3 axis) {
+	return Rotate(a, axis.x, axis.y, axis.z);
 }
 
 Mat4 Mat4::Translate(float x, float y, float z) {
@@ -320,4 +320,170 @@ Mat4 Mat4::operator*(const Mat4& m) const {
 		(w1 * m.x2) + (w2 * m.y2) + (w3 * m.z2) + (w4 * m.w2),
 		(w1 * m.x3) + (w2 * m.y3) + (w3 * m.z3) + (w4 * m.w3),
 		(w1 * m.x4) + (w2 * m.y4) + (w3 * m.z4) + (w4 * m.w4)};
+}
+
+Mat4 Mat4::transpose() const {
+	return {
+		x1, y1, z1, w1,
+		x2, y2, z2, w2,
+		x3, y3, z3, w3,
+		x4, y4, z4, w4};
+}
+
+Mat4 Mat4::inverse() const {
+	Mat4 inv;
+
+	inv.x1 =
+		y2 * z3 * w4 -
+		y2 * z4 * w3 -
+		z2 * y3 * w4 +
+		z2 * y4 * w3 +
+		w2 * y3 * z4 -
+		w2 * y4 * z3;
+
+	inv.y1 =
+		y1 * z4 * w3 -
+		y1 * z3 * w4 +
+		z1 * y3 * w4 -
+		z1 * y4 * w3 -
+		w1 * y3 * z4 +
+		w1 * y4 * z3;
+
+	inv.z1 =
+		y1 * z2 * w4 -
+		y1 * z4 * w2 -
+		z1 * y2 * w4 +
+		z1 * y4 * w2 +
+		w1 * y2 * z4 -
+		w1 * y4 * z2;
+
+	inv.w1 =
+		y1 * z3 * w2 -
+		y1 * z2 * w3 +
+		z1 * y2 * w3 -
+		z1 * y3 * w2 -
+		w1 * y2 * z3 +
+		w1 * y3 * z2;
+
+	inv.x2 =
+		x2 * z4 * w3 -
+		x2 * z3 * w4 +
+		z2 * x3 * w4 -
+		z2 * x4 * w3 -
+		w2 * x3 * z4 +
+		w2 * x4 * z3;
+
+	inv.y2 =
+		x1 * z3 * w4 -
+		x1 * z4 * w3 -
+		z1 * x3 * w4 +
+		z1 * x4 * w3 +
+		w1 * x3 * z4 -
+		w1 * x4 * z3;
+
+	inv.z2 =
+		x1 * z4 * w2 -
+		x1 * z2 * w4 +
+		z1 * x2 * w4 -
+		z1 * x4 * w2 -
+		w1 * x2 * z4 +
+		w1 * x4 * z2;
+
+	inv.w2 =
+		x1 * z2 * w3 -
+		x1 * z3 * w2 -
+		z1 * x2 * w3 +
+		z1 * x3 * w2 +
+		w1 * x2 * z3 -
+		w1 * x3 * z2;
+
+	inv.x3 =
+		x2 * y3 * w4 -
+		x2 * y4 * w3 -
+		y2 * x3 * w4 +
+		y2 * x4 * w3 +
+		w2 * x3 * y4 -
+		w2 * x4 * y3;
+
+	inv.y3 =
+		x1 * y4 * w3 -
+		x1 * y3 * w4 +
+		y1 * x3 * w4 -
+		y1 * x4 * w3 -
+		w1 * x3 * y4 +
+		w1 * x4 * y3;
+
+	inv.z3 =
+		x1 * y2 * w4 -
+		x1 * y4 * w2 -
+		y1 * x2 * w4 +
+		y1 * x4 * w2 +
+		w1 * x2 * y4 -
+		w1 * x4 * y2;
+
+	inv.w3 =
+		x1 * y3 * w2 -
+		x1 * y2 * w3 +
+		y1 * x2 * w3 -
+		y1 * x3 * w2 -
+		w1 * x2 * y3 +
+		w1 * x3 * y2;
+
+	inv.x4 =
+		x2 * y4 * z3 -
+		x2 * y3 * z4 +
+		y2 * x3 * z4 -
+		y2 * x4 * z3 -
+		z2 * x3 * y4 +
+		z2 * x4 * y3;
+
+	inv.y4 =
+		x1 * y3 * z4 -
+		x1 * y4 * z3 -
+		y1 * x3 * z4 +
+		y1 * x4 * z3 +
+		z1 * x3 * y4 -
+		z1 * x4 * y3;
+
+	inv.z4 =
+		x1 * y4 * z2 -
+		x1 * y2 * z4 +
+		y1 * x2 * z4 -
+		y1 * x4 * z2 -
+		z1 * x2 * y4 +
+		z1 * x4 * y2;
+
+	inv.w4 =
+		x1 * y2 * z3 -
+		x1 * y3 * z2 -
+		y1 * x2 * z3 +
+		y1 * x3 * z2 +
+		z1 * x2 * y3 -
+		z1 * x3 * y2;
+
+	float det = x1 * inv.x1 + x2 * inv.y1 + x3 * inv.z1 + x4 * inv.w1;
+
+	if (std::abs(det) < 1e-6f) {
+		DEBUG_WARNING("Matrix determinant is 0, inverse cannot be computed");
+		return Identity();
+	}
+	inv.x1 /= det; inv.x2 /= det; inv.x3 /= det; inv.x4 /= det;
+	inv.y1 /= det; inv.y2 /= det; inv.y3 /= det; inv.y4 /= det;
+	inv.z1 /= det; inv.z2 /= det; inv.z3 /= det; inv.z4 /= det;
+	inv.w1 /= det; inv.w2 /= det; inv.w3 /= det; inv.w4 /= det;
+	return inv;
+}
+
+Vec3 Mat4::operator*(Vec3 v) const {
+	Vec4 v4 = {v.x, v.y, v.z, 1.0f};
+	Vec4 result = (*this) * v4;
+	return {result.x, result.y, result.z};
+}
+
+Vec4 Mat4::operator*(Vec4 v) const {
+	return {
+		x1 * v.x + x2 * v.y + x3 * v.z + x4 * v.w,
+		y1 * v.x + y2 * v.y + y3 * v.z + y4 * v.w,
+		z1 * v.x + z2 * v.y + z3 * v.z + z4 * v.w,
+		w1 * v.x + w2 * v.y + w3 * v.z + w4 * v.w};
 }

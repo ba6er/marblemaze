@@ -1,4 +1,5 @@
 #include <geo/geometrygenerator.hpp>
+#include <geo/geometrytransform.hpp>
 #include <gm/game.hpp>
 #include <ren/renderer.hpp>
 #include <cmath>
@@ -10,6 +11,9 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 
 	auto cubeData = geo::GeometryGenerator::GenerateCube();
 	auto& cube = ram.createMesh("cube");
+	geo::GeometryTransform::Scale(cubeData, {0.5f, 3.0f, 2.0f});
+	geo::GeometryTransform::ApplyColor(cubeData, {0, 1, 1});
+
 	cube.create();
 	cube.addGeometry(cubeData);
 
@@ -42,6 +46,6 @@ void Game::onRender(float deltaTime, float currentTime, ren::RenderAssetManager&
 	};
 	currentScene.camera.setPosition(cameraPos);
 
-	ren::Renderer::clear(0.0f, 0.2f, 0.3f);
+	ren::Renderer::clear(0.3f, 0.1f, 0.1f);
 	ren::Renderer::render(currentScene.camera, currentScene.renderables);
 }

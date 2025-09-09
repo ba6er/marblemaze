@@ -2,10 +2,10 @@
 
 namespace lin {
 
-	constexpr float Pi  = 3.1415926535897932385f;
-	constexpr float Tau = 6.2831853071795864769f;
-	constexpr float DegToRad = Pi / 180;
-	constexpr float RadToDeg = 180 / Pi;
+	inline constexpr float Pi  = 3.1415926535897932385f;
+	inline constexpr float Tau = 6.2831853071795864769f;
+	inline constexpr float DegToRad = Pi / 180;
+	inline constexpr float RadToDeg = 180 / Pi;
 
 	class Vec2 {
 
@@ -60,7 +60,7 @@ namespace lin {
 		static Mat4 Scale(float x, float y, float z);
 		static Mat4 Scale(Vec3 scalar);
 		static Mat4 Rotate(float a, float nx, float ny, float nz);
-		static Mat4 Rotate(float a, Vec3 normal);
+		static Mat4 Rotate(float a, Vec3 axis);
 		static Mat4 Translate(float x, float y, float z);
 		static Mat4 Translate(Vec3 translation);
 
@@ -71,6 +71,12 @@ namespace lin {
 		Mat4 operator+(const Mat4& m) const;
 		Mat4 operator-(const Mat4& m) const;
 		Mat4 operator*(const Mat4& m) const;
+
+		Mat4 transpose() const;
+		Mat4 inverse() const;
+
+		Vec3 operator*(Vec3 v) const;
+		Vec4 operator*(Vec4 v) const;
 
 		float x1, x2, x3, x4;
 		float y1, y2, y3, y4;
