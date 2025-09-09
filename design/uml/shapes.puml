@@ -2,12 +2,9 @@
 set separator ::
 
 enum geo::CubeFace {
-	Front
-	Back
-	Left
-	Right
-	Top
-	Bottom
+	Front  	Back
+	Left   	Right
+	Top    	Bottom
 	All
 }
 hide CubeFace methods
@@ -23,7 +20,7 @@ class geo::GeometryData {
 hide GeometryData methods
 
 class geo::GeometryGenerator {
-	{static} +GenerateCube() : GeometryData
+	{static} +GenerateCube(faces) : GeometryData
 }
 hide GeometryGenerator fields
 
