@@ -48,7 +48,6 @@ class ren::Vertex {
 	+color: Vec4
 	+atlas: Vec2
 	+normal: Vec3
-	+tangent: Vec3
 }
 hide Vertex methods
 

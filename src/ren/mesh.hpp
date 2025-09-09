@@ -10,6 +10,7 @@ namespace ren {
 		lin::Vec3 position;
 		lin::Vec4 color;
 		lin::Vec2 atlas;
+		lin::Vec3 normal;
 	};
 
 	class Mesh {

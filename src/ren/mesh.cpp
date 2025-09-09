@@ -37,6 +37,10 @@ void Mesh::create(int initVerts) {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(7 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
+	// Vertex normal
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
+	glEnableVertexAttribArray(3);
+
 	// Unbind
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
