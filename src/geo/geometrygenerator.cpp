@@ -2,7 +2,7 @@
 
 using namespace geo;
 
-GeometryData GeometryGenerator::GenerateCube() {
+GeometryData GeometryGenerator::GenerateCube(lin::Vec3 color) {
 	GeometryData gd;
 
 	const lin::Vec3 positions[] = {
@@ -80,12 +80,11 @@ GeometryData GeometryGenerator::GenerateCube() {
 		{0, 0}, {1, 0}, {1, 1}, {0, 1},
 	};
 
-	const lin::Vec3 white = {1.0f, 1.0f, 1.0f};
 	for (int i = 0; i < 24; ++i) {
 		gd.positions.push_back(positions[i]);
 		gd.normals.push_back(normals[i]);
 		gd.uvs.push_back(uvs[i]);
-		gd.colors.push_back(white);
+		gd.colors.push_back(color);
 	}
 
 	// 6 faces × 2 triangles = 12 triangles = 36 indices
@@ -101,3 +100,8 @@ GeometryData GeometryGenerator::GenerateCube() {
 	gd.indices.insert(gd.indices.end(), std::begin(indices), std::end(indices));
 	return gd;
 }
+
+GeometryData GeometryGenerator::GenerateCube() {
+	return GenerateCube({1, 1, 1});
+}
+
