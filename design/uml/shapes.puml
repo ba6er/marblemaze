@@ -27,9 +27,9 @@ hide GeometryGenerator fields
 class geo::GeometryTransform {
 	{static} +ApplyMatrix(&gd, matrix)
 	..
-	{static} +Scale(&gd, scaleVec)
-	{static} +Rotate(&gd, angle, axisVec)
-	{static} +Translate(&gd, translationVec)
+	{static} +Scale(&gd, scale)
+	{static} +Rotate(&gd, angle, axis)
+	{static} +Translate(&gd, translation)
 	..
 	{static} +ApplyColor(&gd, color)
 }

@@ -28,9 +28,9 @@ class lin::Vec3 {
 
 class lin::Mat4 {
 	{static} +Identity() : Mat4
-	{static} +Scale(scaleVec) : Mat4
-	{static} +Rotate(angle, normalVec) : Mat4
-	{static} +Translate(translationVec) : Mat4
+	{static} +Scale(scale) : Mat4
+	{static} +Rotate(angle, axis) : Mat4
+	{static} +Translate(translation) : Mat4
 	..
 	{static} +LookAt(eye, target, up) : Mat4
 	{static} +Project2d(left, right, bottom, top, near, far) : Mat4
