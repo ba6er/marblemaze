@@ -2,6 +2,9 @@
 
 using namespace ren;
 
+void RenderAssetManager::initFromConfig(cstr fileName) {
+}
+
 Shader& RenderAssetManager::createShader(const std::string& name) {
 	shaders[name] = Shader();
 	return shaders.at(name);

@@ -3,6 +3,7 @@
 #include <ren/texture.hpp>
 #include <ren/material.hpp>
 #include <ren/mesh.hpp>
+#include <util.hpp>
 #include <map>
 #include <string>
 
@@ -11,6 +12,8 @@ namespace ren {
 	class RenderAssetManager {
 
 	public:
+		void initFromConfig(cstr fileName);
+
 		Shader& createShader(const std::string& name);
 		Texture& createTexture(const std::string& name);
 		Material& createMaterial(const std::string& name);

@@ -2,6 +2,8 @@
 set separator ::
 
 class ren::RenderAssetManager {
+	+initFromConfig(filename)
+	..
 	+createShader(name) : &Shader
 	+createTexture(name) : &Texture
 	+createMaterial(name) : &Material
