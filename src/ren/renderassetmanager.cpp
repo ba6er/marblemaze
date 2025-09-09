@@ -4,7 +4,7 @@
 
 using namespace ren;
 
-void RenderAssetManager::initFromConfig(cstr fileName) {
+void RenderAssetManager::initFromConfig(const std::string& fileName) {
 	std::ifstream configIn(fileName);
 	std::string configLine = "";
 
@@ -66,7 +66,7 @@ void RenderAssetManager::initFromConfig(cstr fileName) {
 			DEBUG_TRACE("Loaded material \"%s\" from shader \"%s\"", name.c_str(), shader.c_str());
 		}
 	}
-	DEBUG_TRACE("Loaded asset configuration from %s", fileName);
+	DEBUG_TRACE("Loaded asset configuration from %s", fileName.c_str());
 }
 
 Shader& RenderAssetManager::createShader(const std::string& name) {
@@ -101,19 +101,35 @@ void RenderAssetManager::destroy() {
 	}
 }
 
-Shader& RenderAssetManager::getShader(const std::string& name) {
-	return shaders.at(name);
+Shader& RenderAssetManager::getShader(std::string_view name) {
+	auto value = shaders.find(name);
+	if (value == shaders.end()) {
+		DEBUG_ASSERT("No shader by the name of \"%s\"", "%s", name.data());
+	}
+	return value->second;
 }
 
-Texture& RenderAssetManager::getTexture(const std::string& name) {
-	return textures.at(name);
+Texture& RenderAssetManager::getTexture(std::string_view name) {
+	auto value = textures.find(name);
+	if (value == textures.end()) {
+		DEBUG_ASSERT("No texture by the name of \"%s\"", "%s", name.data());
+	}
+	return value->second;
 }
 
-Material& RenderAssetManager::getMaterial(const std::string& name) {
-	return materials.at(name);
+Material& RenderAssetManager::getMaterial(std::string_view name) {
+	auto value = materials.find(name);
+	if (value == materials.end()) {
+		DEBUG_ASSERT("No material by the name of \"%s\"", "%s", name.data());
+	}
+	return value->second;
 }
 
-Mesh& RenderAssetManager::getMesh(const std::string& name) {
-	return meshes.at(name);
+Mesh& RenderAssetManager::getMesh(std::string_view name) {
+	auto value = meshes.find(name);
+	if (value == meshes.end()) {
+		DEBUG_ASSERT("No mesh by the name of \"%s\"", "%s", name.data());
+	}
+	return value->second;
 }
 

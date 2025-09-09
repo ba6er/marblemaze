@@ -6,13 +6,14 @@
 #include <util.hpp>
 #include <map>
 #include <string>
+#include <string_view>
 
 namespace ren {
 
 	class RenderAssetManager {
 
 	public:
-		void initFromConfig(cstr fileName);
+		void initFromConfig(const std::string& fileName);
 
 		Shader& createShader(const std::string& name);
 		Texture& createTexture(const std::string& name);
@@ -21,15 +22,15 @@ namespace ren {
 
 		void destroy();
 
-		Shader& getShader(const std::string& name);
-		Texture& getTexture(const std::string& name);
-		Material& getMaterial(const std::string& name);
-		Mesh& getMesh(const std::string& name);
+		Shader& getShader(std::string_view name);
+		Texture& getTexture(std::string_view name);
+		Material& getMaterial(std::string_view name);
+		Mesh& getMesh(std::string_view name);
 
 	private:
-		std::map<std::string, Shader> shaders;
-		std::map<std::string, Texture> textures;
-		std::map<std::string, Material> materials;
-		std::map<std::string, Mesh> meshes;
+		std::map<std::string, Shader, std::less<>> shaders;
+		std::map<std::string, Texture, std::less<>> textures;
+		std::map<std::string, Material, std::less<>> materials;
+		std::map<std::string, Mesh, std::less<>> meshes;
 	};
 }

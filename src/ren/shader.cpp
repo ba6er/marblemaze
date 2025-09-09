@@ -6,11 +6,11 @@ using namespace ren;
 
 Shader::Shader() : id(0) {}
 
-void Shader::create(cstr vertex, cstr fragment) {
+void Shader::create(std::string_view vertex, std::string_view fragment) {
 	// Vertex shader
-	std::ifstream vertIn(vertex);
+	std::ifstream vertIn(vertex.data());
 	std::string vertString((std::istreambuf_iterator<char>(vertIn)), std::istreambuf_iterator<char>());
-	cstr vertSource = vertString.c_str();
+	const char* vertSource = vertString.c_str();
 
 	uint vertShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertShader, 1, &vertSource, NULL);
@@ -18,9 +18,9 @@ void Shader::create(cstr vertex, cstr fragment) {
 	CheckCompileErrors(vertShader);
 
 	// Fragment shader
-	std::ifstream fragIn(fragment);
+	std::ifstream fragIn(fragment.data());
 	std::string fragString((std::istreambuf_iterator<char>(fragIn)), std::istreambuf_iterator<char>());
-	cstr frag_source = fragString.c_str();
+	const char* frag_source = fragString.c_str();
 
 	uint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragShader, 1, &frag_source, NULL);
@@ -47,19 +47,19 @@ void Shader::use() const {
 	glUseProgram(id);
 }
 
-void Shader::setUniform(cstr name, const UniformType& value) const {
+void Shader::setUniform(std::string_view name, const UniformType& value) const {
 	glUseProgram(id);
 	if (std::holds_alternative<int>(value)) {
-		glUniform1i(glGetUniformLocation(id, name), std::get<int>(value));
+		glUniform1i(glGetUniformLocation(id, name.data()), std::get<int>(value));
 	}
 	else if (std::holds_alternative<uint>(value)) {
-		glUniform1ui(glGetUniformLocation(id, name), std::get<uint>(value));
+		glUniform1ui(glGetUniformLocation(id, name.data()), std::get<uint>(value));
 	}
 	else if (std::holds_alternative<float>(value)) {
-		glUniform1f(glGetUniformLocation(id, name), std::get<float>(value));
+		glUniform1f(glGetUniformLocation(id, name.data()), std::get<float>(value));
 	}
 	else if (std::holds_alternative<lin::Mat4>(value)) {
-		glUniformMatrix4fv(glGetUniformLocation(id, name), 1, GL_TRUE, &std::get<lin::Mat4>(value).x1);
+		glUniformMatrix4fv(glGetUniformLocation(id, name.data()), 1, GL_TRUE, &std::get<lin::Mat4>(value).x1);
 	}
 	glUseProgram(0);
 }

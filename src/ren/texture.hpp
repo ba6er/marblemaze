@@ -1,5 +1,6 @@
 #pragma once
 #include <util.hpp>
+#include <string_view>
 
 namespace ren {
 
@@ -9,7 +10,7 @@ namespace ren {
 		Texture();
 
 		void create(int width, int height, void* data, bool filtered);
-		void create(cstr fileName, bool filtered);
+		void create(std::string_view fileName, bool filtered);
 		void create();
 		void destroy();
 

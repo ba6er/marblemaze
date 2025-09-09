@@ -1,23 +1,24 @@
 #pragma once
 #include <lin/linalg.hpp>
 #include <util.hpp>
+#include <string_view>
 #include <variant>
 
 namespace ren {
 
-	typedef std::variant<int, uint, float, lin::Mat4> UniformType;
+	using UniformType = std::variant<int, uint, float, lin::Mat4>;
 
 	class Shader {
 
 	public:
 		Shader();
 
-		void create(cstr vertex, cstr fragment);
+		void create(std::string_view vertex, std::string_view fragment);
 		void destroy();
 
 		void use() const;
 
-		void setUniform(cstr name, const UniformType& value) const;
+		void setUniform(std::string_view name, const UniformType& value) const;
 
 	private:
 		static void CheckCompileErrors(uint shader);

@@ -35,9 +35,9 @@ void Texture::create(int width, int height, void* data, bool filtered) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::create(cstr fileName, bool filtered) {
+void Texture::create(std::string_view fileName, bool filtered) {
 	int width, height, num_channels;
-	void* data = stbi_load(fileName, &width, &height, &num_channels, 0);
+	void* data = stbi_load(fileName.data(), &width, &height, &num_channels, 0);
 	this->width = width;
 	this->height = height;
 

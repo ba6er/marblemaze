@@ -5,14 +5,14 @@
 #include <ren/renderassetmanager.hpp>
 #include <util.hpp>
 
-static void callbackError(int code, cstr text) {
+static void callbackError(int code, const char* text) {
 	DEBUG_WARNING("GLFW error: %d, %s", code, text);
 }
 
-constexpr static cstr title  = "Marble Maze";
-constexpr static int  width  = 720;
-constexpr static int  height = 480;
-constexpr static int  fps    = 60;
+static const char* title = "Marble Maze";
+static const int width  = 720;
+static const int height = 480;
+static const int fps    = 60;
 
 static GLFWwindow* window;
 
