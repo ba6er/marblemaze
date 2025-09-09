@@ -58,9 +58,9 @@ int main() {
 	// TEMPORARY
 	ren::Mesh& triangle = ram.createMesh("triangle");
 	triangle.create(3);
-	triangle.addVertex({{0, 0, 0}, {1, 1, 1, 1}, {0, 0}, {0, 0, 1}});
-	triangle.addVertex({{1, 0, 0}, {1, 1, 1, 1}, {1, 0}, {0, 0, 1}});
-	triangle.addVertex({{1, 1, 0}, {1, 1, 1, 1}, {1, 1}, {0, 0, 1}});
+	triangle.addVertex({{0, 0, 0}, {1, 1, 1}, {0, 0}, {0, 0, 1}});
+	triangle.addVertex({{1, 0, 0}, {1, 1, 1}, {1, 0}, {0, 0, 1}});
+	triangle.addVertex({{1, 1, 0}, {1, 1, 1}, {1, 1}, {0, 0, 1}});
 	// TEMPORARY
 
 	game.onInit(width, height, ram);

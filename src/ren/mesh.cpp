@@ -30,15 +30,15 @@ void Mesh::create(int initVerts) {
 	glEnableVertexAttribArray(0);
 
 	// Vertex color
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
 	// Vertex texture atlas coordinates
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(7 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
 	// Vertex normal
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(8 * sizeof(float)));
 	glEnableVertexAttribArray(3);
 
 	// Unbind
@@ -74,8 +74,7 @@ void Mesh::addVertex(const Vertex& v) {
 
 void Mesh::addGeometry(const geo::GeometryData& gd) {
 	for (auto i : gd.indicies) {
-		lin::Vec4 col = {gd.colors[i].x, gd.colors[i].y, gd.colors[i].z, 1.0f};
-		addVertex({gd.positions[i], col, gd.uvs[i], gd.normals[i]});
+		addVertex({gd.positions[i], gd.colors[i], gd.uvs[i], gd.normals[i]});
 	}
 }
 

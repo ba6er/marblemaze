@@ -45,7 +45,7 @@ class ren::Material {
 
 class ren::Vertex {
 	+position: Vec3
-	+color: Vec4
+	+color: Vec3
 	+atlas: Vec2
 	+normal: Vec3
 }
