@@ -1,6 +1,17 @@
 @startuml
 set separator ::
 
+enum geo::CubeFace {
+	Front
+	Back
+	Left
+	Right
+	Top
+	Bottom
+	All
+}
+hide CubeFace methods
+
 class geo::GeometryData {
 	+positions: Vec3[]
 	+colors: Vec3[]
@@ -26,6 +37,8 @@ class geo::GeometryTransform {
 	{static} +ApplyColor(&gd, color)
 }
 hide GeometryTransform fields
+
+GeometryGenerator <-right- CubeFace
 
 GeometryData <.up. GeometryGenerator
 GeometryData <-right- GeometryTransform

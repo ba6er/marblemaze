@@ -13,7 +13,7 @@ namespace ren {
 	class RenderAssetManager {
 
 	public:
-		void initFromConfig(const std::string& fileName);
+		void initFromConfig(std::string_view fileName);
 
 		Shader& createShader(const std::string& name);
 		Texture& createTexture(const std::string& name);

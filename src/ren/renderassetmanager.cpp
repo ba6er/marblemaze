@@ -4,8 +4,8 @@
 
 using namespace ren;
 
-void RenderAssetManager::initFromConfig(const std::string& fileName) {
-	std::ifstream configIn(fileName);
+void RenderAssetManager::initFromConfig(std::string_view fileName) {
+	std::ifstream configIn(fileName.data());
 	std::string configLine = "";
 
 	int stage = 0;
@@ -66,7 +66,7 @@ void RenderAssetManager::initFromConfig(const std::string& fileName) {
 			DEBUG_TRACE("Loaded material \"%s\" from shader \"%s\"", name.c_str(), shader.c_str());
 		}
 	}
-	DEBUG_TRACE("Loaded asset configuration from %s", fileName.c_str());
+	DEBUG_TRACE("Loaded asset configuration from %s", fileName.data());
 }
 
 Shader& RenderAssetManager::createShader(const std::string& name) {
