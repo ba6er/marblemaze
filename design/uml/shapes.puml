@@ -7,7 +7,7 @@ class geo::GeometryData {
 	+uvs: Vec2[]
 	+normals: Vec3[]
 	..
-	+indicies: uint[]
+	+indices: uint[]
 }
 hide GeometryData methods
 

@@ -89,7 +89,7 @@ GeometryData GeometryGenerator::GenerateCube() {
 	}
 
 	// 6 faces × 2 triangles = 12 triangles = 36 indices
-	const uint indicies[] = {
+	const uint indices[] = {
 		0,  1,  2,  2,  3,  0,      // Front
 		4,  5,  6,  6,  7,  4,      // Back
 		8,  9, 10, 10, 11,  8,      // Left
@@ -98,6 +98,6 @@ GeometryData GeometryGenerator::GenerateCube() {
 		20, 21, 22, 22, 23, 20,     // Bottom
 	};
 
-	gd.indicies.insert(gd.indicies.end(), std::begin(indicies), std::end(indicies));
+	gd.indices.insert(gd.indices.end(), std::begin(indices), std::end(indices));
 	return gd;
 }

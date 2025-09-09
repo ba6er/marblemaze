@@ -13,7 +13,7 @@ namespace geo {
 		std::vector<lin::Vec2> uvs;
 		std::vector<lin::Vec3> normals;
 
-		std::vector<uint> indicies;
+		std::vector<uint> indices;
 
 		GeometryData operator+(const GeometryData& gd) const;
 		void operator+=(const GeometryData& gd);
