@@ -53,17 +53,9 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
+	ram.initFromConfig(_RES_PATH "assets.txt");
+
 	// TEMPORARY
-	ren::Shader& basicShader = ram.createShader("basic");
-	basicShader.create(_RES_PATH "shader/basic3d.vert", _RES_PATH "shader/basic3d.frag");
-
-	ren::Texture& copperTexture = ram.createTexture("copper");
-	copperTexture.create(_RES_PATH "graphics/copper.png", true);
-
-	ren::Material& copperMaterial = ram.createMaterial("copper");
-	copperMaterial.create(basicShader);
-	copperMaterial.addTexture(0, copperTexture);
-
 	ren::Mesh& triangle = ram.createMesh("triangle");
 	triangle.create(3);
 	triangle.addVertex({{0, 0, 0}, {1, 1, 1, 1}, {0, 0}});

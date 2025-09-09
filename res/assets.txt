@@ -1,0 +1,21 @@
+# This is the file that RenderAssetManager uses to import Textures, Shaders and Materials.
+# Note: set tab size to 8 for proper table alignment.
+# Note: comments must be on their own line starting with "#".
+
+SHADERS
+# Shaders are located in res/shader/
+# Table format for shaders:
+# name		vertex source file	fragment source file
+basic3d		basic3d.vert		basic3d.frag
+
+TEXTURES
+# Textures are located in res/graphics/
+# Table format for textures:
+# name		image source file	filtered (T/F)
+copper		copper.png		T
+
+MATERIALS
+# Table format for materials:
+# name		shader name		number of textures	textures...
+blank		basic3d			1			blank
+copper		basic3d			1			copper
