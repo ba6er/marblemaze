@@ -54,15 +54,6 @@ int main() {
 	glDepthFunc(GL_LESS);
 
 	ram.initFromConfig(_RES_PATH "assets.txt");
-
-	// TEMPORARY
-	ren::Mesh& triangle = ram.createMesh("triangle");
-	triangle.create(3);
-	triangle.addVertex({{0, 0, 0}, {1, 1, 1}, {0, 0}, {0, 0, 1}});
-	triangle.addVertex({{1, 0, 0}, {1, 1, 1}, {1, 0}, {0, 0, 1}});
-	triangle.addVertex({{1, 1, 0}, {1, 1, 1}, {1, 1}, {0, 0, 1}});
-	// TEMPORARY
-
 	game.onInit(width, height, ram);
 
 	float tickTime     = 1.0f / fps;
