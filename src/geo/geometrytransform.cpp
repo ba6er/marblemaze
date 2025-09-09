@@ -3,12 +3,12 @@
 using namespace geo;
 
 void GeometryTransform::ApplyMatrix(GeometryData& gd, const lin::Mat4& matrix) {
-	for (int i = 0; i < gd.positions.size(); i++) {
-		gd.positions[i] = matrix * gd.positions[i];
+	for (auto& p : gd.positions) {
+		p = matrix * p;
 	}
 	lin::Mat4 inverseTransposeMatrix = matrix.inverse().transpose();
-	for (int i = 0; i < gd.normals.size(); i++) {
-		gd.normals[i] = inverseTransposeMatrix * gd.normals[i];
+	for (auto& n : gd.normals) {
+		n = (inverseTransposeMatrix * n).normalize();
 	}
 }
 
