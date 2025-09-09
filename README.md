@@ -27,16 +27,16 @@ For the release build, replace `Debug` with `Release`.
 
 # Design
 
-The game consists of 5 main namespaces which contain classes with a loosely similar purpose.  
-Those namespaces are:  
+The game consists of 6 main namespaces which contain classes with a loosely similar purpose.  
 - `lin` for linear algebra and other math-related functionality
 - `in` for input handling
+- `geo` for generating mesh geometry
 - `ren` for rendering and managing underlying resources
 - `snd` for playing sound and managing sound resources
 - `gm` for everything related to game logic
 
 ## Math
-The `lin` namespace contains `Vec3` and `Mat4` classes which are used by OpenGL for transformations.  
+The `lin` namespace contains `Vec2`, `Vec3`, `Vec4` and `Mat4` classes which are used by OpenGL for transformations.  
 `Mat4` also contains static functions to generate commonly used matrices.  
 This is the specification UML diagram for `lin`.  
 ![Math UML diagram](./design/math.png)
@@ -46,6 +46,11 @@ The `in` namespace contains `Input` class, `KeyState` and `KeyName` enums.
 It keeps track of which keys and mouse buttons are pressed and where the mouse is.  
 Actual key names are held in `Input::KeyboardValues` which contains `GLFW_KEY` for each `KeyName`.  
 ![Input UML diagram](./design/input.png)
+
+## Mesh geometry
+The `geo` namespace contains `GeometryData`, `GeometryGenerator` and `GeometryTransform` classes.  
+Class `GeometryData` has no functionality and all operations are done by helper classes.  
+![Shapes UML giagram](./design/shapes.png)
 
 ## Rendering
 The `ren` namespace is roughly split in 2 parts; asset management and rendering.

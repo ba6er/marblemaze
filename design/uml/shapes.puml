@@ -1,0 +1,33 @@
+@startuml
+set separator ::
+
+class geo::GeometryData {
+	+positions: Vec3[]
+	+colors: Vec3[]
+	+uvs: Vec2[]
+	+normals: Vec3[]
+	..
+	+indicies: uint[]
+}
+hide GeometryData methods
+
+class geo::GeometryGenerator {
+	{static} +GenerateCube() : GeometryData
+}
+hide GeometryGenerator fields
+
+class geo::GeometryTransform {
+	{static} +ApplyMatrix(&gd, matrix)
+	..
+	{static} +Scale(&gd, scaleVec)
+	{static} +Rotate(&gd, angle, axisVec)
+	{static} +Translate(&gd, translationVec)
+	..
+	{static} +ApplyColor(&gd, color)
+}
+hide GeometryTransform fields
+
+GeometryData <.up. GeometryGenerator
+GeometryData <-right- GeometryTransform
+
+@enduml
