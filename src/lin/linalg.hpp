@@ -2,10 +2,10 @@
 
 namespace lin {
 
-	constexpr float pi  = 3.1415926535897932385f;
-	constexpr float tau = 6.2831853071795864769f;
-	constexpr float degToRad = pi / 180;
-	constexpr float radToDeg = 180 / pi;
+	constexpr float Pi  = 3.1415926535897932385f;
+	constexpr float Tau = 6.2831853071795864769f;
+	constexpr float DegToRad = Pi / 180;
+	constexpr float RadToDeg = 180 / Pi;
 
 	class Vec2 {
 
