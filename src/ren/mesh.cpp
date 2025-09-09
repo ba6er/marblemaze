@@ -53,7 +53,7 @@ void Mesh::destroy() {
 	std::free(vertices);
 }
 
-void Mesh::addVertex(Vertex v) {
+void Mesh::addVertex(const Vertex& v) {
 	if (numVerts == maxVerts) {
 		maxVerts *= 2;
 		vertices = (Vertex*)std::realloc(vertices, maxVerts * sizeof(Vertex));
@@ -71,6 +71,14 @@ void Mesh::addVertex(Vertex v) {
 	vertices[numVerts] = v;
 	numVerts++;
 }
+
+void Mesh::addGeometry(const geo::GeometryData& gd) {
+	for (auto i : gd.indicies) {
+		lin::Vec4 col = {gd.colors[i].x, gd.colors[i].y, gd.colors[i].z, 1.0f};
+		addVertex({gd.positions[i], col, gd.uvs[i], gd.normals[i]});
+	}
+}
+
 
 void Mesh::clear() {
 	numVerts = 0;

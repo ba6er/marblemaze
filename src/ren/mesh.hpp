@@ -1,4 +1,5 @@
 #pragma once
+#include <geo/geometrydata.hpp>
 #include <lin/linalg.hpp>
 #include <util.hpp>
 
@@ -21,7 +22,8 @@ namespace ren {
 		void create(int initVerts = 6);
 		void destroy();
 
-		void addVertex(Vertex v);
+		void addVertex(const Vertex& v);
+		void addGeometry(const geo::GeometryData& gd);
 
 		void clear();
 		void draw();
