@@ -26,6 +26,10 @@ namespace gm {
 
 		geo::GeometryData toGeometry() const;
 
+		int getWidth() const;
+		int getHeight() const;
+		int getDepth() const;
+
 	private:
 		inline int index(int x, int y, int z) const {
 			return x + width * (z + depth * y);

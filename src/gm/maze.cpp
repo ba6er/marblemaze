@@ -44,6 +44,7 @@ void Maze::loadFromFile(std::string_view fileName) {
 BlockType Maze::getBlock(int x, int y, int z) const {
 	if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= depth) {
 		DEBUG_WARNING("Block %d %d %d is out of bounds", x, y, z);
+		return Empty;
 	}
 	return blocks.at(index(x, y, z));
 }
@@ -51,6 +52,7 @@ BlockType Maze::getBlock(int x, int y, int z) const {
 void Maze::setBlock(int x, int y, int z, BlockType block) {
 	if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= depth) {
 		DEBUG_WARNING("Block %d %d %d is out of bounds", x, y, z);
+		return;
 	}
 	blocks[index(x, y, z)] = block;
 }
@@ -73,3 +75,14 @@ geo::GeometryData Maze::toGeometry() const {
 	return fullData;
 }
 
+int Maze::getWidth() const {
+	return width;
+}
+
+int Maze::getHeight() const {
+	return height;
+}
+
+int Maze::getDepth() const {
+	return depth;
+}

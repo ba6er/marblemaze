@@ -13,11 +13,12 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	ren::Renderer::resizeFrame(width, height);
 
 	lin::Vec3 cameraPos = {
-		std::cosf(camPitch) * std::sinf(camYaw) * camDistance,
+		4.5f + std::cosf(camPitch) * std::sinf(camYaw) * camDistance,
 		std::sinf(camPitch) * camDistance,
-		std::cosf(camPitch) * std::cosf(camYaw) * camDistance,
+		4.5f + std::cosf(camPitch) * std::cosf(camYaw) * camDistance,
 	};
 	currentScene.camera.setPosition(cameraPos);
+	currentScene.camera.setTarget({4.5f, 0.0f, 4.5f});
 	currentScene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 
 	currentScene.light = {
@@ -29,21 +30,19 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 
 	currentScene.maze.loadFromFile(_RES_PATH "testLevel.txt");
 
-	auto mazeData = currentScene.maze.toGeometry();
-	geo::GeometryTransform::Translate(mazeData, {-4.5f, -1.0f, -4.5f});
+	currentScene.marble.position = {5, 5, 5};
+	currentScene.marble.velocity = {-0.5f, -1.5f, 0.2f};
+
 	auto& maze = ram.createMesh("maze");
 	maze.create();
-	maze.addGeometry(mazeData);
+	maze.addGeometry(currentScene.maze.toGeometry());
 
-	currentScene.marble.position = {0.5f, 4.5f, 0.5f};
-	currentScene.marble.velocity = {0.0f, -1.0f, 0.0f};
+	currentScene.renderables.push_back(ren::Renderable());
+	currentScene.renderables[0].create(maze, ram.getMaterial("copperTextured"));
 
 	auto& marble = ram.createMesh("marble");
 	marble.create();
 	marble.addGeometry(currentScene.marble.toGeometry());
-
-	currentScene.renderables.push_back(ren::Renderable());
-	currentScene.renderables[0].create(maze, ram.getMaterial("copperTextured"));
 
 	currentScene.renderables.push_back(ren::Renderable());
 	currentScene.renderables[1].create(marble, ram.getMaterial("emerald"));
@@ -93,9 +92,9 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 	}
 	if (moved) {
 		lin::Vec3 cameraPos = {
-			std::cosf(camPitch) * std::sinf(camYaw) * camDistance,
+			4.5f + std::cosf(camPitch) * std::sinf(camYaw) * camDistance,
 			std::sinf(camPitch) * camDistance,
-			std::cosf(camPitch) * std::cosf(camYaw) * camDistance,
+			4.5f + std::cosf(camPitch) * std::cosf(camYaw) * camDistance,
 		};
 		currentScene.camera.setPosition(cameraPos);
 	}

@@ -19,5 +19,8 @@ namespace gm {
 
 		Marble marble;
 		Maze maze;
+
+	private:
+		void marbleBlockCollision(float x, float y, float z);
 	};
 }

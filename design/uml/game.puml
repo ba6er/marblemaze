@@ -19,6 +19,8 @@ class gm::Scene {
 	+camera: Camera
 	+renderables: Renderable[]
 	+lights: Light[]
+	--
+	-marbleBlockCollision(x, y, z):
 }
 
 enum gm::BlockType {
@@ -36,6 +38,10 @@ class gm::Maze {
 	+setBlock(x, y, z, block)
 	..
 	+toGeometry(&mesh) : GeometryData
+	..
+	+getWidth() : int
+	+getHeight() : int
+	+getDepth() : int
 	--
 	-width, height, depth: int
 	-bricks: BlockType[]
