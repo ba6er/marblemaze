@@ -1,6 +1,7 @@
 #pragma once
 #include <ren/camera.hpp>
 #include <ren/renderable.hpp>
+#include <ren/renderer.hpp>
 #include <vector>
 
 namespace gm {
@@ -11,6 +12,7 @@ namespace gm {
 		void updatePhysics(float deltaTime);
 
 		ren::Camera camera;
+		ren::Light light;
 		std::vector<ren::Renderable> renderables;
 	};
 }

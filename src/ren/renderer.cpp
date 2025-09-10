@@ -16,7 +16,7 @@ void Renderer::render(Renderable& renderable) {
 	renderable.mesh->draw();
 }
 
-void Renderer::render(Camera& camera, const std::vector<Renderable>& renderables) {
+void Renderer::render(const Camera& camera, const std::vector<Renderable>& renderables, const Light& light) {
 	lin::Mat4 view = camera.getViewMatrix();
 	lin::Mat4 projection = camera.getProjectionMatrix();
 
@@ -24,6 +24,14 @@ void Renderer::render(Camera& camera, const std::vector<Renderable>& renderables
 		r.material->setUniform("model", r.transform);
 		r.material->setUniform("view", view);
 		r.material->setUniform("projection", projection);
+
+		r.material->setUniform("uLight.position", light.position);
+		r.material->setUniform("uLight.ambient", light.ambient);
+		r.material->setUniform("uLight.diffuse", light.diffuse);
+		r.material->setUniform("uLight.specular", light.specular);
+
+		r.material->setUniform("uViewPosition", camera.getPosition());
+
 		r.material->use();
 		r.mesh->draw();
 	}

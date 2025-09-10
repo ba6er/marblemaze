@@ -56,8 +56,10 @@ class ren::Camera {
 
 class ren::Light {
 	+position: Vec3
-	+color: Vec3
-	+range: float
+	..
+	+ambient: Vec3
+	+diffuse: Vec3
+	+specular: Vec3
 }
 hide Light methods
 
@@ -70,10 +72,10 @@ class ren::Renderer {
 }
 hide Renderer fields
 
-Renderable <-left- RenderAssetManager
+Renderable <-down- RenderAssetManager
 
-Renderer <-down- Renderable
-Renderer <-left- Camera
-Renderer <-up- Light
+Renderer <-down- Camera
+Renderer <-left- Renderable
+Renderer <-right- Light
 
 @enduml

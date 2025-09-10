@@ -21,19 +21,18 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	currentScene.camera.setPosition(cameraPos);
 	currentScene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 
-	auto& copperMat = ram.getMaterial("copper");
+	currentScene.light = {
+		{1.0f, 1.0f, 2.0f},
+		{0.3f, 0.3f, 0.3f},
+		{1.0f, 1.0f, 1.0f},
+		{0.5f, 0.5f, 0.5f},
+	};
 
+	auto& copperMat = ram.getMaterial("copper");
 	copperMat.setUniform("uMaterial.ambient", (lin::Vec3){1, 1, 1});
 	copperMat.setUniform("uMaterial.diffuse", (lin::Vec3){1, 1, 1});
 	copperMat.setUniform("uMaterial.specular", (lin::Vec3){1, 1, 1});
 	copperMat.setUniform("uMaterial.shininess", 16.0f);
-
-	copperMat.setUniform("uLight.position", (lin::Vec3){1.0f, 1.0f, 2.0f});
-	copperMat.setUniform("uLight.ambient", (lin::Vec3){0.3f, 0.3f, 0.3f});
-	copperMat.setUniform("uLight.diffuse", (lin::Vec3){1.0f, 1.0f, 1.0f});
-	copperMat.setUniform("uLight.specular", (lin::Vec3){0.5f, 0.5f, 0.5f});
-
-	copperMat.setUniform("uViewPosition", cameraPos);
 
 	auto cubeData = geo::GeometryGenerator::GenerateCube();
 	auto& cube = ram.createMesh("cube");
@@ -87,7 +86,6 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 			std::cosf(camYaw) * 5,
 		};
 		currentScene.camera.setPosition(cameraPos);
-		currentScene.renderables[0].material->setUniform("uViewPosition", currentScene.camera.getPosition());
 	}
 
 	if (input.getKey(in::CameraAngleDecrease) == in::Pressed) {
@@ -105,5 +103,5 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 
 void Game::onRender(float deltaTime, float currentTime, ren::RenderAssetManager& ram) {
 	ren::Renderer::clear(0.5f, 0.5f, 0.5f);
-	ren::Renderer::render(currentScene.camera, currentScene.renderables);
+	ren::Renderer::render(currentScene.camera, currentScene.renderables, currentScene.light);
 }
