@@ -1,4 +1,3 @@
-#include <geo/geometrygenerator.hpp>
 #include <geo/geometrytransform.hpp>
 #include <gm/game.hpp>
 #include <ren/renderer.hpp>
@@ -7,31 +6,33 @@
 using namespace gm;
 
 // TEMP
-static float camYaw = lin::Pi / 4, camPitch = lin::Pi / 8, cubeAngle = 0.0f;
+static float camYaw = lin::Pi / 4, camPitch = lin::Pi / 8, camDistance = 5.0f;
 // TEMP
 
 void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	ren::Renderer::resizeFrame(width, height);
 
 	lin::Vec3 cameraPos = {
-		std::sinf(camYaw) * 5,
-		std::sinf(camPitch) * 2,
-		std::cosf(camYaw) * 5,
+		std::cosf(camPitch) * std::sinf(camYaw) * camDistance,
+		std::sinf(camPitch) * camDistance,
+		std::cosf(camPitch) * std::cosf(camYaw) * camDistance,
 	};
 	currentScene.camera.setPosition(cameraPos);
 	currentScene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 
 	currentScene.light = {
-		{1.0f, 1.0f, 2.0f},
+		{1.0f, 9.9f, 1.0f},
 		{0.3f, 0.3f, 0.3f},
 		{1.0f, 1.0f, 1.0f},
 		{0.5f, 0.5f, 0.5f},
 	};
 
-	auto cubeData = geo::GeometryGenerator::GenerateCube();
-	auto& cube = ram.createMesh("cube");
-	geo::GeometryTransform::Scale(cubeData, {2, 2, 2});
+	currentScene.maze.loadFromFile(_RES_PATH "testLevel.txt");
 
+	auto cubeData = currentScene.maze.toGeometry();
+	geo::GeometryTransform::Translate(cubeData, {-4.5f, -1.0f, -4.5f});
+	geo::GeometryTransform::Scale(cubeData, {0.4f, 0.4f, 0.4f});
+	auto& cube = ram.createMesh("cube");
 	cube.create();
 	cube.addGeometry(cubeData);
 
@@ -61,34 +62,33 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 	}
 	if (input.getKey(in::MazePitchDecrease) == in::Pressed) {
 		camPitch -= lin::Pi * deltaTime;
-		if (camPitch < -lin::Pi / 2 + 0.1f) {
-			camPitch = -lin::Pi / 2 + 0.1f;
+		if (camPitch < -lin::Pi / 2 + 0.01f) {
+			camPitch = -lin::Pi / 2 + 0.01f;
 		}
 		moved = true;
 	}
 	if (input.getKey(in::MazePitchIncrease) == in::Pressed) {
 		camPitch += lin::Pi * deltaTime;
-		if (camPitch > lin::Pi / 2 - 0.1f) {
-			camPitch = lin::Pi / 2 - 0.1f;
+		if (camPitch > lin::Pi / 2 - 0.01f) {
+			camPitch = lin::Pi / 2 - 0.01f;
 		}
+		moved = true;
+	}
+	if (input.getKey(in::CameraAngleDecrease) == in::Pressed) {
+		camDistance -= deltaTime * 5;
+		moved = true;
+	}
+	if (input.getKey(in::CameraAngleIncrease) == in::Pressed) {
+		camDistance += deltaTime * 5;
 		moved = true;
 	}
 	if (moved) {
 		lin::Vec3 cameraPos = {
-			std::sinf(camYaw) * 5,
-			std::sinf(camPitch) * 2,
-			std::cosf(camYaw) * 5,
+			std::cosf(camPitch) * std::sinf(camYaw) * camDistance,
+			std::sinf(camPitch) * camDistance,
+			std::cosf(camPitch) * std::cosf(camYaw) * camDistance,
 		};
 		currentScene.camera.setPosition(cameraPos);
-	}
-
-	if (input.getKey(in::CameraAngleDecrease) == in::Pressed) {
-		cubeAngle -= lin::Pi * deltaTime;
-		currentScene.renderables[0].transform = lin::Mat4::Rotate(cubeAngle, {0, 1, 0});
-	}
-	if (input.getKey(in::CameraAngleIncrease) == in::Pressed) {
-		cubeAngle += lin::Pi * deltaTime;
-		currentScene.renderables[0].transform = lin::Mat4::Rotate(cubeAngle, {0, 1, 0});
 	}
 	// TEMP
 

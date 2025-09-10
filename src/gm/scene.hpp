@@ -1,4 +1,5 @@
 #pragma once
+#include <gm/maze.hpp>
 #include <ren/camera.hpp>
 #include <ren/renderable.hpp>
 #include <ren/renderer.hpp>
@@ -14,5 +15,7 @@ namespace gm {
 		ren::Camera camera;
 		ren::Light light;
 		std::vector<ren::Renderable> renderables;
+
+		Maze maze;
 	};
 }
