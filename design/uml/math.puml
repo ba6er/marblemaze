@@ -36,6 +36,12 @@ class lin::Mat4 {
 	{static} +Project2d(left, right, bottom, top, near, far) : Mat4
 	{static} +Project3d(fov, aspect, near, far) : Mat4
 	..
+	{static} +FromArray(array[16]) : Mat4
+	{static} +FromArray2D(array[4][4]) : Mat4
+	..
+	+transpose() : Mat4
+	+inverse() : Mat4
+	..
 	+x1, ... , w4: float
 }
 

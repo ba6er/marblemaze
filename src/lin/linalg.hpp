@@ -53,6 +53,7 @@ namespace lin {
 		float x, y, z;
 	};
 
+	// Row-major 4x4 matrix
 	class Mat4 {
 
 	public:
@@ -67,6 +68,9 @@ namespace lin {
 		static Mat4 LookAt(Vec3 eye, Vec3 target, Vec3 up);
 		static Mat4 Project2d(float left, float right, float bottom, float top, float near, float far);
 		static Mat4 Project3d(float fov, float aspect, float near, float far);
+
+		static Mat4 FromArray(const float array[16]);
+		static Mat4 FromArray2D(const float array[4][4]);
 
 		Mat4 operator+(const Mat4& m) const;
 		Mat4 operator-(const Mat4& m) const;

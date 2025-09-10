@@ -286,6 +286,22 @@ Mat4 Mat4::Project3d(float fov, float aspect, float near, float far) {
 	return m;
 }
 
+Mat4 Mat4::FromArray(const float array[16]) {
+	return {
+		array[ 0], array[ 1], array[ 2], array[ 3],
+		array[ 4], array[ 5], array[ 6], array[ 7],
+		array[ 8], array[ 9], array[10], array[11],
+		array[12], array[13], array[14], array[15]};
+}
+
+Mat4 Mat4::FromArray2D(const float array[4][4]) {
+	return {
+		array[0][0], array[0][1], array[0][2], array[0][3],
+		array[1][0], array[1][1], array[1][2], array[1][3],
+		array[2][0], array[2][1], array[2][2], array[2][3],
+		array[3][0], array[3][1], array[3][2], array[3][3]};
+}
+
 Mat4 Mat4::operator+(const Mat4& m) const {
 	return {
 		x1 + m.x1, x2 + m.x2, x3 + m.x3, x4 + m.x4,
@@ -331,147 +347,36 @@ Mat4 Mat4::transpose() const {
 }
 
 Mat4 Mat4::inverse() const {
-	Mat4 inv;
+	float inv[16] = {
+		y2*z3*w4 - y2*z4*w3 - z2*y3*w4 + z2*y4*w3 + w2*y3*z4 - w2*y4*z3,
+		x2*z4*w3 - x2*z3*w4 + z2*x3*w4 - z2*x4*w3 - w2*x3*z4 + w2*x4*z3,
+		x2*y3*w4 - x2*y4*w3 - y2*x3*w4 + y2*x4*w3 + w2*x3*y4 - w2*x4*y3,
+		x2*y4*z3 - x2*y3*z4 + y2*x3*z4 - y2*x4*z3 - z2*x3*y4 + z2*x4*y3,
+		y1*z4*w3 - y1*z3*w4 + z1*y3*w4 - z1*y4*w3 - w1*y3*z4 + w1*y4*z3,
+		x1*z3*w4 - x1*z4*w3 - z1*x3*w4 + z1*x4*w3 + w1*x3*z4 - w1*x4*z3,
+		x1*y4*w3 - x1*y3*w4 + y1*x3*w4 - y1*x4*w3 - w1*x3*y4 + w1*x4*y3,
+		x1*y3*z4 - x1*y4*z3 - y1*x3*z4 + y1*x4*z3 + z1*x3*y4 - z1*x4*y3,
+		y1*z2*w4 - y1*z4*w2 - z1*y2*w4 + z1*y4*w2 + w1*y2*z4 - w1*y4*z2,
+		x1*z4*w2 - x1*z2*w4 + z1*x2*w4 - z1*x4*w2 - w1*x2*z4 + w1*x4*z2,
+		x1*y2*w4 - x1*y4*w2 - y1*x2*w4 + y1*x4*w2 + w1*x2*y4 - w1*x4*y2,
+		x1*y4*z2 - x1*y2*z4 + y1*x2*z4 - y1*x4*z2 - z1*x2*y4 + z1*x4*y2,
+		y1*z3*w2 - y1*z2*w3 + z1*y2*w3 - z1*y3*w2 - w1*y2*z3 + w1*y3*z2,
+		x1*z2*w3 - x1*z3*w2 - z1*x2*w3 + z1*x3*w2 + w1*x2*z3 - w1*x3*z2,
+		x1*y3*w2 - x1*y2*w3 + y1*x2*w3 - y1*x3*w2 - w1*x2*y3 + w1*x3*y2,
+		x1*y2*z3 - x1*y3*z2 - y1*x2*z3 + y1*x3*z2 + z1*x2*y3 - z1*x3*y2,
+	};
 
-	inv.x1 =
-		y2 * z3 * w4 -
-		y2 * z4 * w3 -
-		z2 * y3 * w4 +
-		z2 * y4 * w3 +
-		w2 * y3 * z4 -
-		w2 * y4 * z3;
-
-	inv.y1 =
-		y1 * z4 * w3 -
-		y1 * z3 * w4 +
-		z1 * y3 * w4 -
-		z1 * y4 * w3 -
-		w1 * y3 * z4 +
-		w1 * y4 * z3;
-
-	inv.z1 =
-		y1 * z2 * w4 -
-		y1 * z4 * w2 -
-		z1 * y2 * w4 +
-		z1 * y4 * w2 +
-		w1 * y2 * z4 -
-		w1 * y4 * z2;
-
-	inv.w1 =
-		y1 * z3 * w2 -
-		y1 * z2 * w3 +
-		z1 * y2 * w3 -
-		z1 * y3 * w2 -
-		w1 * y2 * z3 +
-		w1 * y3 * z2;
-
-	inv.x2 =
-		x2 * z4 * w3 -
-		x2 * z3 * w4 +
-		z2 * x3 * w4 -
-		z2 * x4 * w3 -
-		w2 * x3 * z4 +
-		w2 * x4 * z3;
-
-	inv.y2 =
-		x1 * z3 * w4 -
-		x1 * z4 * w3 -
-		z1 * x3 * w4 +
-		z1 * x4 * w3 +
-		w1 * x3 * z4 -
-		w1 * x4 * z3;
-
-	inv.z2 =
-		x1 * z4 * w2 -
-		x1 * z2 * w4 +
-		z1 * x2 * w4 -
-		z1 * x4 * w2 -
-		w1 * x2 * z4 +
-		w1 * x4 * z2;
-
-	inv.w2 =
-		x1 * z2 * w3 -
-		x1 * z3 * w2 -
-		z1 * x2 * w3 +
-		z1 * x3 * w2 +
-		w1 * x2 * z3 -
-		w1 * x3 * z2;
-
-	inv.x3 =
-		x2 * y3 * w4 -
-		x2 * y4 * w3 -
-		y2 * x3 * w4 +
-		y2 * x4 * w3 +
-		w2 * x3 * y4 -
-		w2 * x4 * y3;
-
-	inv.y3 =
-		x1 * y4 * w3 -
-		x1 * y3 * w4 +
-		y1 * x3 * w4 -
-		y1 * x4 * w3 -
-		w1 * x3 * y4 +
-		w1 * x4 * y3;
-
-	inv.z3 =
-		x1 * y2 * w4 -
-		x1 * y4 * w2 -
-		y1 * x2 * w4 +
-		y1 * x4 * w2 +
-		w1 * x2 * y4 -
-		w1 * x4 * y2;
-
-	inv.w3 =
-		x1 * y3 * w2 -
-		x1 * y2 * w3 +
-		y1 * x2 * w3 -
-		y1 * x3 * w2 -
-		w1 * x2 * y3 +
-		w1 * x3 * y2;
-
-	inv.x4 =
-		x2 * y4 * z3 -
-		x2 * y3 * z4 +
-		y2 * x3 * z4 -
-		y2 * x4 * z3 -
-		z2 * x3 * y4 +
-		z2 * x4 * y3;
-
-	inv.y4 =
-		x1 * y3 * z4 -
-		x1 * y4 * z3 -
-		y1 * x3 * z4 +
-		y1 * x4 * z3 +
-		z1 * x3 * y4 -
-		z1 * x4 * y3;
-
-	inv.z4 =
-		x1 * y4 * z2 -
-		x1 * y2 * z4 +
-		y1 * x2 * z4 -
-		y1 * x4 * z2 -
-		z1 * x2 * y4 +
-		z1 * x4 * y2;
-
-	inv.w4 =
-		x1 * y2 * z3 -
-		x1 * y3 * z2 -
-		y1 * x2 * z3 +
-		y1 * x3 * z2 +
-		z1 * x2 * y3 -
-		z1 * x3 * y2;
-
-	float det = x1 * inv.x1 + x2 * inv.y1 + x3 * inv.z1 + x4 * inv.w1;
-
+	float det = x1 * inv[0] + x2 * inv[4] + x3 * inv[8] + x4 * inv[12];
 	if (std::abs(det) < 1e-6f) {
 		DEBUG_WARNING("Matrix determinant is 0, inverse cannot be computed");
 		return Identity();
 	}
-	inv.x1 /= det; inv.x2 /= det; inv.x3 /= det; inv.x4 /= det;
-	inv.y1 /= det; inv.y2 /= det; inv.y3 /= det; inv.y4 /= det;
-	inv.z1 /= det; inv.z2 /= det; inv.z3 /= det; inv.z4 /= det;
-	inv.w1 /= det; inv.w2 /= det; inv.w3 /= det; inv.w4 /= det;
-	return inv;
+
+	for (int i = 0; i < 16; i++) {
+		inv[i] /= det;
+	}
+
+	return FromArray(inv);
 }
 
 Vec3 Mat4::operator*(Vec3 v) const {
