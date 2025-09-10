@@ -13,6 +13,21 @@ static float camYaw = lin::Pi / 4, camPitch = lin::Pi / 8, cubeAngle = 0.0f;
 void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	ren::Renderer::resizeFrame(width, height);
 
+	lin::Vec3 cameraPos = {
+		std::sinf(camYaw) * 5,
+		std::sinf(camPitch) * 2,
+		std::cosf(camYaw) * 5,
+	};
+	currentScene.camera.setPosition(cameraPos);
+	currentScene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
+
+	auto& copperMat = ram.getMaterial("copper");
+	copperMat.setUniform("uMaterial.ambient", (lin::Vec3){0.2f, 0.2f, 0.2f});
+	copperMat.setUniform("uMaterial.diffuse", (lin::Vec3){1.0f, 1.0f, 1.0f});
+	copperMat.setUniform("uMaterial.specular", (lin::Vec3){0.5f, 0.5f, 0.5f});
+	copperMat.setUniform("uMaterial.shininess", 16.0f);
+	copperMat.setUniform("uViewPosition", cameraPos);
+
 	auto cubeData = geo::GeometryGenerator::GenerateCube();
 	auto& cube = ram.createMesh("cube");
 	geo::GeometryTransform::Scale(cubeData, {2, 2, 2});
@@ -21,15 +36,7 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	cube.addGeometry(cubeData);
 
 	currentScene.renderables.push_back(ren::Renderable());
-	currentScene.renderables[0].create(ram.getMesh("cube"), ram.getMaterial("copper"));
-
-	lin::Vec3 cameraPos = {
-		std::sinf(camYaw) * 5,
-		std::sinf(camPitch) * 2,
-		std::cosf(camYaw) * 5,
-	};
-	currentScene.camera.setPosition(cameraPos);
-	currentScene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
+	currentScene.renderables[0].create(ram.getMesh("cube"), copperMat);
 }
 
 void Game::onResize(int width, int height) {
