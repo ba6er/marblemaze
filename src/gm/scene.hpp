@@ -1,4 +1,5 @@
 #pragma once
+#include <gm/marble.hpp>
 #include <gm/maze.hpp>
 #include <ren/camera.hpp>
 #include <ren/renderable.hpp>
@@ -16,6 +17,7 @@ namespace gm {
 		ren::Light light;
 		std::vector<ren::Renderable> renderables;
 
+		Marble marble;
 		Maze maze;
 	};
 }
