@@ -6,7 +6,6 @@ Camera::Camera() : pos({0, 0, -1}), target({0, 0, 0}), up({0, 1, 0}), projection
 	updateViewMatrix();
 }
 
-
 void Camera::project2d(float left, float right, float bottom, float top, float near, float far) {
 	projection = lin::Mat4::Project2d(left, right, bottom, top, near, far);
 }
@@ -25,16 +24,28 @@ void Camera::setTarget(lin::Vec3 target) {
 	updateViewMatrix();
 }
 
+lin::Vec3 Camera::getPosition() const {
+	return pos;
+}
+
+lin::Vec3 Camera::getTarget() const {
+	return target;
+}
+
+lin::Vec3 Camera::getUp() const {
+	return up;
+}
+
 void Camera::setUp(lin::Vec3 up) {
 	this->up = up;
 	updateViewMatrix();
 }
 
-lin::Mat4 Camera::getViewMatrix() {
+lin::Mat4 Camera::getViewMatrix() const {
 	return view;
 }
 
-lin::Mat4 Camera::getProjectionMatrix() {
+lin::Mat4 Camera::getProjectionMatrix() const {
 	return projection;
 }
 

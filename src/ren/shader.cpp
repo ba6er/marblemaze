@@ -58,6 +58,18 @@ void Shader::setUniform(std::string_view name, const UniformType& value) const {
 	else if (std::holds_alternative<float>(value)) {
 		glUniform1f(glGetUniformLocation(id, name.data()), std::get<float>(value));
 	}
+	else if (std::holds_alternative<lin::Vec2>(value)) {
+		lin::Vec2 v = std::get<lin::Vec2>(value);
+		glUniform2f(glGetUniformLocation(id, name.data()), v.x, v.y);
+	}
+	else if (std::holds_alternative<lin::Vec3>(value)) {
+		lin::Vec3 v = std::get<lin::Vec3>(value);
+		glUniform3f(glGetUniformLocation(id, name.data()), v.x, v.y, v.z);
+	}
+	else if (std::holds_alternative<lin::Vec4>(value)) {
+		lin::Vec4 v = std::get<lin::Vec4>(value);
+		glUniform4f(glGetUniformLocation(id, name.data()), v.x, v.y, v.z, v.w);
+	}
 	else if (std::holds_alternative<lin::Mat4>(value)) {
 		glUniformMatrix4fv(glGetUniformLocation(id, name.data()), 1, GL_TRUE, &std::get<lin::Mat4>(value).x1);
 	}

@@ -15,8 +15,12 @@ namespace ren {
 		void setTarget(lin::Vec3 target);
 		void setUp(lin::Vec3 up);
 
-		lin::Mat4 getViewMatrix();
-		lin::Mat4 getProjectionMatrix();
+		lin::Vec3 getPosition() const;
+		lin::Vec3 getTarget() const;
+		lin::Vec3 getUp() const;
+
+		lin::Mat4 getViewMatrix() const;
+		lin::Mat4 getProjectionMatrix() const;
 
 	private:
 		void updateViewMatrix();

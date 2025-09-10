@@ -37,6 +37,10 @@ class ren::Camera {
 	+setTarget(target)
 	+setUp(up)
 	..
+	+getPosition() : Vec3
+	+getTarget() : Vec3
+	+getUp() : Vec3
+	..
 	+getViewMatrix() : Mat4
 	+getProjectionMatrix() : Mat4
 	--

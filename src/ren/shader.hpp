@@ -6,7 +6,7 @@
 
 namespace ren {
 
-	using UniformType = std::variant<int, uint, float, lin::Mat4>;
+	using UniformType = std::variant<int, uint, float, lin::Vec2, lin::Vec3, lin::Vec4, lin::Mat4>;
 
 	class Shader {
 
