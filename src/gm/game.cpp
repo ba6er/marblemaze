@@ -6,7 +6,7 @@
 using namespace gm;
 
 // TEMP
-static float camYaw = lin::Pi / 4, camPitch = lin::Pi / 8, camDistance = 5.0f;
+static float camYaw = lin::Pi / 4, camPitch = lin::Pi / 8, camDistance = 10;
 // TEMP
 
 void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
@@ -29,15 +29,24 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 
 	currentScene.maze.loadFromFile(_RES_PATH "testLevel.txt");
 
-	auto cubeData = currentScene.maze.toGeometry();
-	geo::GeometryTransform::Translate(cubeData, {-4.5f, -1.0f, -4.5f});
-	geo::GeometryTransform::Scale(cubeData, {0.4f, 0.4f, 0.4f});
-	auto& cube = ram.createMesh("cube");
-	cube.create();
-	cube.addGeometry(cubeData);
+	auto mazeData = currentScene.maze.toGeometry();
+	geo::GeometryTransform::Translate(mazeData, {-4.5f, -1.0f, -4.5f});
+	auto& maze = ram.createMesh("maze");
+	maze.create();
+	maze.addGeometry(mazeData);
+
+	currentScene.marble.position = {0.5f, 4.5f, 0.5f};
+	currentScene.marble.velocity = {0.0f, -1.0f, 0.0f};
+
+	auto& marble = ram.createMesh("marble");
+	marble.create();
+	marble.addGeometry(currentScene.marble.toGeometry());
 
 	currentScene.renderables.push_back(ren::Renderable());
-	currentScene.renderables[0].create(ram.getMesh("cube"), ram.getMaterial("copper"));
+	currentScene.renderables[0].create(maze, ram.getMaterial("copperTextured"));
+
+	currentScene.renderables.push_back(ren::Renderable());
+	currentScene.renderables[1].create(marble, ram.getMaterial("emerald"));
 }
 
 void Game::onResize(int width, int height) {
@@ -92,10 +101,14 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 	}
 	// TEMP
 
+	currentScene.updatePhysics(deltaTime);
+
 	return true;
 }
 
 void Game::onRender(float deltaTime, float currentTime, ren::RenderAssetManager& ram) {
+	currentScene.renderables[1].transform = lin::Mat4::Translate(currentScene.marble.position);
+
 	ren::Renderer::clear(0.5f, 0.5f, 0.5f);
 	ren::Renderer::render(currentScene.camera, currentScene.renderables, currentScene.light);
 }
