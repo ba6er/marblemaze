@@ -4,4 +4,3 @@ using namespace gm;
 
 void Scene::updatePhysics(float deltaTime) {
 }
-

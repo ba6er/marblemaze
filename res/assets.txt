@@ -5,20 +5,74 @@
 SHADERS
 # Shaders are located in res/shader/
 # Table format for shaders:
-# name		vertex source file	fragment source file
-basic3d		basic3d.vert		basic3d.frag
-lighting3d	lighting3d.vert		lighting3d.frag
+# name                  vertex source file      fragment source file
+basic3d                 basic3d.vert            basic3d.frag
+lighting3d              lighting3d.vert         lighting3d.frag
 
 TEXTURES
 # Textures are located in res/graphics/
 # Table format for textures:
-# name		image source file	filtered (T/F)
-copper		copper.png		T
+# name                  image source file       filtered (T/F)
+copper                  copper.png              T
 
 MATERIALS
 # Table format for materials:
-# name		shader name		number of textures	textures...
-blankBasic	basic3d			1			blank
-copperBasic	basic3d			1			copper
-blank		lighting3d		1			blank
-copper		lighting3d		1			copper
+# name                  shader name             number of textures      texture names
+# ambient (0-100 rbg)   diffuse (0-100 rgb)     specular (0-100 rgb)    shininess
+blankBasic              basic3d                 1                       blank
+-
+copperBasic             basic3d                 1                       copper
+-
+blank                   lighting3d              1                       blank
+100 100 100             100 100 100             100 100 100             16
+copperTextured          lighting3d              1                       copper
+100 100 100             100 100 100             100 100 100             16
+# Materials from http://devernay.free.fr/cours/opengl/materials.html
+emerald                 lighting3d              1                       blank
+002 017 002             008 061 008             063 073 063             77
+jade                    lighting3d              1                       blank
+014 022 016             054 089 063             032 032 032             13
+obsidian                lighting3d              1                       blank
+005 005 007             018 017 023             033 033 035             38
+pearl                   lighting3d              1                       blank
+025 021 021             100 083 083             030 030 030             11
+ruby                    lighting3d              1                       blank
+017 001 001             061 004 004             073 063 063             77
+turquoise               lighting3d              1                       blank
+010 019 017             040 074 069             030 031 031             13
+brass                   lighting3d              1                       blank
+033 022 003             078 057 011             099 094 081             28
+bronze                  lighting3d              1                       blank
+021 013 005             071 043 018             039 027 017             26
+chrome                  lighting3d              1                       blank
+025 025 025             040 040 040             077 077 077             77
+copper                  lighting3d              1                       blank
+019 007 002             070 027 008             026 014 009             13
+gold                    lighting3d              1                       blank
+025 020 007             075 061 023             063 056 037             51
+silver                  lighting3d              1                       blank
+019 019 019             051 051 051             051 051 051             51
+blackPlastic            lighting3d              1                       blank
+000 000 000             001 001 001             050 050 050             32
+cyanPlastic             lighting3d              1                       blank
+000 010 006             000 051 051             050 050 050             32
+greenPlastic            lighting3d              1                       blank
+000 000 000             010 035 010             045 055 045             32
+redPlastic              lighting3d              1                       blank
+000 000 000             050 000 000             070 060 060             32
+whitePlastic            lighting3d              1                       blank
+000 000 000             055 055 055             070 070 070             32
+yellowPlastic           lighting3d              1                       blank
+000 000 000             050 050 000             060 060 050             32
+blackRubber             lighting3d              1                       blank
+002 002 002             001 001 001             040 040 040             10
+cyanRubber              lighting3d              1                       blank
+000 005 005             040 050 050             004 070 070             10
+greenRubber             lighting3d              1                       blank
+000 005 000             040 050 040             004 070 004             10
+redRubber               lighting3d              1                       blank
+005 000 000             050 040 040             070 004 004             10
+whiteRubber             lighting3d              1                       blank
+005 005 005             050 050 050             070 070 070             10
+yellowRubber            lighting3d              1                       blank
+005 005 000             050 050 040             070 070 004             10

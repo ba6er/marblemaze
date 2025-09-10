@@ -80,6 +80,10 @@ class ren::RenderAssetManager {
 	+getMaterial(name) : &Material
 	+getMesh(name) : &Mesh
 	--
+	-stringToShader(configLine)
+	-stringToTexture(configLine)
+	-stringToMaterial(configLine1, configLine2)
+	..
 	-shaders: map<str, Shader>
 	-textures: map<str, Texture>
 	-materials: map<str, Material>

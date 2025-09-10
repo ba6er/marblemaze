@@ -28,6 +28,10 @@ namespace ren {
 		Mesh& getMesh(std::string_view name);
 
 	private:
+		void stringToShader(const std::string& configLine);
+		void stringToTexture(const std::string& configLine);
+		void stringToMaterial(const std::string& configLine1, const std::string& configLine2);
+
 		std::map<std::string, Shader, std::less<>> shaders;
 		std::map<std::string, Texture, std::less<>> textures;
 		std::map<std::string, Material, std::less<>> materials;
