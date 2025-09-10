@@ -6,6 +6,10 @@ using namespace ren;
 
 void RenderAssetManager::initFromConfig(std::string_view fileName) {
 	std::ifstream configIn(fileName.data());
+	if (configIn.is_open() == false) {
+		DEBUG_ERROR("No configuration file by the name of %s", fileName.data());
+		return;
+	}
 	std::string configLine = "", configLine2 = "";
 
 	int stage = 0;
@@ -154,8 +158,6 @@ void RenderAssetManager::stringToMaterial(const std::string& configLine1, const 
 		materialConfig2 >> diffuse.x >> diffuse.y >> diffuse.z;
 		materialConfig2 >> specular.x >> specular.y >> specular.z;
 		materialConfig2 >> shininess;
-
-		DEBUG_TRACE("%f %f %f", ambient.x, ambient.y, ambient.z);
 
 		m.setUniform("uMaterial.ambient", ambient / 100);
 		m.setUniform("uMaterial.diffuse", diffuse / 100);
