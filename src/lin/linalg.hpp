@@ -60,7 +60,7 @@ namespace lin {
 		static Mat4 Identity();
 		static Mat4 Scale(float x, float y, float z);
 		static Mat4 Scale(Vec3 scalar);
-		static Mat4 Rotate(float a, float nx, float ny, float nz);
+		static Mat4 Rotate(float a, float x, float y, float z);
 		static Mat4 Rotate(float a, Vec3 axis);
 		static Mat4 Translate(float x, float y, float z);
 		static Mat4 Translate(Vec3 translation);

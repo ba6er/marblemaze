@@ -204,19 +204,26 @@ Mat4 Mat4::Scale(Vec3 scalar) {
 	return Scale(scalar.x, scalar.y, scalar.z);
 }
 
-Mat4 Mat4::Rotate(float a, float nx, float ny, float nz) {
+Mat4 Mat4::Rotate(float a, float x, float y, float z) {
+	return Rotate(a, {x, y, z});
+}
+
+Mat4 Mat4::Rotate(float a, Vec3 axis) {
+	axis = axis.normalize();
+
 	float sa = std::sinf(a);
 	float ca = std::cosf(a);
 	float na = 1 - ca;
+
+	float nx = axis.x;
+	float ny = axis.y;
+	float nz = axis.z;
+
 	return {
 		nx * nx * na + ca,      ny * nx * na + nz * sa, nz * nx * na - ny * sa, 0.0f,
 		nx * ny * na - nz * sa, ny * ny * na + ca,      nz * ny * na + nx * sa, 0.0f,
 		nx * nz * na + ny * sa, ny * nz * na - nx * sa, nz * nz * na + ca,      0.0f,
 		0.0f,                   0.0f,                   0.0f,                   1.0f};
-}
-
-Mat4 Mat4::Rotate(float a, Vec3 axis) {
-	return Rotate(a, axis.x, axis.y, axis.z);
 }
 
 Mat4 Mat4::Translate(float x, float y, float z) {
