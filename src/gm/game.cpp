@@ -7,7 +7,7 @@
 using namespace gm;
 
 // TEMP
-static float camYaw = lin::Pi / 4, camPitch = lin::Pi / 8;
+static float camYaw = lin::Pi / 4, camPitch = lin::Pi / 8, cubeAngle = 0.0f;
 // TEMP
 
 void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
@@ -15,8 +15,7 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 
 	auto cubeData = geo::GeometryGenerator::GenerateCube();
 	auto& cube = ram.createMesh("cube");
-	geo::GeometryTransform::Scale(cubeData, {0.5f, 3.0f, 2.0f});
-	geo::GeometryTransform::ApplyColor(cubeData, {0, 1, 1});
+	geo::GeometryTransform::Scale(cubeData, {2, 2, 2});
 
 	cube.create();
 	cube.addGeometry(cubeData);
@@ -74,6 +73,16 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 			std::cosf(camYaw) * 5,
 		};
 		currentScene.camera.setPosition(cameraPos);
+		currentScene.renderables[0].material->setUniform("uViewPosition", currentScene.camera.getPosition());
+	}
+
+	if (input.getKey(in::CameraAngleDecrease) == in::Pressed) {
+		cubeAngle -= lin::Pi * deltaTime;
+		currentScene.renderables[0].transform = lin::Mat4::Rotate(cubeAngle, {0, 1, 0});
+	}
+	if (input.getKey(in::CameraAngleIncrease) == in::Pressed) {
+		cubeAngle += lin::Pi * deltaTime;
+		currentScene.renderables[0].transform = lin::Mat4::Rotate(cubeAngle, {0, 1, 0});
 	}
 	// TEMP
 
@@ -81,7 +90,6 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 }
 
 void Game::onRender(float deltaTime, float currentTime, ren::RenderAssetManager& ram) {
-	currentScene.renderables[0].transform = lin::Mat4::Rotate(currentTime, {0, 1, 1});
-	ren::Renderer::clear(0.3f, 0.1f, 0.1f);
+	ren::Renderer::clear(0.5f, 0.5f, 0.5f);
 	ren::Renderer::render(currentScene.camera, currentScene.renderables);
 }

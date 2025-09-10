@@ -7,6 +7,7 @@ SHADERS
 # Table format for shaders:
 # name		vertex source file	fragment source file
 basic3d		basic3d.vert		basic3d.frag
+lighting3d	lighting3d.vert		lighting3d.frag
 
 TEXTURES
 # Textures are located in res/graphics/
@@ -17,5 +18,7 @@ copper		copper.png		T
 MATERIALS
 # Table format for materials:
 # name		shader name		number of textures	textures...
-blank		basic3d			1			blank
-copper		basic3d			1			copper
+blankBasic	basic3d			1			blank
+copperBasic	basic3d			1			copper
+blank		lighting3d		1			blank
+copper		lighting3d		1			copper
