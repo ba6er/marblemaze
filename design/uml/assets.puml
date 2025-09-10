@@ -67,7 +67,7 @@ class ren::Mesh {
 }
 
 class ren::RenderAssetManager {
-	+initFromConfig(filename)
+	+initFromConfig(fileName)
 	..
 	+createShader(name) : &Shader
 	+createTexture(name) : &Texture

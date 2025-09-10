@@ -21,14 +21,28 @@ class gm::Scene {
 	+lights: Light[]
 }
 
+enum gm::BlockType {
+	Empty
+	Wall
+	Start
+	Finish
+}
+hide BlockType methods
+
 class gm::Maze {
-	+toMesh(&mesh)
+	+loadFromFile(fileName)
 	..
-	+bricks: Vec3[]
+	+getBlock(x, y, z) : BlockType
+	+setBlock(x, y, z, block)
+	..
+	+toGeometry(&mesh) : GeometryData
+	--
+	-width, height, depth: int
+	-bricks: BlockType[]
 }
 
 class gm::Ball {
-	+toMesh(&mesh)
+	+toGeometry() : GeometryData
 	..
 	+position: Vec3
 	+velocity: Vec3
@@ -44,6 +58,8 @@ hide main methods
 
 main *-- Game
 Game <-- Scene
+
+Maze <-up- BlockType
 
 Scene *-left- Maze
 Scene *-right- Ball
