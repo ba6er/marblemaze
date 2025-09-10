@@ -22,10 +22,17 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	currentScene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 
 	auto& copperMat = ram.getMaterial("copper");
-	copperMat.setUniform("uMaterial.ambient", (lin::Vec3){0.2f, 0.2f, 0.2f});
-	copperMat.setUniform("uMaterial.diffuse", (lin::Vec3){1.0f, 1.0f, 1.0f});
-	copperMat.setUniform("uMaterial.specular", (lin::Vec3){0.5f, 0.5f, 0.5f});
+
+	copperMat.setUniform("uMaterial.ambient", (lin::Vec3){1, 1, 1});
+	copperMat.setUniform("uMaterial.diffuse", (lin::Vec3){1, 1, 1});
+	copperMat.setUniform("uMaterial.specular", (lin::Vec3){1, 1, 1});
 	copperMat.setUniform("uMaterial.shininess", 16.0f);
+
+	copperMat.setUniform("uLight.position", (lin::Vec3){1.0f, 1.0f, 2.0f});
+	copperMat.setUniform("uLight.ambient", (lin::Vec3){0.3f, 0.3f, 0.3f});
+	copperMat.setUniform("uLight.diffuse", (lin::Vec3){1.0f, 1.0f, 1.0f});
+	copperMat.setUniform("uLight.specular", (lin::Vec3){0.5f, 0.5f, 0.5f});
+
 	copperMat.setUniform("uViewPosition", cameraPos);
 
 	auto cubeData = geo::GeometryGenerator::GenerateCube();
