@@ -2,6 +2,7 @@
 
 Marble Maze is a 3D game where you move the marble from start to finish by turning and tilting the maze.  
 The game was made in C++, using GLFW for windowing and input, OpenGL for rendering and OpenAL for sound.
+![Example 1](./design/_example1.jpg)
 
 
 # Building
