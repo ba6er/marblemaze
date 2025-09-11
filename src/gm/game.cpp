@@ -1,3 +1,4 @@
+#include <geo/geometrygenerator.hpp>
 #include <geo/geometrytransform.hpp>
 #include <gm/game.hpp>
 #include <ren/renderer.hpp>
@@ -48,6 +49,17 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 
 	currentScene.renderables.push_back(ren::Renderable());
 	currentScene.renderables[1].create(marble, ram.getMaterial("emerald"));
+
+	auto skybox = geo::GeometryGenerator::GenerateCube();
+	geo::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
+	geo::GeometryTransform::Translate(skybox, cameraTarget);
+
+	auto& sky = ram.createMesh("sky");
+	sky.create(6 * 6);
+	sky.addGeometry(skybox);
+
+	currentScene.renderables.push_back(ren::Renderable());
+	currentScene.renderables[2].create(sky, ram.getMaterial("sky"));
 }
 
 void Game::onResize(int width, int height) {

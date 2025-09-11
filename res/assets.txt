@@ -14,11 +14,14 @@ TEXTURES
 # Table format for textures:
 # name                  image source file       filtered (T/F)
 copper                  copper.png              T
+sky                     sky.png                 T
 
 MATERIALS
 # Table format for materials:
 # name                  shader name             number of textures      texture names
 # ambient (0-100 rbg)   diffuse (0-100 rgb)     specular (0-100 rgb)    shininess
+sky                     basic3d                 1                       sky
+-
 blankBasic              basic3d                 1                       blank
 -
 copperBasic             basic3d                 1                       copper

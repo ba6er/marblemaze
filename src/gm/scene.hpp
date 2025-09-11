@@ -20,11 +20,11 @@ namespace gm {
 		Marble marble;
 		Maze maze;
 
+		float mazeYaw, mazePitch, cameraAngle;
+
 	private:
 		void marbleBlockCollision(float x, float y, float z, float deltaTime);
 
 		static float DistanceSphereAABB(lin::Vec3 box, lin::Vec3 sphere);
-
-		float mazeYaw, mazePitch, cameraAngle;
 	};
 }
