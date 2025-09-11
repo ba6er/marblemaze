@@ -31,17 +31,17 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	currentScene.maze.loadFromFile(_RES_PATH "testLevel.txt");
 
 	currentScene.marble.position = {5, 5, 5};
-	currentScene.marble.velocity = {-0.5f, -1.5f, 0.2f};
+	currentScene.marble.velocity = {0, -1, 0};
 
 	auto& maze = ram.createMesh("maze");
-	maze.create();
+	maze.create(6 * 6 * 9 * 9 * 2);
 	maze.addGeometry(currentScene.maze.toGeometry());
 
 	currentScene.renderables.push_back(ren::Renderable());
 	currentScene.renderables[0].create(maze, ram.getMaterial("copperTextured"));
 
 	auto& marble = ram.createMesh("marble");
-	marble.create();
+	marble.create(6 * 6);
 	marble.addGeometry(currentScene.marble.toGeometry());
 
 	currentScene.renderables.push_back(ren::Renderable());
