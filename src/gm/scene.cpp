@@ -14,9 +14,11 @@ void Scene::updatePhysics(float deltaTime) {
 	int maxZ = std::ceil(marble.position.z + marble.radius);
 
 	if (minX >= maze.getWidth() || minY >= maze.getHeight() || minZ >= maze.getDepth()) {
+		marble.position += marble.velocity * deltaTime;
 		return;
 	}
 	if (maxX < 0 || maxY < 0 || maxZ < 0) {
+		marble.position += marble.velocity * deltaTime;
 		return;
 	}
 	while (minX < 0 && maxX >= 0) { minX++; }

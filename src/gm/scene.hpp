@@ -24,5 +24,7 @@ namespace gm {
 		void marbleBlockCollision(float x, float y, float z, float deltaTime);
 
 		static float DistanceSphereAABB(lin::Vec3 box, lin::Vec3 sphere);
+
+		float mazeYaw, mazePitch, cameraAngle;
 	};
 }

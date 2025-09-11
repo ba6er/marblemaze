@@ -23,6 +23,10 @@ class gm::Scene {
 	-marbleBlockCollision(x, y, z, deltaTime)
 	..
 	{static} -DistanceSphereAABB(box, sphere) : float
+	..
+	-mazeYaw: float
+	-mazePitch: float
+	-cameraAngle: float
 }
 
 enum gm::BlockType {
