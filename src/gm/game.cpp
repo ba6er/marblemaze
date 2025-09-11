@@ -5,20 +5,11 @@
 
 using namespace gm;
 
-// TEMP
-static float camYaw = lin::Pi / 4, camPitch = lin::Pi / 8, camDistance = 10;
-// TEMP
-
 void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	ren::Renderer::resizeFrame(width, height);
 
-	lin::Vec3 cameraPos = {
-		4.5f + std::cosf(camPitch) * std::sinf(camYaw) * camDistance,
-		std::sinf(camPitch) * camDistance,
-		4.5f + std::cosf(camPitch) * std::cosf(camYaw) * camDistance,
-	};
-	currentScene.camera.setPosition(cameraPos);
-	currentScene.camera.setTarget({4.5f, 0.0f, 4.5f});
+	currentScene.camera.setPosition({8, 6, 4});
+	currentScene.camera.setTarget({4, 0, 4});
 	currentScene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 
 	currentScene.light = {
@@ -30,7 +21,7 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 
 	currentScene.maze.loadFromFile(_RES_PATH "testLevel.txt");
 
-	currentScene.marble.position = {5, 5, 5};
+	currentScene.marble.position = {5, 1, 4};
 	currentScene.marble.velocity = {0, -1, 0};
 
 	auto& maze = ram.createMesh("maze");
@@ -58,47 +49,18 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 		return false;
 	}
 
-	// TEMP
-	bool moved = false;
-	if (input.getKey(in::MazeYawDecrease) == in::Pressed) {
-		camYaw -= lin::Pi * deltaTime;
-		moved = true;
-	}
-	if (input.getKey(in::MazeYawIncrease) == in::Pressed) {
-		camYaw += lin::Pi * deltaTime;
-		moved = true;
-	}
-	if (input.getKey(in::MazePitchDecrease) == in::Pressed) {
-		camPitch -= lin::Pi * deltaTime;
-		if (camPitch < -lin::Pi / 2 + 0.01f) {
-			camPitch = -lin::Pi / 2 + 0.01f;
-		}
-		moved = true;
-	}
-	if (input.getKey(in::MazePitchIncrease) == in::Pressed) {
-		camPitch += lin::Pi * deltaTime;
-		if (camPitch > lin::Pi / 2 - 0.01f) {
-			camPitch = lin::Pi / 2 - 0.01f;
-		}
-		moved = true;
-	}
-	if (input.getKey(in::CameraAngleDecrease) == in::Pressed) {
-		camDistance -= deltaTime * 5;
-		moved = true;
-	}
-	if (input.getKey(in::CameraAngleIncrease) == in::Pressed) {
-		camDistance += deltaTime * 5;
-		moved = true;
-	}
-	if (moved) {
-		lin::Vec3 cameraPos = {
-			4.5f + std::cosf(camPitch) * std::sinf(camYaw) * camDistance,
-			std::sinf(camPitch) * camDistance,
-			4.5f + std::cosf(camPitch) * std::cosf(camYaw) * camDistance,
-		};
-		currentScene.camera.setPosition(cameraPos);
-	}
-	// TEMP
+	int pressed[6] = {
+		input.getKey(in::MazePitchIncrease) == in::Pressed,
+		input.getKey(in::MazePitchDecrease) == in::Pressed,
+		input.getKey(in::CameraAngleIncrease) == in::Pressed,
+		input.getKey(in::CameraAngleDecrease) == in::Pressed,
+		input.getKey(in::MazeYawIncrease) == in::Pressed,
+		input.getKey(in::MazeYawDecrease) == in::Pressed,
+	};
+
+	currentScene.marble.velocity.x = (pressed[1] - pressed[0]);
+	currentScene.marble.velocity.y = (pressed[3] - pressed[2]);
+	currentScene.marble.velocity.z = (pressed[5] - pressed[4]);
 
 	currentScene.updatePhysics(deltaTime);
 

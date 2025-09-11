@@ -20,7 +20,9 @@ class gm::Scene {
 	+renderables: Renderable[]
 	+lights: Light[]
 	--
-	-marbleBlockCollision(x, y, z):
+	-marbleBlockCollision(x, y, z, deltaTime)
+	..
+	{static} -DistanceSphereAABB(box, sphere) : float
 }
 
 enum gm::BlockType {

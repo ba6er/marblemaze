@@ -21,6 +21,8 @@ namespace gm {
 		Maze maze;
 
 	private:
-		void marbleBlockCollision(float x, float y, float z);
+		void marbleBlockCollision(float x, float y, float z, float deltaTime);
+
+		static float DistanceSphereAABB(lin::Vec3 box, lin::Vec3 sphere);
 	};
 }
