@@ -4,6 +4,36 @@
 
 using namespace gm;
 
+void Scene::updateCamera() {
+	lin::Vec3 offset = camera.getTarget();
+	lin::Vec3 newPosition = {
+		offset.x + std::cosf(cameraPitch) * std::cosf(cameraYaw) * cameraDistance,
+		offset.y + std::sinf(cameraPitch) * cameraDistance,
+		offset.z + std::cosf(cameraPitch) * std::sinf(cameraYaw) * cameraDistance,
+	};
+	camera.setPosition(newPosition);
+}
+
+void Scene::updateMazeRotation(float deltaYaw, float deltaRoll) {
+	mazeYaw += deltaYaw;
+	mazeRoll += deltaRoll;
+	lin::Vec3 mazeCenter = {
+		std::floorf((int)(maze.getWidth() / 2)),
+		std::floorf((int)(maze.getHeight() / 2)),
+		std::floorf((int)(maze.getDepth() / 2)),
+	};
+	lin::Mat4 rt = lin::Mat4::Identity();
+	rt = rt * lin::Mat4::Rotate(mazeYaw, {0, 0, 1});
+	rt = rt * lin::Mat4::Rotate(mazeRoll, {1, 0, 0});
+
+	marble.velocity = rt * (lin::Vec3){0, marble.speed, 0};
+	marble.velocity.y *= -1;
+
+	lin::Mat4 nt = lin::Mat4::Translate(mazeCenter) * rt * lin::Mat4::Translate(-mazeCenter);
+	renderables[0].transform = nt;
+}
+
+
 void Scene::updatePhysics(float deltaTime) {
 
 	int minX = std::floor(marble.position.x - marble.radius);

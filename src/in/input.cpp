@@ -3,7 +3,11 @@
 
 using namespace in;
 
-Input::Input() : mouseL(Released), mouseR(Released), mouseX(0), mouseY(0), scrollX(0), scrollY(0) {
+Input::Input()
+		: mouseL(Released), mouseR(Released)
+		, mouseX(0), mouseY(0)
+		, lastMouseX(0), lastMouseY(0)
+		, scrollX(0), scrollY(0) {
 	for (int i = 0; i < KEYBOARD_COUNT; i++) {
 		keyboard[i] = Released;
 	}
@@ -50,7 +54,17 @@ float Input::getMouseY() const {
 	return mouseY;
 }
 
+float Input::getDeltaMouseX() const {
+	return mouseX - lastMouseX;
+}
+
+float Input::getDeltaMouseY() const {
+	return mouseY - lastMouseY;
+}
+
 void Input::setMousePos(float x, float y) {
+	lastMouseX = mouseX;
+	lastMouseY = mouseY;
 	mouseX = x;
 	mouseY = y;
 }

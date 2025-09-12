@@ -11,6 +11,8 @@ namespace gm {
 	class Scene {
 
 	public:
+		void updateCamera();
+		void updateMazeRotation(float deltaPitch, float deltaRoll);
 		void updatePhysics(float deltaTime);
 
 		ren::Camera camera;
@@ -20,7 +22,8 @@ namespace gm {
 		Marble marble;
 		Maze maze;
 
-		float mazeYaw, mazePitch, cameraAngle;
+		float mazeYaw, mazeRoll;
+		float cameraDistance, cameraYaw, cameraPitch;
 
 	private:
 		void marbleBlockCollision(float x, float y, float z, float deltaTime);

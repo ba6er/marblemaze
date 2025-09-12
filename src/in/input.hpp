@@ -12,12 +12,10 @@ namespace in {
 
 	enum KeyName {
 		Quit,
+		MazeRollDecrease,
+		MazeRollIncrease,
 		MazeYawDecrease,
 		MazeYawIncrease,
-		MazePitchDecrease,
-		MazePitchIncrease,
-		CameraAngleDecrease,
-		CameraAngleIncrease,
 		KEYBOARD_COUNT,
 	};
 
@@ -27,12 +25,10 @@ namespace in {
 
 		static constexpr int KeyboardValues[KEYBOARD_COUNT] = {
 			GLFW_KEY_ESCAPE, // Quit
-			GLFW_KEY_A,      // MazeYawDecrease
-			GLFW_KEY_D,      // MazeYawIncrease
-			GLFW_KEY_S,      // MazePitchDecrease
-			GLFW_KEY_W,      // MazePitchIncrease
-			GLFW_KEY_Q,      // CameraAngleDecrease
-			GLFW_KEY_E,      // CameraAngleIncrease
+			GLFW_KEY_A,      // MazeRollDecrease
+			GLFW_KEY_D,      // MazeRollIncrease
+			GLFW_KEY_W,      // MazeYawDecrease
+			GLFW_KEY_S,      // MazeYawIncrease
 		};
 
 		Input();
@@ -47,6 +43,8 @@ namespace in {
 
 		float getMouseX() const;
 		float getMouseY() const;
+		float getDeltaMouseX() const;
+		float getDeltaMouseY() const;
 		void  setMousePos(float x, float y);
 
 		float getScrollX() const;
@@ -59,6 +57,8 @@ namespace in {
 		KeyState mouseR;
 		float mouseX;
 		float mouseY;
+		float lastMouseX;
+		float lastMouseY;
 		float scrollX;
 		float scrollY;
 	};

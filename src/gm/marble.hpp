@@ -16,6 +16,6 @@ namespace gm {
 
 		lin::Vec3 position;
 		lin::Vec3 velocity;
-		float radius;
+		float radius, speed;
 	};
 }

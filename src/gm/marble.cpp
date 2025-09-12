@@ -11,10 +11,9 @@ Marble::Marble(lin::Vec3 position) : Marble(position, {0, 0, 0}) {}
 Marble::Marble(lin::Vec3 position, lin::Vec3 velocity) : Marble(position, velocity, 0.25f) {}
 
 Marble::Marble(lin::Vec3 position, lin::Vec3 velocity, float radius)
-	: position(position), velocity(velocity), radius(radius) {}
+	: position(position), velocity(velocity), radius(radius), speed(0) {}
 
-geo::GeometryData Marble::toGeometry() const
-{
+geo::GeometryData Marble::toGeometry() const {
 	auto gd = geo::GeometryGenerator::GenerateCube();
 	geo::GeometryTransform::Scale(gd, {radius * 2, radius * 2, radius * 2});
 	return gd;

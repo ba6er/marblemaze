@@ -11,12 +11,10 @@ hide KeyState methods
 
 enum in::KeyName {
 	Quit
+	MazeRollDecrease
+	MazeRollIncrease
 	MazeYawDecrease
 	MazeYawIncrease
-	MazePitchDecrease
-	MazePitchIncrease
-	CameraAngleDecrease
-	CameraAngleIncrease
 }
 hide KeyName methods
 
@@ -33,6 +31,8 @@ class in::Input {
 	..
 	+getMouseX() : float
 	+getMouseY() : float
+	+getDeltaMouseX() : float
+	+getDeltaMouseY() : float
 	+setMousePos(x, y)
 	..
 	+getScrollX() : float
@@ -42,10 +42,9 @@ class in::Input {
 	-keyboard: KeyState[]
 	-mouseL: KeyState
 	-mouseR: KeyState
-	-mouseX: float
-	-mouseY: float
-	-scrollX: float
-	-scrollY: float
+	-mouseX, mouseY: float
+	-lastMouseX, lastMouseY: float
+	-scrollX, scrollY: float
 }
 
 class main {

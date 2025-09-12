@@ -19,22 +19,20 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	currentScene.maze.loadFromFile(_RES_PATH "testLevel.txt");
 
 	currentScene.marble.position = {5, 1, 4};
-	currentScene.marble.velocity = {0, -1, 0};
+	currentScene.marble.speed = 2;
+
+	currentScene.cameraYaw = 0;
+	currentScene.cameraPitch = lin::Pi / 4;
+	currentScene.cameraDistance = 10;
 
 	lin::Vec3 cameraTarget = {
 		std::floorf((int)(currentScene.maze.getWidth() / 2)),
 		0,
 		std::floorf((int)(currentScene.maze.getDepth() / 2)),
 	};
-	lin::Vec3 cameraPosition = {
-		cameraTarget.x + std::cosf(currentScene.cameraAngle) * 6,
-		cameraTarget.y + 6,
-		cameraTarget.z + std::sinf(currentScene.cameraAngle) * 6,
-	};
-
-	currentScene.camera.setPosition(cameraPosition);
 	currentScene.camera.setTarget(cameraTarget);
 	currentScene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
+	currentScene.updateCamera();
 
 	auto& maze = ram.createMesh("maze");
 	maze.create(6 * 6 * 9 * 9 * 2);
@@ -72,47 +70,30 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 		return false;
 	}
 
-	int pressed[6] = {
-		input.getKey(in::MazePitchIncrease) == in::Pressed,
-		input.getKey(in::MazePitchDecrease) == in::Pressed,
-		input.getKey(in::MazeYawIncrease) == in::Pressed,
+	int pressed[] = {
 		input.getKey(in::MazeYawDecrease) == in::Pressed,
-		input.getKey(in::CameraAngleIncrease) == in::Pressed,
-		input.getKey(in::CameraAngleDecrease) == in::Pressed,
+		input.getKey(in::MazeYawIncrease) == in::Pressed,
+		input.getKey(in::MazeRollDecrease) == in::Pressed,
+		input.getKey(in::MazeRollIncrease) == in::Pressed,
 	};
 
 	if (pressed[3] || pressed[2] || pressed[1] || pressed[0]) {
-		currentScene.mazePitch += (pressed[1] - pressed[0]) * deltaTime;
-		currentScene.mazeYaw += (pressed[3] - pressed[2]) * deltaTime;
-		lin::Vec3 mazeCenter = {
-			currentScene.maze.getWidth() / 2.0f,
-			currentScene.maze.getHeight() / 2.0f,
-			currentScene.maze.getDepth() / 2.0f,
-		};
-		lin::Mat4 nt = lin::Mat4::Translate(mazeCenter);
-		nt = nt * lin::Mat4::Rotate(currentScene.mazePitch, {0, 0, 1});
-		nt = nt * lin::Mat4::Rotate(currentScene.mazeYaw, {0, 1, 0});
-		nt = nt * lin::Mat4::Translate(-mazeCenter);
-		currentScene.renderables[0].transform = nt;
+		currentScene.updateMazeRotation(
+			(pressed[1] - pressed[0]) * deltaTime,
+			(pressed[3] - pressed[2]) * deltaTime);
 	}
 
-	if (pressed[5] || pressed[4]) {
-		currentScene.cameraAngle += (pressed[5] - pressed[4]) * deltaTime;
-		lin::Vec3 target = currentScene.camera.getTarget();
-		lin::Vec3 cameraPosition = {
-			target.x + std::cosf(currentScene.cameraAngle) * 6,
-			target.y + 6,
-			target.z + std::sinf(currentScene.cameraAngle) * 6,
-		};
-		currentScene.camera.setPosition(cameraPosition);
+	if (input.getMouseL() == in::Pressed) {
+		currentScene.cameraYaw += input.getDeltaMouseX() * deltaTime * 0.2f;
+		float np = currentScene.cameraPitch + input.getDeltaMouseY() * deltaTime * 0.2f;
+		currentScene.cameraPitch = std::min(std::max(np, -lin::Pi / 2 + 0.1f), lin::Pi / 2 - 0.1f);
+		currentScene.updateCamera();
 	}
 
-	lin::Vec3 marbleDirection = {
-		std::sinf(currentScene.mazePitch) * std::cosf(currentScene.mazeYaw),
-		-std::cosf(currentScene.mazePitch),
-		-std::sinf(currentScene.mazePitch) * std::sinf(currentScene.mazeYaw),
-	};
-	currentScene.marble.velocity = marbleDirection * 2;
+	if (input.getScrollY() != 0) {
+		currentScene.cameraDistance -= input.getScrollY() * deltaTime * 10;
+		currentScene.updateCamera();
+	}
 
 	currentScene.updatePhysics(deltaTime);
 

@@ -11,6 +11,8 @@ class gm::Game {
 }
 
 class gm::Scene {
+	+updateCamera()
+	+updateMazeRotation(deltaPitch, deltaRoll)
 	+updatePhysics(deltaTime)
 	..
 	+marble: Marble
@@ -20,9 +22,8 @@ class gm::Scene {
 	+renderables: Renderable[]
 	+lights: Light[]
 	..
-	+mazeYaw: float
-	+mazePitch: float
-	+cameraAngle: float
+	+mazeYaw, mazeRoll: float
+	+cameraDistance, cameraYaw, cameraPitch: float
 	--
 	-marbleBlockCollision(x, y, z, deltaTime)
 	..
@@ -59,6 +60,7 @@ class gm::Marble {
 	+position: Vec3
 	+velocity: Vec3
 	+radius: float
+	+speed: float
 }
 
 class main {

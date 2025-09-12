@@ -129,6 +129,7 @@ int main() {
 
 		// Update system
 		glfwSwapBuffers(window);
+		input.setScroll(0, 0);
 		glfwPollEvents();
 	}
 
