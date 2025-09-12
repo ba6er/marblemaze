@@ -28,9 +28,9 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	currentScene.cameraDistance = 10;
 
 	lin::Vec3 cameraTarget = {
-		std::floorf((int)(currentScene.maze.getWidth() / 2)),
+		(int)(currentScene.maze.getWidth() / 2) * 1.0f,
 		0,
-		std::floorf((int)(currentScene.maze.getDepth() / 2)),
+		(int)(currentScene.maze.getDepth() / 2) * 1.0f,
 	};
 	currentScene.camera.setTarget(cameraTarget);
 	currentScene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);

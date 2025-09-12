@@ -44,7 +44,7 @@ class gm::Maze {
 	+getBlock(x, y, z) : BlockType
 	+setBlock(x, y, z, block)
 	..
-	+toGeometry(&mesh) : GeometryData
+	+toGeometry() : GeometryData
 	..
 	+getWidth() : int
 	+getHeight() : int
