@@ -49,9 +49,17 @@ namespace in {
 		float getMouseY() const;
 		void  setMousePos(float x, float y);
 
+		float getScrollX() const;
+		float getScrollY() const;
+		void  setScroll(float x, float y);
+
 	private:
 		KeyState keyboard[KEYBOARD_COUNT];
-		KeyState mouseL, mouseR;
-		float    mouseX, mouseY;
+		KeyState mouseL;
+		KeyState mouseR;
+		float mouseX;
+		float mouseY;
+		float scrollX;
+		float scrollY;
 	};
 }

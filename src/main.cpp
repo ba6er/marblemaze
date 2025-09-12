@@ -20,6 +20,10 @@ static gm::Game game;
 static in::Input input;
 static ren::RenderAssetManager ram;
 
+static void callbackScroll(GLFWwindow*, double x, double y) {
+	input.setScroll(x, y);
+}
+
 int main() {
 	DEBUG_TRACE("Initializing system");
 
@@ -38,6 +42,7 @@ int main() {
 		return 1;
 	}
 	glfwMakeContextCurrent(window);
+	glfwSetScrollCallback(window, callbackScroll);
 
 	// Loading OpenGL functions via glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {

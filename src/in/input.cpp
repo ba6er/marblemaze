@@ -3,7 +3,7 @@
 
 using namespace in;
 
-Input::Input() : mouseL(Released), mouseR(Released), mouseX(0), mouseY(0) {
+Input::Input() : mouseL(Released), mouseR(Released), mouseX(0), mouseY(0), scrollX(0), scrollY(0) {
 	for (int i = 0; i < KEYBOARD_COUNT; i++) {
 		keyboard[i] = Released;
 	}
@@ -55,3 +55,15 @@ void Input::setMousePos(float x, float y) {
 	mouseY = y;
 }
 
+float Input::getScrollX() const {
+	return scrollX;
+}
+
+float Input::getScrollY() const {
+	return scrollY;
+}
+
+void Input::setScroll(float x, float y) {
+	scrollX = x;
+	scrollY = y;
+}

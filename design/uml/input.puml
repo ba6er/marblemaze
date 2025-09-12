@@ -34,12 +34,18 @@ class in::Input {
 	+getMouseX() : float
 	+getMouseY() : float
 	+setMousePos(x, y)
+	..
+	+getScrollX() : float
+	+getScrollY() : float
+	+setScroll(x, y)
 	--
 	-keyboard: KeyState[]
 	-mouseL: KeyState
 	-mouseR: KeyState
 	-mouseX: float
 	-mouseY: float
+	-scrollX: float
+	-scrollY: float
 }
 
 class main {
