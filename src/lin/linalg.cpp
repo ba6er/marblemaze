@@ -211,8 +211,8 @@ Mat4 Mat4::Rotate(float a, float x, float y, float z) {
 Mat4 Mat4::Rotate(float a, Vec3 axis) {
 	axis = axis.normalize();
 
-	float sa = std::sinf(a);
-	float ca = std::cosf(a);
+	float sa = std::sin(a);
+	float ca = std::cos(a);
 	float na = 1 - ca;
 
 	float nx = axis.x;

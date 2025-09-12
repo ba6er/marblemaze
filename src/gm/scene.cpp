@@ -1,27 +1,26 @@
 #include <gm/scene.hpp>
 #include <cmath>
-#include <algorithm>
 
 using namespace gm;
 
 void Scene::updateCamera() {
 	lin::Vec3 offset = camera.getTarget();
 	lin::Vec3 newPosition = {
-		offset.x + std::cosf(cameraPitch) * std::cosf(cameraYaw) * cameraDistance,
-		offset.y + std::sinf(cameraPitch) * cameraDistance,
-		offset.z + std::cosf(cameraPitch) * std::sinf(cameraYaw) * cameraDistance,
+		offset.x + std::cos(cameraPitch) * std::cos(cameraYaw) * cameraDistance,
+		offset.y + std::sin(cameraPitch) * cameraDistance,
+		offset.z + std::cos(cameraPitch) * std::sin(cameraYaw) * cameraDistance,
 	};
 	camera.setPosition(newPosition);
 }
 
 void Scene::updateMazeRotation(float deltaYaw, float deltaRoll) {
 	lin::Vec3 mazeCenter = {
-		std::floorf((int)(maze.getWidth() / 2)),
-		std::floorf((int)(maze.getHeight() / 2)),
-		std::floorf((int)(maze.getDepth() / 2)),
+		(int)(maze.getWidth() / 2) * 1.0f,
+		(int)(maze.getHeight() / 2) * 1.0f,
+		(int)(maze.getDepth() / 2) * 1.0f,
 	};
-	rotator = rotator * lin::Mat4::Rotate(deltaYaw, {-std::sinf(cameraYaw), 0, std::cosf(cameraYaw)});
-	rotator = rotator * lin::Mat4::Rotate(deltaRoll, {std::cosf(cameraYaw), 0, std::sinf(cameraYaw)});
+	rotator = rotator * lin::Mat4::Rotate(deltaYaw, {-std::sin(cameraYaw), 0, std::cos(cameraYaw)});
+	rotator = rotator * lin::Mat4::Rotate(deltaRoll, {std::cos(cameraYaw), 0, std::sin(cameraYaw)});
 
 	marble.velocity = rotator  * (lin::Vec3){0, marble.speed, 0};
 	marble.velocity.y *= -1;
