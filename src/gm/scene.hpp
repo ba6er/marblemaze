@@ -22,7 +22,7 @@ namespace gm {
 		Marble marble;
 		Maze maze;
 
-		float mazeYaw, mazeRoll;
+		lin::Mat4 rotator;
 		float cameraDistance, cameraYaw, cameraPitch;
 
 	private:

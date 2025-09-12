@@ -15,21 +15,18 @@ void Scene::updateCamera() {
 }
 
 void Scene::updateMazeRotation(float deltaYaw, float deltaRoll) {
-	mazeYaw += deltaYaw;
-	mazeRoll += deltaRoll;
 	lin::Vec3 mazeCenter = {
 		std::floorf((int)(maze.getWidth() / 2)),
 		std::floorf((int)(maze.getHeight() / 2)),
 		std::floorf((int)(maze.getDepth() / 2)),
 	};
-	lin::Mat4 rt = lin::Mat4::Identity();
-	rt = rt * lin::Mat4::Rotate(mazeYaw, {0, 0, 1});
-	rt = rt * lin::Mat4::Rotate(mazeRoll, {1, 0, 0});
+	rotator = rotator * lin::Mat4::Rotate(deltaYaw, {-std::sinf(cameraYaw), 0, std::cosf(cameraYaw)});
+	rotator = rotator * lin::Mat4::Rotate(deltaRoll, {std::cosf(cameraYaw), 0, std::sinf(cameraYaw)});
 
-	marble.velocity = rt * (lin::Vec3){0, marble.speed, 0};
+	marble.velocity = rotator  * (lin::Vec3){0, marble.speed, 0};
 	marble.velocity.y *= -1;
 
-	lin::Mat4 nt = lin::Mat4::Translate(mazeCenter) * rt * lin::Mat4::Translate(-mazeCenter);
+	lin::Mat4 nt = lin::Mat4::Translate(mazeCenter) * rotator  * lin::Mat4::Translate(-mazeCenter);
 	renderables[0].transform = nt;
 }
 

@@ -22,7 +22,7 @@ class gm::Scene {
 	+renderables: Renderable[]
 	+lights: Light[]
 	..
-	+mazeYaw, mazeRoll: float
+	+rotator: Mat4
 	+cameraDistance, cameraYaw, cameraPitch: float
 	--
 	-marbleBlockCollision(x, y, z, deltaTime)
