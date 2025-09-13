@@ -181,7 +181,7 @@ float Vec3::dot(Vec3 v) const {
 }
 
 float Vec3::length() const {
-	return std::sqrtf(x * x + y * y + z * z);
+	return std::sqrt(x * x + y * y + z * z);
 }
 
 Mat4 Mat4::Identity() {
@@ -281,7 +281,7 @@ Mat4 Mat4::Project2d(float left, float right, float bottom, float top, float nea
 Mat4 Mat4::Project3d(float fov, float aspect, float near, float far) {
 	Mat4 m = Identity();
 
-	float top = near * std::tanf(fov / 2);
+	float top = near * std::tan(fov / 2);
 	float right = top * aspect;
 
 	m.x1 = near / right;
