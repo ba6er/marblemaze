@@ -86,7 +86,7 @@ void Shader::CheckCompileErrors(uint shader) {
 	}
 
 	glGetShaderInfoLog(shader, 512, NULL, infoLog);
-	DEBUG_ASSERT(0, "%s", infoLog);
+	CRITICAL_ASSERT(0, "%s", infoLog);
 }
 
 void Shader::CheckLinkingErrors(uint program) {
@@ -99,5 +99,5 @@ void Shader::CheckLinkingErrors(uint program) {
 	}
 
 	glGetProgramInfoLog(program, 512, NULL, infoLog);
-	DEBUG_ASSERT(0, "%s", infoLog);
+	CRITICAL_ASSERT(0, "%s", infoLog);
 }

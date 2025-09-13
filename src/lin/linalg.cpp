@@ -6,158 +6,120 @@ using namespace lin;
 
 Vec2 Vec2::operator-() const {
 	Vec2 result = {-x, -y};
-	if (std::isnan(result.x) || std::isnan(result.y)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
+	DEBUG_ASSERT(std::isnan(result.x) || std::isnan(result.y), "Vec2 values are NaN");
 	return result;
 }
 
 Vec2 Vec2::operator+(Vec2 v) const {
 	Vec2 result = {x + v.x, y + v.y};
-	if (std::isnan(result.x) || std::isnan(result.y)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
+	DEBUG_ASSERT(std::isnan(result.x) || std::isnan(result.y), "Vec2 values are NaN");
 	return result;
 }
 
 Vec2 Vec2::operator-(Vec2 v) const {
 	Vec2 result = {x - v.x, y - v.y};
-	if (std::isnan(result.x) || std::isnan(result.y)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
+	DEBUG_ASSERT(std::isnan(result.x) || std::isnan(result.y), "Vec2 values are NaN");
 	return result;
 }
 
 Vec2 Vec2::operator*(float n) const {
 	Vec2 result = {x * n, y * n};
-	if (std::isnan(result.x) || std::isnan(result.y)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
+	DEBUG_ASSERT(std::isnan(result.x) || std::isnan(result.y), "Vec2 values are NaN");
 	return result;
 }
 
 Vec2 Vec2::operator/(float n) const {
 	Vec2 result = {x / n, y / n};
-	if (std::isnan(result.x) || std::isnan(result.y)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
+	DEBUG_ASSERT(std::isnan(result.x) || std::isnan(result.y), "Vec2 values are NaN");
 	return result;
 }
 
 Vec4 Vec4::operator-() const {
-	Vec4 result = {-x, -y, -z, -w};
-	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z) || std::isnan(result.w)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
-	return result;
+	Vec4 r = {-x, -y, -z, -w};
+	DEBUG_ASSERT(std::isnan(r.x) || std::isnan(r.y) || std::isnan(r.z) || std::isnan(r.w), "Vec4 values are NaN");
+	return r;
 }
 
 Vec4 Vec4::operator+(Vec4 v) const {
-	Vec4 result = {x + v.x, y + v.y, z + v.z, w + v.w};
-	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z) || std::isnan(result.w)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
-	return result;
+	Vec4 r = {x + v.x, y + v.y, z + v.z, w + v.w};
+	DEBUG_ASSERT(std::isnan(r.x) || std::isnan(r.y) || std::isnan(r.z) || std::isnan(r.w), "Vec4 values are NaN");
+	return r;
 }
 
 Vec4 Vec4::operator-(Vec4 v) const {
-	Vec4 result = {x - v.x, y - v.y, z - v.z, w - v.w};
-	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z) || std::isnan(result.w)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
-	return result;
+	Vec4 r = {x - v.x, y - v.y, z - v.z, w - v.w};
+	DEBUG_ASSERT(std::isnan(r.x) || std::isnan(r.y) || std::isnan(r.z) || std::isnan(r.w), "Vec4 values are NaN");
+	return r;
 }
 
 Vec4 Vec4::operator*(float n) const {
-	Vec4 result = {x * n, y * n, z * n, w * n};
-	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z) || std::isnan(result.w)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
-	return result;
+	Vec4 r = {x * n, y * n, z * n, w * n};
+	DEBUG_ASSERT(std::isnan(r.x) || std::isnan(r.y) || std::isnan(r.z) || std::isnan(r.w), "Vec4 values are NaN");
+	return r;
 }
 
 Vec4 Vec4::operator/(float n) const {
-	Vec4 result = {x / n, y / n, z / n, w / n};
-	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z) || std::isnan(result.w)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
-	return result;
+	Vec4 r = {x / n, y / n, z / n, w / n};
+	DEBUG_ASSERT(std::isnan(r.x) || std::isnan(r.y) || std::isnan(r.z) || std::isnan(r.w), "Vec4 values are NaN");
+	return r;
 }
 
 Vec3 Vec3::operator-() const {
-	Vec3 result = {-x, -y, -z};
-	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
-	return result;
+	Vec3 r = {-x, -y, -z};
+	DEBUG_ASSERT(std::isnan(r.x) || std::isnan(r.y) || std::isnan(r.z), "Vec3 values are NaN");
+	return r;
 }
 
 Vec3 Vec3::operator+(Vec3 v) const {
-	Vec3 result = {x + v.x, y + v.y, z + v.z};
-	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
-	return result;
+	Vec3 r = {x + v.x, y + v.y, z + v.z};
+	DEBUG_ASSERT(std::isnan(r.x) || std::isnan(r.y) || std::isnan(r.z), "Vec3 values are NaN");
+	return r;
 }
 
 Vec3 Vec3::operator-(Vec3 v) const {
-	Vec3 result = {x - v.x, y - v.y, z - v.z};
-	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
-	return result;
+	Vec3 r = {x - v.x, y - v.y, z - v.z};
+	DEBUG_ASSERT(std::isnan(r.x) || std::isnan(r.y) || std::isnan(r.z), "Vec3 values are NaN");
+	return r;
 }
 
 Vec3 Vec3::operator*(float n) const {
-	Vec3 result = {x * n, y * n, z * n};
-	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
-	return result;
+	Vec3 r = {x * n, y * n, z * n};
+	DEBUG_ASSERT(std::isnan(r.x) || std::isnan(r.y) || std::isnan(r.z), "Vec3 values are NaN");
+	return r;
 }
 
 Vec3 Vec3::operator/(float n) const {
-	Vec3 result = {x / n, y / n, z / n};
-	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
-	return result;
+	Vec3 r = {x / n, y / n, z / n};
+	DEBUG_ASSERT(std::isnan(r.x) || std::isnan(r.y) || std::isnan(r.z), "Vec3 values are NaN");
+	return r;
 }
 
 void Vec3::operator+=(Vec3 v) {
 	x += v.x;
 	y += v.y;
 	z += v.z;
-	if (std::isnan(x) || std::isnan(y) || std::isnan(z)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
+	DEBUG_ASSERT(std::isnan(x) || std::isnan(y) || std::isnan(z), "Vec3 values are NaN");
 }
 
 void Vec3::operator-=(Vec3 v) {
 	x -= v.x;
 	y -= v.y;
 	z -= v.z;
-	if (std::isnan(x) || std::isnan(y) || std::isnan(z)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
+	DEBUG_ASSERT(std::isnan(x) || std::isnan(y) || std::isnan(z), "Vec3 values are NaN");
 }
 
 void Vec3::operator*=(float n) {
 	x *= n;
 	y *= n;
 	z *= n;
-	if (std::isnan(x) || std::isnan(y) || std::isnan(z)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
+	DEBUG_ASSERT(std::isnan(x) || std::isnan(y) || std::isnan(z), "Vec3 values are NaN");
 }
 
 void Vec3::operator/=(float n) {
 	x /= n;
 	y /= n;
 	z /= n;
-	if (std::isnan(x) || std::isnan(y) || std::isnan(z)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
+	DEBUG_ASSERT(std::isnan(x) || std::isnan(y) || std::isnan(z), "Vec3 values are NaN");
 }
 
 Vec3 Vec3::normalize() const {
@@ -166,14 +128,12 @@ Vec3 Vec3::normalize() const {
 }
 
 Vec3 Vec3::cross(Vec3 v) const {
-	Vec3 result = {
+	Vec3 r = {
 		y * v.z - z * v.y,
 		z * v.x - x * v.z,
 		x * v.y - y * v.x};
-	if (std::isnan(result.x) || std::isnan(result.y) || std::isnan(result.z)) {
-		DEBUG_WARNING("Vector values are NaN!");
-	}
-	return result;
+	DEBUG_ASSERT(std::isnan(r.x) || std::isnan(r.y) || std::isnan(r.z), "Vec3 cross product is NaN");
+	return r;
 }
 
 float Vec3::dot(Vec3 v) const {

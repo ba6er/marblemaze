@@ -25,7 +25,8 @@ static void callbackScroll(GLFWwindow*, double x, double y) {
 }
 
 int main() {
-	DEBUG_TRACE("Initializing system");
+	DEBUG_TRACE("This is a debug build");
+	CRITICAL_TRACE("Initializing system");
 
 	// Initialize GLFW
 	glfwInit();
@@ -139,7 +140,7 @@ int main() {
 
 // Declared in util.hpp
 void FreeSystemResources() {
-	DEBUG_TRACE("Freeing system resources");
+	CRITICAL_TRACE("Freeing system resources");
 
 	// Free render assets
 	ram.destroy();

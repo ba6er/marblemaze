@@ -7,8 +7,7 @@ using namespace ren;
 void RenderAssetManager::initFromConfig(std::string_view fileName) {
 	std::ifstream configIn(fileName.data());
 	if (configIn.is_open() == false) {
-		DEBUG_ERROR("No configuration file by the name of %s", fileName.data());
-		return;
+		CRITICAL_ASSERT(0, "No configuration file by the name of %s", fileName.data());
 	}
 	std::string configLine = "", configLine2 = "";
 
@@ -45,7 +44,7 @@ void RenderAssetManager::initFromConfig(std::string_view fileName) {
 			stringToMaterial(configLine, configLine2);
 		}
 	}
-	DEBUG_TRACE("Loaded asset configuration from %s", fileName.data());
+	CRITICAL_TRACE("Loaded asset configuration from %s", fileName.data());
 }
 
 Shader& RenderAssetManager::createShader(const std::string& name) {
@@ -82,33 +81,25 @@ void RenderAssetManager::destroy() {
 
 Shader& RenderAssetManager::getShader(std::string_view name) {
 	auto value = shaders.find(name);
-	if (value == shaders.end()) {
-		DEBUG_ASSERT("No shader by the name of \"%s\"", "%s", name.data());
-	}
+	DEBUG_ASSERT(value == shaders.end(), "No shader by the name of \"%s\"", name.data());
 	return value->second;
 }
 
 Texture& RenderAssetManager::getTexture(std::string_view name) {
 	auto value = textures.find(name);
-	if (value == textures.end()) {
-		DEBUG_ASSERT("No texture by the name of \"%s\"", "%s", name.data());
-	}
+	DEBUG_ASSERT(value == textures.end(), "No texture by the name of \"%s\"", name.data());
 	return value->second;
 }
 
 Material& RenderAssetManager::getMaterial(std::string_view name) {
 	auto value = materials.find(name);
-	if (value == materials.end()) {
-		DEBUG_ASSERT("No material by the name of \"%s\"", "%s", name.data());
-	}
+	DEBUG_ASSERT(value == materials.end(), "No material by the name of \"%s\"", name.data());
 	return value->second;
 }
 
 Mesh& RenderAssetManager::getMesh(std::string_view name) {
 	auto value = meshes.find(name);
-	if (value == meshes.end()) {
-		DEBUG_ASSERT("No mesh by the name of \"%s\"", "%s", name.data());
-	}
+	DEBUG_ASSERT(value == meshes.end(), "No mesh by the name of \"%s\"", name.data());
 	return value->second;
 }
 
