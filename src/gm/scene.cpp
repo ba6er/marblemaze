@@ -3,6 +3,14 @@
 
 using namespace gm;
 
+Scene::Scene()
+		: camera(), renderables()
+		, marble(), maze()
+		, rotator(lin::Mat4::Identity())
+		, cameraDistance(10), cameraYaw(0), cameraPitch(0) {
+	light = {{0}};
+}
+
 void Scene::updateCamera() {
 	lin::Vec3 offset = camera.getTarget();
 	lin::Vec3 newPosition = {

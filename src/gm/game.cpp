@@ -6,6 +6,8 @@
 
 using namespace gm;
 
+Game::Game() : currentScene() {}
+
 void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	ren::Renderer::resizeFrame(width, height);
 

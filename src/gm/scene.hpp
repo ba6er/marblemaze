@@ -11,6 +11,8 @@ namespace gm {
 	class Scene {
 
 	public:
+		Scene();
+
 		void updateCamera();
 		void updateMazeRotation(float deltaPitch, float deltaRoll);
 		void updatePhysics(float deltaTime);

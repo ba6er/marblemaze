@@ -8,6 +8,8 @@ namespace gm {
 	class Game {
 
 	public:
+		Game();
+
 		void onInit(int width, int height, ren::RenderAssetManager& ram);
 		bool onUpdate(float deltaTime, float currentTime, const in::Input& input);
 		void onRender(float deltaTime, float currentTime, ren::RenderAssetManager& ram);
