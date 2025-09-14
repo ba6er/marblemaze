@@ -30,6 +30,8 @@ namespace gm {
 		int getHeight() const;
 		int getDepth() const;
 
+		lin::Mat4 transform;
+
 	private:
 		inline int index(int x, int y, int z) const {
 			return x + width * (z + depth * y);

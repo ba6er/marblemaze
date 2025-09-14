@@ -22,7 +22,6 @@ class gm::Scene {
 	+renderables: Renderable[]
 	+lights: Light[]
 	..
-	+rotator: Mat4
 	+cameraDistance, cameraYaw, cameraPitch: float
 	--
 	-marbleBlockCollision(x, y, z, deltaTime)
@@ -49,6 +48,8 @@ class gm::Maze {
 	+getWidth() : int
 	+getHeight() : int
 	+getDepth() : int
+	..
+	+transform: Mat4
 	--
 	-width, height, depth: int
 	-bricks: BlockType[]
@@ -56,6 +57,8 @@ class gm::Maze {
 
 class gm::Marble {
 	+toGeometry() : GeometryData
+	..
+	+transform: Mat4
 	..
 	+position: Vec3
 	+velocity: Vec3

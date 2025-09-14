@@ -8,7 +8,8 @@ using namespace gm;
 Maze::Maze() : Maze(1, 1, 1) {}
 
 Maze::Maze(int width, int height, int depth)
-	: width(width), height(height), depth(depth)
+	: transform(lin::Mat4::Identity())
+	, width(width), height(height), depth(depth)
 	, blocks(width * height * depth, BlockType::Empty) {}
 
 void Maze::loadFromFile(std::string_view fileName) {

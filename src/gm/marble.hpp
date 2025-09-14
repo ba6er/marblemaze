@@ -14,6 +14,8 @@ namespace gm {
 
 		geo::GeometryData toGeometry() const;
 
+		lin::Mat4 transform;
+
 		lin::Vec3 position;
 		lin::Vec3 velocity;
 		float radius, speed;

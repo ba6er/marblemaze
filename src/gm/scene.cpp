@@ -6,7 +6,6 @@ using namespace gm;
 Scene::Scene()
 		: camera(), renderables()
 		, marble(), maze()
-		, rotator(lin::Mat4::Identity())
 		, cameraDistance(10), cameraYaw(0), cameraPitch(0) {
 	light = {{0}};
 }
@@ -27,13 +26,14 @@ void Scene::updateMazeRotation(float deltaYaw, float deltaRoll) {
 		(int)(maze.getHeight() / 2) * 1.0f,
 		(int)(maze.getDepth() / 2) * 1.0f,
 	};
-	rotator = rotator * lin::Mat4::Rotate(deltaYaw, {-std::sin(cameraYaw), 0, std::cos(cameraYaw)});
-	rotator = rotator * lin::Mat4::Rotate(deltaRoll, {std::cos(cameraYaw), 0, std::sin(cameraYaw)});
+	maze.transform = maze.transform * lin::Mat4::Rotate(deltaYaw, {-std::sin(cameraYaw), 0, std::cos(cameraYaw)});
+	maze.transform = maze.transform * lin::Mat4::Rotate(deltaRoll, {std::cos(cameraYaw), 0, std::sin(cameraYaw)});
+	marble.transform = marble.transform * lin::Mat4::Rotate(-deltaYaw, {-std::sin(cameraYaw), 0, std::cos(cameraYaw)});
+	marble.transform = marble.transform * lin::Mat4::Rotate(-deltaRoll, {std::cos(cameraYaw), 0, std::sin(cameraYaw)});
 
-	marble.velocity = rotator  * (lin::Vec3){0, marble.speed, 0};
-	marble.velocity.y *= -1;
+	marble.velocity = marble.transform * (lin::Vec3){0, -marble.speed, 0};
 
-	lin::Mat4 nt = lin::Mat4::Translate(mazeCenter) * rotator  * lin::Mat4::Translate(-mazeCenter);
+	lin::Mat4 nt = lin::Mat4::Translate(mazeCenter) * maze.transform * lin::Mat4::Translate(-mazeCenter);
 	renderables[0].transform = nt;
 }
 

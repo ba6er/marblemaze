@@ -11,8 +11,6 @@ Game::Game() : currentScene() {}
 void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	ren::Renderer::resizeFrame(width, height);
 
-	currentScene.rotator = lin::Mat4::Identity();
-
 	currentScene.light = {
 		{1.0f, 9.9f, 1.0f},
 		{0.3f, 0.3f, 0.3f},
