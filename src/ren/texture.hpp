@@ -25,7 +25,7 @@ namespace ren {
 		Texture();
 
 		void create(int width, int height, void* data, TextureFormat format);
-		void create(std::string_view fileName, bool filtered);
+		void create(std::string_view fileName, bool filtered, int mipmaps = 4);
 		void create();
 		void destroy();
 

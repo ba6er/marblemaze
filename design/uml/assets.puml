@@ -25,7 +25,7 @@ hide TextureFormat methods
 
 class ren::Texture {
 	+create(width, height, data, format)
-	+create(fileName, filtered)
+	+create(fileName, filtered, mipmaps)
 	+create()
 	+destroy()
 	..

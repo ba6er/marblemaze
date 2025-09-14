@@ -46,7 +46,7 @@ void Texture::create(int width, int height, void* data, TextureFormat format) {
 	// Load texture into GPU
 	glTexImage2D(
 		GL_TEXTURE_2D,        // Target
-		format.mipmaps,       // Mipmap level for manual mipmaps
+		0,                    // Mipmap level for manual mipmaps
 		format.textureFormat, // Texture format
 		width,                // Texture width
 		height,               // Texture height
@@ -61,16 +61,16 @@ void Texture::create(int width, int height, void* data, TextureFormat format) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::create(std::string_view fileName, bool filtered) {
+void Texture::create(std::string_view fileName, bool filtered, int mipmaps) {
 	int width, height, num_channels;
 	void* data = stbi_load(fileName.data(), &width, &height, &num_channels, 0);
 	this->width = width;
 	this->height = height;
 
 	if (filtered) {
-		create(width, height, data, TextureFormat::LinearRGBA(4));
+		create(width, height, data, TextureFormat::LinearRGBA(mipmaps));
 	} else {
-		create(width, height, data, TextureFormat::NearestRGBA(4));
+		create(width, height, data, TextureFormat::NearestRGBA(mipmaps));
 	}
 	stbi_image_free((stbi_uc*)data);
 }
