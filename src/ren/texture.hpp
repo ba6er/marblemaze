@@ -4,12 +4,27 @@
 
 namespace ren {
 
+	class TextureFormat {
+
+	public:
+
+		static TextureFormat NearestRGBA(int mipmaps = 0);
+		static TextureFormat LinearRGBA(int mipmaps = 0);
+		static TextureFormat NearestFont();
+		static TextureFormat LinearFont();
+
+		bool filtered;
+		int textureFormat;
+		int sourceFormat;
+		int mipmaps;
+	};
+
 	class Texture {
 
 	public:
 		Texture();
 
-		void create(int width, int height, void* data, bool filtered);
+		void create(int width, int height, void* data, TextureFormat format);
 		void create(std::string_view fileName, bool filtered);
 		void create();
 		void destroy();

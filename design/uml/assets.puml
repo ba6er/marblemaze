@@ -15,8 +15,18 @@ class ren::Shader {
 	-id: uint
 }
 
+class ren::TextureFormat {
+	+filtered: bool
+	+textureFormat: int
+	+sourceFormat: int
+	+mipmaps: int
+}
+hide TextureFormat methods
+
 class ren::Texture {
-	+create(...)
+	+create(width, height, data, format)
+	+create(fileName, filtered)
+	+create()
 	+destroy()
 	..
 	+use(index)
@@ -97,6 +107,8 @@ class main {
 }
 hide main circle
 hide main methods
+
+Texture <-down- TextureFormat
 
 RenderAssetManager *-down- Shader
 RenderAssetManager *-down- Texture

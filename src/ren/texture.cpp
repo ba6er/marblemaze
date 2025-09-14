@@ -4,9 +4,25 @@
 
 using namespace ren;
 
+TextureFormat TextureFormat::NearestRGBA(int mipmaps) {
+	return {false, GL_RGBA8, GL_RGBA, mipmaps};
+}
+
+TextureFormat TextureFormat::LinearRGBA(int mipmaps) {
+	return {true, GL_RGBA8, GL_RGBA, mipmaps};
+}
+
+TextureFormat TextureFormat::NearestFont() {
+	return {false, GL_RED, GL_RED, 0};
+}
+
+TextureFormat TextureFormat::LinearFont() {
+	return {true, GL_RED, GL_RED, 0};
+}
+
 Texture::Texture() : width(0), height(0), id(0) {}
 
-void Texture::create(int width, int height, void* data, bool filtered) {
+void Texture::create(int width, int height, void* data, TextureFormat format) {
 	this->width = width;
 	this->height = height;
 
@@ -17,20 +33,30 @@ void Texture::create(int width, int height, void* data, bool filtered) {
 	// Horizontal and vertical repeating and filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtered ? GL_LINEAR : GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtered ? GL_LINEAR : GL_NEAREST);
+	if (format.mipmaps != 0) {
+		glTexParameteri(
+			GL_TEXTURE_2D,
+			GL_TEXTURE_MIN_FILTER,
+			format.filtered ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST);
+	} else {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, format.filtered ? GL_LINEAR : GL_NEAREST);
+	}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, format.filtered ? GL_LINEAR : GL_NEAREST);
 
 	// Load texture into GPU
 	glTexImage2D(
-		GL_TEXTURE_2D,    // Target
-		0,                // Mipmap level for manual mipmaps
-		GL_RGBA8,         // Texture format
-		width,            // Texture width
-		height,           // Texture height
-		0,                // 0 is some "legacy stuff"
-		GL_RGBA,          // Source format
-		GL_UNSIGNED_BYTE, // Source datatype
-		data);            // Source data
+		GL_TEXTURE_2D,        // Target
+		format.mipmaps,       // Mipmap level for manual mipmaps
+		format.textureFormat, // Texture format
+		width,                // Texture width
+		height,               // Texture height
+		0,                    // 0 is some "legacy stuff"
+		format.sourceFormat,  // Source format
+		GL_UNSIGNED_BYTE,     // Source datatype
+		data);                // Source data
+	if (format.mipmaps != 0) {
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -41,13 +67,17 @@ void Texture::create(std::string_view fileName, bool filtered) {
 	this->width = width;
 	this->height = height;
 
-	create(width, height, data, filtered);
+	if (filtered) {
+		create(width, height, data, TextureFormat::LinearRGBA(4));
+	} else {
+		create(width, height, data, TextureFormat::NearestRGBA(4));
+	}
 	stbi_image_free((stbi_uc*)data);
 }
 
 void Texture::create() {
 	constexpr uchar whitePixel[4] = {0xff, 0xff, 0xff, 0xff};
-	create(1, 1, (void*)whitePixel, false);
+	create(1, 1, (void*)whitePixel, TextureFormat::LinearRGBA());
 }
 
 void Texture::destroy() {

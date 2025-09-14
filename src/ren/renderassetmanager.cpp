@@ -21,8 +21,7 @@ void RenderAssetManager::initFromConfig(std::string_view fileName) {
 			continue;
 		}
 		if (configLine == "TEXTURES") {
-			uchar blankData[] = {0xFF, 0xFF, 0xFF, 0xFF};
-			createTexture("blank").create(1, 1, blankData, true);
+			createTexture("blank").create();
 			DEBUG_TRACE("Loaded texture \"blank\" from data 0xFFFFFFFF");
 
 			stage = 2;
