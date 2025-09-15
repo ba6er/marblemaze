@@ -76,6 +76,23 @@ class ren::Mesh {
 	-vertices: Vertex[]
 }
 
+class ren::Glyph {
+	+advance: int
+	+uv: Vec4
+}
+hide Glyph methods
+
+class ren::Font {
+	+create(texture, fileName, size, filtered)
+	+destroy()
+	..
+	+getTexture() : &Texture
+	--
+	-size: int
+	-texture: Texture&
+	-glyphs: Glyph[]
+}
+
 class ren::RenderAssetManager {
 	+initFromConfig(fileName)
 	..
@@ -83,21 +100,25 @@ class ren::RenderAssetManager {
 	+createTexture(name) : &Texture
 	+createMaterial(name) : &Material
 	+createMesh(name) : &Mesh
+	+createFont(name) : &Font
 	+destroy()
 	..
 	+getShader(name) : &Shader
 	+getTexture(name) : &Texture
 	+getMaterial(name) : &Material
 	+getMesh(name) : &Mesh
+	+getFont(name) : &Font
 	--
 	-stringToShader(configLine)
 	-stringToTexture(configLine)
 	-stringToMaterial(configLine1, configLine2)
+	-stringToFont(configLine)
 	..
 	-shaders: map<str, Shader>
 	-textures: map<str, Texture>
 	-materials: map<str, Material>
 	-meshes: map<str, Mesh>
+	-fonts: map<str, Font>
 }
 
 class main {
@@ -113,12 +134,15 @@ Texture <-down- TextureFormat
 RenderAssetManager *-down- Shader
 RenderAssetManager *-down- Texture
 RenderAssetManager *-left- Material
-RenderAssetManager *-right- Mesh
+RenderAssetManager *-down- Mesh
+RenderAssetManager *-right- Font
 
 Material <-- Shader
 Material <-- Texture
 
 Mesh <-down- Vertex
+
+Font <-down- Glyph
 
 main *-- RenderAssetManager
 

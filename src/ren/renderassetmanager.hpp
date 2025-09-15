@@ -1,4 +1,5 @@
 #pragma once
+#include <ren/font.hpp>
 #include <ren/shader.hpp>
 #include <ren/texture.hpp>
 #include <ren/material.hpp>
@@ -19,6 +20,7 @@ namespace ren {
 		Texture& createTexture(const std::string& name);
 		Material& createMaterial(const std::string& name);
 		Mesh& createMesh(const std::string& name);
+		Font& createFont(const std::string& name);
 
 		void destroy();
 
@@ -26,15 +28,18 @@ namespace ren {
 		Texture& getTexture(std::string_view name);
 		Material& getMaterial(std::string_view name);
 		Mesh& getMesh(std::string_view name);
+		Font& getFont(std::string_view name);
 
 	private:
 		void stringToShader(const std::string& configLine);
 		void stringToTexture(const std::string& configLine);
 		void stringToMaterial(const std::string& configLine1, const std::string& configLine2);
+		void stringToFont(const std::string& configLine);
 
 		std::map<std::string, Shader, std::less<>> shaders;
 		std::map<std::string, Texture, std::less<>> textures;
 		std::map<std::string, Material, std::less<>> materials;
 		std::map<std::string, Mesh, std::less<>> meshes;
+		std::map<std::string, Font, std::less<>> fonts;
 	};
 }

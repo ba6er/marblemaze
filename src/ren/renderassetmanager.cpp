@@ -29,6 +29,10 @@ void RenderAssetManager::initFromConfig(std::string_view fileName) {
 			stage = 3;
 			continue;
 		}
+		if (configLine == "FONTS") {
+			stage = 4;
+			continue;
+		}
 
 		if (stage == 1) {
 			stringToShader(configLine);
@@ -39,6 +43,9 @@ void RenderAssetManager::initFromConfig(std::string_view fileName) {
 		if (stage == 3) {
 			std::getline(configIn, configLine2);
 			stringToMaterial(configLine, configLine2);
+		}
+		if (stage == 4) {
+			stringToFont(configLine);
 		}
 	}
 	CRITICAL_TRACE("Loaded asset configuration from %s", fileName.data());
@@ -64,6 +71,11 @@ Mesh& RenderAssetManager::createMesh(const std::string& name) {
 	return meshes.at(name);
 }
 
+Font& RenderAssetManager::createFont(const std::string& name) {
+	fonts[name] = Font();
+	return fonts.at(name);
+}
+
 void RenderAssetManager::destroy() {
 	for (auto& shader : shaders) {
 		shader.second.destroy();
@@ -73,6 +85,9 @@ void RenderAssetManager::destroy() {
 	}
 	for (auto& mesh : meshes) {
 		mesh.second.destroy();
+	}
+	for (auto& font : fonts) {
+		font.second.destroy();
 	}
 }
 
@@ -97,6 +112,12 @@ Material& RenderAssetManager::getMaterial(std::string_view name) {
 Mesh& RenderAssetManager::getMesh(std::string_view name) {
 	auto value = meshes.find(name);
 	DEBUG_ASSERT(value != meshes.end(), "No mesh by the name of \"%s\"", name.data());
+	return value->second;
+}
+
+Font& RenderAssetManager::getFont(std::string_view name) {
+	auto value = fonts.find(name);
+	DEBUG_ASSERT(value != fonts.end(), "No font by the name of \"%s\"", name.data());
 	return value->second;
 }
 
@@ -154,5 +175,20 @@ void RenderAssetManager::stringToMaterial(const std::string& configLine1, const 
 	}
 
 	DEBUG_TRACE("Loaded material \"%s\" from shader \"%s\"", name.c_str(), shader.c_str());
+}
+
+void RenderAssetManager::stringToFont(const std::string& configLine) {
+	std::istringstream fontConfig(configLine);
+	std::string name, fileName, filtered;
+	int size;
+	fontConfig >> name >> fileName >> size >> filtered;
+
+	std::string textureName = "_font_" + name;
+	std::string fsf = std::string(_RES_PATH) + std::string("font/") + fileName;
+
+	Texture& ft = createTexture(textureName);
+	createFont(name).create(&ft, fsf.c_str(), size, filtered == "T");
+
+	DEBUG_TRACE("Loaded font \"%s\" from \"%s\"", name.c_str(), fileName.c_str());
 }
 

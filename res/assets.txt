@@ -79,3 +79,9 @@ whiteRubber             lighting3d              1                       blank
 005 005 005             050 050 050             070 070 070             10
 yellowRubber            lighting3d              1                       blank
 005 005 000             050 050 040             070 070 004             10
+
+FONTS
+# Fonts are located in res/font/
+# Table format for fonts:
+# name                  font source file        size in pixels          filtered (T/F)
+noto16                  notoSerif.ttf           16                      T
