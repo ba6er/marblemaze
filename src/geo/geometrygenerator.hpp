@@ -19,5 +19,7 @@ namespace geo {
 	public:
 		static GeometryData GenerateCube(lin::Vec3 color, CubeFaceMask faces = CubeFace::All);
 		static GeometryData GenerateCube(CubeFaceMask faces = CubeFace::All);
+		static GeometryData GenerateIcosphere(lin::Vec3 color, int subdivisions = 0);
+		static GeometryData GenerateIcosphere(int subdivisions = 0);
 	};
 }

@@ -21,6 +21,7 @@ hide GeometryData methods
 
 class geo::GeometryGenerator {
 	{static} +GenerateCube(faces) : GeometryData
+	{static} +GenerateIcosphere(subdivision) : GeometryData
 }
 hide GeometryGenerator fields
 
