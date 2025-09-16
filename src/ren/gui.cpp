@@ -17,7 +17,7 @@ void Label::create(float size, std::string_view text, lin::Vec3 position) {
 	create(size, text, position, {1, 1, 1});
 }
 
-GUI::GUI() : shader(nullptr), font(nullptr), mesh(nullptr), labels() {}
+GUI::GUI() : shader(nullptr), font(nullptr), mesh(nullptr), labels(), needsUpdate(false) {}
 
 void GUI::create(Shader& shader, Font& font, Mesh& mesh) {
 	this->shader = &shader;
@@ -34,6 +34,7 @@ void GUI::setFrame(float left, float right, float bottom, float top) {
 }
 
 Label& GUI::addLabel(const std::string& name) {
+	needsUpdate = true;
 	labels[name] = Label();
 	return labels.at(name);
 }
@@ -41,11 +42,22 @@ Label& GUI::addLabel(const std::string& name) {
 Label& GUI::getLabel(std::string_view name) {
 	auto value = labels.find(name);
 	DEBUG_ASSERT(value != labels.end(), "No label by the name of \"%s\"", name.data());
+	needsUpdate = true;
 	return value->second;
 }
 
+void GUI::removeLabel(std::string_view name) {
+	auto value = labels.find(name);
+	DEBUG_ASSERT(value != labels.end(), "No label by the name of \"%s\"", name.data());
+	labels.erase(value);
+	needsUpdate = true;
+}
+
 void GUI::display() {
-	updateMesh();
+	if (needsUpdate) {
+		updateMesh();
+		needsUpdate = false;
+	}
 
 	glDisable(GL_DEPTH_TEST);
 

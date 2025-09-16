@@ -68,6 +68,8 @@ class ren::GUI {
 	-mesh: &Mesh
 	..
 	-labels: map<str, Label>
+	..
+	-needsUpdate: bool
 }
 
 enum ren::TextAlign {

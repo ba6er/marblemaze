@@ -42,6 +42,7 @@ namespace ren {
 
 		Label& addLabel(const std::string& name);
 		Label& getLabel(std::string_view name);
+		void removeLabel(std::string_view name);
 
 		void display();
 
@@ -53,5 +54,7 @@ namespace ren {
 		Mesh* mesh;
 
 		std::map<std::string, Label, std::less<>> labels;
+
+		bool needsUpdate;
 	};
 }
