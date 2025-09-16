@@ -54,7 +54,7 @@ Class `GeometryData` has no functionality and all operations are done by helper 
 ![Shapes UML giagram](./design/shapes.png)
 
 ## Rendering
-The `ren` namespace is roughly split in 2 parts; asset management and rendering.
+The `ren` namespace is roughly split in 3 parts; asset management, GUI and rendering.
 
 `RenderAssetManager` is the key in this role because it manages creation and deletion of
 resources required for rendering.  
@@ -71,13 +71,17 @@ Rendering is handled by the `Renderer` class, which only contains methods for re
 The game uses a forward-rendering pipeline so framebuffers aren't needed.  
 ![Renderer UML diagram](./design/renderer.png)
 
+User interface is handled by the `GUI` class which holds `Label`s.  
+Rendering of the UI is called by the `Game` class.  
+![GUI UML diagram](./design/label.png)
+
 ## Sound
 Sound will be implemented in future versions.
 
 ## Game
 The `gm` namespace contains `Game` and `Scene` classes.  
-`Scene` just holds data for the `Maze` and the `Ball`,
+`Scene` holds data for the `Maze` and the `Ball`,
 as well as the list of `Renderable`s, `Light`s and the game `Camera`.  
-`Scene`'s only functionality is updating the physics simulation,
-because `Game` takes care of rendering by passing the data to the `Renderer`.  
+`Scene`'s functionality is updating the physics simulation and the camera,
+while `Game` takes care of passing input and rendering accordingly.  
 ![Game UML diagram](./design/game.png)

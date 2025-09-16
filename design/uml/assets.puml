@@ -76,23 +76,6 @@ class ren::Mesh {
 	-vertices: Vertex[]
 }
 
-class ren::Glyph {
-	+advance: int
-	+uv: Vec4
-}
-hide Glyph methods
-
-class ren::Font {
-	+create(texture, fileName, size, filtered)
-	+destroy()
-	..
-	+getTexture() : &Texture
-	--
-	-size: int
-	-texture: Texture&
-	-glyphs: Glyph[]
-}
-
 class ren::RenderAssetManager {
 	+initFromConfig(fileName)
 	..
@@ -134,15 +117,12 @@ Texture <-down- TextureFormat
 RenderAssetManager *-down- Shader
 RenderAssetManager *-down- Texture
 RenderAssetManager *-left- Material
-RenderAssetManager *-down- Mesh
-RenderAssetManager *-right- Font
+RenderAssetManager *-right- Mesh
 
 Material <-- Shader
 Material <-- Texture
 
 Mesh <-down- Vertex
-
-Font <-down- Glyph
 
 main *-- RenderAssetManager
 
