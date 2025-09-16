@@ -60,14 +60,16 @@ class ren::GUI {
 	..
 	-shader: &Shader
 	-font: &Font
+	-mesh: &Mesh
 	..
-	-frame: Vec4
+	-labels: map<str, Label>
 }
 
 class ren::Label {
-	+create(position, text)
+	+create(size, position, text)
 	..
 	+position: Vec3
+	+size: float
 	+text: string
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <gm/scene.hpp>
 #include <in/input.hpp>
+#include <ren/gui.hpp>
 #include <ren/renderassetmanager.hpp>
 
 namespace gm {
@@ -16,6 +17,7 @@ namespace gm {
 		void onResize(int width, int height);
 
 	private:
-		Scene currentScene;
+		ren::GUI gui;
+		Scene scene;
 	};
 }
