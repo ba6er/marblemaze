@@ -85,4 +85,4 @@ FONTS
 # Fonts are located in res/font/
 # Table format for fonts:
 # name                  font source file        size in pixels          filtered (T/F)
-noto16                  notoSerif.ttf           16                      T
+noto48                  notoSerif.ttf           48                      T

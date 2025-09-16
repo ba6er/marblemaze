@@ -8,7 +8,7 @@ namespace ren {
 	class Glyph {
 
 	public:
-		int advance;
+		int width, advance;
 		lin::Vec4 uv;
 	};
 
@@ -21,6 +21,10 @@ namespace ren {
 		void destroy();
 
 		Texture& getTexture();
+		Glyph getGlyph(int glyph) const;
+		int getSize() const;
+		int getWidth() const;
+		int getHeight() const;
 
 	private:
 		static inline constexpr int FirstGlyph = ' '; // ' ' = 32

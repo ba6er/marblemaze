@@ -2,6 +2,7 @@
 set separator ::
 
 class ren::Glyph {
+	+width: int
 	+advance: int
 	+uv: Vec4
 }
@@ -12,6 +13,10 @@ class ren::Font {
 	+destroy()
 	..
 	+getTexture() : &Texture
+	+getGlyph(c) : Glyph
+	+getSize() : int
+	+getWidth() : int
+	+getHeight() : int
 	--
 	-size: int
 	-texture: Texture&
@@ -75,11 +80,12 @@ enum ren::TextAlign {
 hide TextAlign methods
 
 class ren::Label {
-	+create(size, position, text, align)
+	+create(size, text, position, color, align)
 	..
-	+position: Vec3
 	+size: float
 	+text: string
+	+position: Vec3
+	+color: Vec3
 	+align: uint
 }
 

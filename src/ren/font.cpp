@@ -8,7 +8,7 @@ using namespace ren;
 
 Font::Font() : size(0), texture(nullptr) {
 	for (int i = 0; i < NumGlyphs; i++) {
-		glyphs[i] = {0, {0, 0, 0, 0}};
+		glyphs[i] = {0, 0, {0, 0, 0, 0}};
 	}
 }
 
@@ -58,7 +58,7 @@ void Font::create(Texture* texture, std::string_view fileName, int size, bool fi
 		stbtt_GetCodepointBitmapBox(&info, c, scale, scale, &left, &bottom, &right, &top);
 
 		int y = ascent + bottom;
-		int byteOffset = x + lsb + (y * atlasWidth);
+		int byteOffset = x + (y * atlasWidth);
 		stbtt_MakeCodepointBitmap(
 			&info,
 			&atlasData[byteOffset],
@@ -69,7 +69,7 @@ void Font::create(Texture* texture, std::string_view fileName, int size, bool fi
 			scale,
 			c);
 
-		glyphs[c - FirstGlyph] = {advance, {x / atlasWidth, 0, (x + advance) / atlasWidth, 1}};
+		glyphs[c - FirstGlyph] = {right - left, advance, {x / atlasWidth, 0, (x + right - left) / atlasWidth, 1}};
 		x += advance;
 	}
 
@@ -85,9 +85,29 @@ void Font::destroy() {
 	texture = nullptr;
 }
 
-
 Texture& Font::getTexture() {
 	DEBUG_ASSERT(texture != nullptr, "This font hasn't been initialized");
 	return *texture;
 }
 
+Glyph Font::getGlyph(int glyph) const {
+	if (glyph < FirstGlyph || glyph >= LastGlyph) {
+		DEBUG_WARNING("Glyph %c (%d) is out of bounds for this font", (char)glyph, glyph);
+		return {0, 0, {0}};
+	}
+	return glyphs[glyph - FirstGlyph];
+}
+
+int Font::getSize() const {
+	return size;
+}
+
+int Font::getWidth() const {
+	DEBUG_ASSERT(texture != nullptr, "This font hasn't been initialized");
+	return texture->getWidth();
+}
+
+int Font::getHeight() const {
+	DEBUG_ASSERT(texture != nullptr, "This font hasn't been initialized");
+	return texture->getHeight();
+}

@@ -56,9 +56,6 @@ int main() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
 	ram.initFromConfig(_RES_PATH "assets.txt");
 	game.onInit(width, height, ram);
 

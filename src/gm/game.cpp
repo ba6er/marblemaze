@@ -13,9 +13,9 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 
 	auto& guiMesh = ram.createMesh("gui");
 	guiMesh.create();
-	gui.create(ram.getShader("text"), ram.getFont("noto16"), guiMesh);
-	gui.setFrame(0, 0, width, height);
-	gui.addLabel("test").create(32, {width / 2.0f, 64.0f, 0.0f}, "Marble Maze");
+	gui.create(ram.getShader("text"), ram.getFont("noto48"), guiMesh);
+	gui.setFrame(0, width, 0, height);
+	gui.addLabel("test").create(48, "Marble Maze", {width / 2.0f, 32, 0}, {0, 0, 0});
 
 	scene.light = {
 		{1.0f, 9.9f, 1.0f},
@@ -73,7 +73,7 @@ void Game::onResize(int width, int height) {
 	ren::Renderer::resizeFrame(width, height);
 	scene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 
-	gui.setFrame(0, 0, width, height);
+	gui.setFrame(0, width, 0, height);
 }
 
 bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) {

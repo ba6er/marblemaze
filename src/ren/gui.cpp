@@ -1,14 +1,20 @@
 #include <ren/gui.hpp>
+#include <glad/glad.h>
 
 using namespace ren;
 
-Label::Label() : size(0), position({0, 0, 0}), text("") {}
+Label::Label() : size(0), text(""), position({0}), color({0}), align(0) {}
 
-void Label::create(float size, lin::Vec3 position, std::string_view text, TextAlignMask align) {
+void Label::create(float size, std::string_view text, lin::Vec3 position, lin::Vec3 color, uint align) {
 	this->size = size;
-	this->position = position;
 	this->text = std::string(text);
+	this->position = position;
+	this->color = color;
 	this->align = align;
+}
+
+void Label::create(float size, std::string_view text, lin::Vec3 position) {
+	create(size, text, position, {1, 1, 1});
 }
 
 GUI::GUI() : shader(nullptr), font(nullptr), mesh(nullptr), labels() {}
@@ -40,7 +46,63 @@ Label& GUI::getLabel(std::string_view name) {
 
 void GUI::display() {
 	updateMesh();
+
+	glDisable(GL_DEPTH_TEST);
+
+	font->getTexture().use(0);
+	shader->use();
+	mesh->draw();
 }
 
 void ren::GUI::updateMesh() {
+	mesh->clear();
+
+	for (auto& labelKV : labels) {
+		Label& l = labelKV.second;
+		if (l.text.empty()) {
+			continue;
+		}
+
+		float hScale = l.size / font->getHeight();
+		lin::Vec2 offs = {0, -l.size / 4};
+		if (!(l.align & TextAlign::Left)) {
+			float width = 0;
+			for (auto& c : l.text) {
+				width += font->getGlyph(c).advance * hScale;
+			}
+			if (l.align & TextAlign::Right) {
+				offs.x = -width;
+			} else {
+				offs.x = -width / 2;
+			}
+		}
+		if (l.align & TextAlign::Top) {
+			offs.y = 0;
+		}
+		if (l.align & TextAlign::Bottom) {
+			offs.y = -l.size / 2;
+		}
+
+		float adv = 0;
+		for (auto& c : l.text) {
+			Glyph g = font->getGlyph(c);
+
+			float cw = g.width * hScale;
+			lin::Vec2 vp = {adv + l.position.x + offs.x, l.position.y + offs.y};
+			Vertex square[] = {
+				{{vp.x,      vp.y,          0}, l.color, {g.uv.x, g.uv.y}, {0}},
+				{{vp.x + cw, vp.y,          0}, l.color, {g.uv.z, g.uv.y}, {0}},
+				{{vp.x + cw, vp.y + l.size, 0}, l.color, {g.uv.z, g.uv.w}, {0}},
+				{{vp.x,      vp.y + l.size, 0}, l.color, {g.uv.x, g.uv.w}, {0}},
+			};
+			mesh->addVertex(square[0]);
+			mesh->addVertex(square[1]);
+			mesh->addVertex(square[2]);
+			mesh->addVertex(square[2]);
+			mesh->addVertex(square[3]);
+			mesh->addVertex(square[0]);
+
+			adv += g.advance * hScale;
+		}
+	}
 }

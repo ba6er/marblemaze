@@ -16,19 +16,20 @@ namespace ren {
 		Bottom = 1 << 2,
 		Top    = 1 << 3,
 	};
-	using TextAlignMask = uint;
 
 	class Label {
 
 	public:
 		Label();
 
-		void create(float size, lin::Vec3 position, std::string_view text, TextAlignMask align = Center);
+		void create(float size, std::string_view text, lin::Vec3 position, lin::Vec3 color, uint align = Center);
+		void create(float size, std::string_view text, lin::Vec3 position);
 
 		float size;
-		lin::Vec3 position;
 		std::string text;
-		TextAlignMask align;
+		lin::Vec3 position;
+		lin::Vec3 color;
+		uint align;
 	};
 
 	class GUI {
