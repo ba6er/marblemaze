@@ -2,7 +2,6 @@
 #include <geo/geometrytransform.hpp>
 #include <gm/game.hpp>
 #include <ren/renderer.hpp>
-#include <cmath>
 
 using namespace gm;
 
@@ -31,11 +30,11 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 
 	scene.cameraYaw = 0;
 	scene.cameraPitch = lin::Pi / 4;
-	scene.cameraDistance = 10;
+	scene.cameraDistance = scene.maze.getWidth() / 2 + 5;
 
 	lin::Vec3 cameraTarget = {
 		(int)(scene.maze.getWidth() / 2) * 1.0f,
-		0,
+		(int)(scene.maze.getHeight() / 2) * 1.0f,
 		(int)(scene.maze.getDepth() / 2) * 1.0f,
 	};
 	scene.camera.setTarget(cameraTarget);
@@ -48,7 +47,6 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 
 	scene.renderables.push_back(ren::Renderable());
 	scene.renderables[0].create(maze, ram.getMaterial("copperTextured"));
-
 
 	auto& marble = ram.createMesh("marble");
 	marble.create(20 * 16 * 3);
@@ -95,16 +93,11 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 			(pressed[3] - pressed[2]) * deltaTime);
 	}
 
-	if (input.getMouseL() == in::Pressed) {
-		scene.cameraYaw += input.getDeltaMouseX() * deltaTime * 0.2f;
-		float np = scene.cameraPitch + input.getDeltaMouseY() * deltaTime * 0.2f;
-		scene.cameraPitch = std::min(std::max(np, -lin::Pi / 2 + 0.1f), lin::Pi / 2 - 0.1f);
-		scene.updateCamera();
-	}
-
-	if (input.getScrollY() != 0) {
-		scene.cameraDistance -= input.getScrollY() * deltaTime * 10;
-		scene.updateCamera();
+	if (input.getMouseL() == in::Pressed || input.getScrollY() != 0) {
+		scene.updateCamera(
+			input.getDeltaMouseX() * deltaTime * 0.2f,
+			input.getDeltaMouseY() * deltaTime * 0.2f,
+			-input.getScrollY() * deltaTime * 10);
 	}
 
 	scene.updatePhysics(deltaTime);

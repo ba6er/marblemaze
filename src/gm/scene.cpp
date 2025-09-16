@@ -11,6 +11,19 @@ Scene::Scene()
 }
 
 void Scene::updateCamera() {
+	updateCamera(0, 0, 0);
+}
+
+
+void Scene::updateCamera(float deltaYaw, float deltaPitch, float deltaDistance) {
+	cameraYaw += deltaYaw;
+	cameraPitch = std::min(std::max(cameraPitch + deltaPitch, -lin::Pi / 2 + 0.1f), lin::Pi / 2 - 0.1f);
+
+	cameraDistance += deltaDistance;
+	if (cameraDistance <= 0) {
+		cameraDistance = 0.1f;
+	}
+
 	lin::Vec3 offset = camera.getTarget();
 	lin::Vec3 newPosition = {
 		offset.x + std::cos(cameraPitch) * std::cos(cameraYaw) * cameraDistance,

@@ -12,7 +12,7 @@ class gm::Game {
 }
 
 class gm::Scene {
-	+updateCamera()
+	+updateCamera(deltaYaw, deltaPitch, deltaDistance)
 	+updateMazeRotation(deltaPitch, deltaRoll)
 	+updatePhysics(deltaTime)
 	..
@@ -81,6 +81,6 @@ Game <-- Scene
 Maze <-up- BlockType
 
 Scene *-left- Maze
-Scene *-right- Marble
+Scene *-down- Marble
 
 @enduml

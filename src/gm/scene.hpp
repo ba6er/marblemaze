@@ -14,6 +14,7 @@ namespace gm {
 		Scene();
 
 		void updateCamera();
+		void updateCamera(float deltaYaw, float deltaPitch, float deltaDistance);
 		void updateMazeRotation(float deltaPitch, float deltaRoll);
 		void updatePhysics(float deltaTime);
 
