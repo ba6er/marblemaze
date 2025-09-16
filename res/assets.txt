@@ -8,6 +8,7 @@ SHADERS
 # name                  vertex source file      fragment source file
 basic3d                 basic3d.vert            basic3d.frag
 lighting3d              lighting3d.vert         lighting3d.frag
+text                    text.vert               text.frag
 
 TEXTURES
 # Textures are located in res/graphics/

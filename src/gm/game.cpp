@@ -11,7 +11,11 @@ Game::Game() : gui(), scene() {}
 void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	ren::Renderer::resizeFrame(width, height);
 
+	auto& guiMesh = ram.createMesh("gui");
+	guiMesh.create();
+	gui.create(ram.getShader("text"), ram.getFont("noto16"), guiMesh);
 	gui.setFrame(0, 0, width, height);
+	gui.addLabel("test").create(32, {width / 2.0f, 64.0f, 0.0f}, "Marble Maze");
 
 	scene.light = {
 		{1.0f, 9.9f, 1.0f},
