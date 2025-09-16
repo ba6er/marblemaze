@@ -9,16 +9,26 @@
 
 namespace ren {
 
+	enum TextAlign : uint {
+		Center = 0,
+		Left   = 1 << 0,
+		Right  = 1 << 1,
+		Bottom = 1 << 2,
+		Top    = 1 << 3,
+	};
+	using TextAlignMask = uint;
+
 	class Label {
 
 	public:
 		Label();
 
-		void create(float size, lin::Vec3 position, std::string_view text);
+		void create(float size, lin::Vec3 position, std::string_view text, TextAlignMask align = Center);
 
 		float size;
 		lin::Vec3 position;
 		std::string text;
+		TextAlignMask align;
 	};
 
 	class GUI {

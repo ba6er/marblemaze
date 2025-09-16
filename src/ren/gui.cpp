@@ -4,10 +4,11 @@ using namespace ren;
 
 Label::Label() : size(0), position({0, 0, 0}), text("") {}
 
-void Label::create(float size, lin::Vec3 position, std::string_view text) {
+void Label::create(float size, lin::Vec3 position, std::string_view text, TextAlignMask align) {
 	this->size = size;
 	this->position = position;
 	this->text = std::string(text);
+	this->align = align;
 }
 
 GUI::GUI() : shader(nullptr), font(nullptr), mesh(nullptr), labels() {}

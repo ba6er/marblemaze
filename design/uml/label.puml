@@ -65,12 +65,22 @@ class ren::GUI {
 	-labels: map<str, Label>
 }
 
+enum ren::TextAlign {
+	Center
+	Left
+	Right
+	Bottom
+	Top
+}
+hide TextAlign methods
+
 class ren::Label {
-	+create(size, position, text)
+	+create(size, position, text, align)
 	..
 	+position: Vec3
 	+size: float
 	+text: string
+	+align: uint
 }
 
 Font <-- Glyph
@@ -78,5 +88,7 @@ RenderAssetManager *-down- Font
 
 GUI <-left- RenderAssetManager
 GUI *-down- Label
+
+Label <-- TextAlign
 
 @enduml
