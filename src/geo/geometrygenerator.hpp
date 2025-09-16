@@ -1,5 +1,6 @@
 #pragma once
 #include <geo/geometrydata.hpp>
+#include <array>
 
 namespace geo {
 
@@ -21,5 +22,12 @@ namespace geo {
 		static GeometryData GenerateCube(CubeFaceMask faces = CubeFace::All);
 		static GeometryData GenerateIcosphere(lin::Vec3 color, int subdivisions = 0);
 		static GeometryData GenerateIcosphere(int subdivisions = 0);
+
+	private:
+		using Triangle = std::array<lin::Vec3, 3>;
+		using SubTriangle = std::array<Triangle, 4>;
+
+		static SubTriangle SubdivideTriangle(const Triangle& t);
+		static void AppendSubdivedTriangle(std::vector<Triangle>& tv, const Triangle& t, int subdivisions);
 	};
 }

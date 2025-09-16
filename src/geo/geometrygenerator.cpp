@@ -47,15 +47,14 @@ GeometryData GeometryGenerator::GenerateCube(CubeFaceMask faces) {
 }
 
 GeometryData GeometryGenerator::GenerateIcosphere(lin::Vec3 color, int subdivisions) {
-	// Sphere with radius of 0.5, with a golden ratio square inside for an icosahedron
-	constexpr float cx = 0.425325404175785f;
-	constexpr float cy = 0.262865556059567f;
+	// Golden ratio square used for an icosahedron
+	constexpr float g = 1.61803398875f;
 
 	constexpr lin::Vec3 corners[] = {
-		{ cx,  cy,  0 }, { 0,   cx, -cy}, { 0,   cx,  cy},
-		{ cy,  0,  -cx}, { cy,  0,   cx}, { cx, -cy,  0 },
-		{-cy,  0,  -cx}, {-cx,  cy,  0 }, {-cy,  0,   cx},
-		{ 0,  -cx, -cy}, { 0,  -cx,  cy}, {-cx, -cy,  0 },
+		{ g,  1,  0}, { 0,  g, -1}, { 0,  g,  1},
+		{ 1,  0, -g}, { 1,  0,  g}, { g, -1,  0},
+		{-1,  0, -g}, {-g,  1,  0}, {-1,  0,  g},
+		{ 0, -g, -1}, { 0, -g,  1}, {-g, -1,  0},
 	};
 	constexpr int indices[] = {
 		0,  1,  2,    0,  3,  1,    0,  2,  4,    3,  0,  5,
@@ -65,29 +64,51 @@ GeometryData GeometryGenerator::GenerateIcosphere(lin::Vec3 color, int subdivisi
 		7,  11, 8,    11, 6,  9,    8,  11, 10,   10, 11, 9,
 	};
 
+	std::vector<Triangle> triangles;
+	for (int i = 0; i < 20; i++) {
+		Triangle t = {corners[indices[i * 3]], corners[indices[i * 3 + 1]], corners[indices[i * 3 + 2]]};
+		AppendSubdivedTriangle(triangles, t, subdivisions);
+	}
+
 	GeometryData gd;
-	for (int i = 0; i < 3 * 4; i++) {
-			lin::Vec3 nc = corners[i] * 2;
+	for (int i = 0; i < triangles.size(); i++) {
+		for (int j = 0; j < 3; j++) {
+			lin::Vec3 nc = triangles[i][j].normalize();
 			lin::Vec2 uv = { // Spherical projection
 				0.5f + std::atan2(nc.z, nc.x) / (2 * lin::Pi),
 				0.5f - std::asin(nc.y) / lin::Pi
 			};
-			gd.positions.push_back(corners[i]);
+			gd.indices.push_back(i * 3 + j);
+			gd.positions.push_back(nc / 2);
 			gd.normals.push_back(nc);
 			gd.uvs.push_back(uv);
 			gd.colors.push_back(color);
-	}
-	for (int i = 0; i < 3 * 4 * 5; i++) {
-		gd.indices.push_back(indices[i]);
-	}
-
-	if (subdivisions == 0) {
-		return gd;
+		}
 	}
 	return gd;
 }
 
 GeometryData GeometryGenerator::GenerateIcosphere(int subdivisions) {
 	return GenerateIcosphere({1, 1, 1}, subdivisions);
+}
+
+GeometryGenerator::SubTriangle GeometryGenerator::SubdivideTriangle(const Triangle& t) {
+	lin::Vec3 m[] = {(t[0] + t[1]) / 2, (t[1] + t[2]) / 2, (t[2] + t[0]) / 2};
+	Triangle t1 = {m[2], t[0], m[0]};
+	Triangle t2 = {m[0], t[1], m[1]};
+	Triangle t3 = {m[1], t[2], m[2]};
+	Triangle t4 = {m[0], m[1], m[2]};
+	return {t1, t2, t3, t4};
+}
+
+void GeometryGenerator::AppendSubdivedTriangle(std::vector<Triangle>& tv, const Triangle& t, int subdivisions) {
+	if (subdivisions == 0) {
+		tv.push_back(t);
+		return;
+	}
+	SubTriangle tArr = SubdivideTriangle(t);
+	for (auto& st : tArr) {
+		AppendSubdivedTriangle(tv, st, subdivisions - 1);
+	}
 }
 

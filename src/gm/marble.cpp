@@ -14,7 +14,7 @@ Marble::Marble(lin::Vec3 position, lin::Vec3 velocity, float radius)
 	: transform(lin::Mat4::Identity()), position(position), velocity(velocity), radius(radius), speed(0) {}
 
 geo::GeometryData Marble::toGeometry() const {
-	auto gd = geo::GeometryGenerator::GenerateIcosphere({1, 1, 1}, 0);
+	auto gd = geo::GeometryGenerator::GenerateIcosphere(2);
 	geo::GeometryTransform::Scale(gd, {radius * 2, radius * 2, radius * 2});
 	return gd;
 }

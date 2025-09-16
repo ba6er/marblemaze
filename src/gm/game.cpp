@@ -43,8 +43,9 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	currentScene.renderables.push_back(ren::Renderable());
 	currentScene.renderables[0].create(maze, ram.getMaterial("copperTextured"));
 
+
 	auto& marble = ram.createMesh("marble");
-	marble.create(6 * 6);
+	marble.create(20 * 16 * 3);
 	marble.addGeometry(currentScene.marble.toGeometry());
 
 	currentScene.renderables.push_back(ren::Renderable());

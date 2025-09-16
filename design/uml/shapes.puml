@@ -21,7 +21,10 @@ hide GeometryData methods
 
 class geo::GeometryGenerator {
 	{static} +GenerateCube(faces) : GeometryData
-	{static} +GenerateIcosphere(subdivision) : GeometryData
+	{static} +GenerateIcosphere(subdivisions) : GeometryData
+	--
+	{static} -SubdivideTriangle(t) : Vec3[3][4]
+	{static} -AppendSubdivedTriangle(triangleVector, t, subdivisions)
 }
 hide GeometryGenerator fields
 
