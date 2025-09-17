@@ -1,7 +1,7 @@
 @startuml
 set separator ::
 
-class ren::Shader {
+class rs::Shader {
 	+create(vert, frag)
 	+destroy()
 	..
@@ -15,7 +15,7 @@ class ren::Shader {
 	-id: uint
 }
 
-class ren::TextureFormat {
+class rs::TextureFormat {
 	+filtered: bool
 	+textureFormat: int
 	+sourceFormat: int
@@ -23,7 +23,7 @@ class ren::TextureFormat {
 }
 hide TextureFormat methods
 
-class ren::Texture {
+class rs::Texture {
 	+create(width, height, data, format)
 	+create(fileName, filtered, mipmaps)
 	+create()
@@ -40,7 +40,7 @@ class ren::Texture {
 	-id: uint
 }
 
-class ren::Material {
+class rs::Material {
 	+create(&shader)
 	..
 	+use()
@@ -53,7 +53,7 @@ class ren::Material {
 	-uniforms: map<str, variant>
 }
 
-class ren::Vertex {
+class rs::Vertex {
 	+position: Vec3
 	+color: Vec3
 	+atlas: Vec2
@@ -61,7 +61,7 @@ class ren::Vertex {
 }
 hide Vertex methods
 
-class ren::Mesh {
+class rs::Mesh {
 	+create()
 	+destroy()
 	..
@@ -76,14 +76,52 @@ class ren::Mesh {
 	-vertices: Vertex[]
 }
 
-class ren::RenderAssetManager {
+class rs::Glyph {
+	+width: int
+	+advance: int
+	+uv: Vec4
+}
+hide Glyph methods
+
+class rs::Font {
+	+create(&texture, fileName, size, filtered)
+	..
+	+getTexture() : &Texture
+	+getGlyph(c) : Glyph
+	+getSize() : int
+	+getWidth() : int
+	+getHeight() : int
+	--
+	-size: int
+	-texture: &Texture
+	-glyphs: Glyph[]
+}
+
+class rs::Sound {
+	+create(fileName)
+	+destroy()
+	..
+	+play()
+	+loop()
+	+stop()
+	..
+	+isPlaying() : bool
+	+isLooping() : bool
+	--
+	-source: ma_sound
+	-pooping: bool
+	-playing: bool
+}
+
+class rs::ResourceManager {
 	+initFromConfig(fileName)
 	..
-	+createShader(name) : &Shader
-	+createTexture(name) : &Texture
-	+createMaterial(name) : &Material
-	+createMesh(name) : &Mesh
-	+createFont(name) : &Font
+	+createShader(name, ...) : &Shader
+	+createTexture(name, ...) : &Texture
+	+createMaterial(name, ...) : &Material
+	+createMesh(name, ...) : &Mesh
+	+createFont(name, ...) : &Font
+	+createSound(name, ...) : &Sound
 	+destroy()
 	..
 	+getShader(name) : &Shader
@@ -91,39 +129,36 @@ class ren::RenderAssetManager {
 	+getMaterial(name) : &Material
 	+getMesh(name) : &Mesh
 	+getFont(name) : &Font
+	+getSound(name) : &Sound
 	--
 	-stringToShader(configLine)
 	-stringToTexture(configLine)
-	-stringToMaterial(configLine1, configLine2)
+	-stringToMaterial(configLines)
 	-stringToFont(configLine)
+	-stringToSound(configLine)
 	..
 	-shaders: map<str, Shader>
 	-textures: map<str, Texture>
 	-materials: map<str, Material>
 	-meshes: map<str, Mesh>
 	-fonts: map<str, Font>
+	-sounds: map<str, Sound>
 }
-
-class main {
-	input: Input
-	ram: RenderAssetManager
-	game: Game
-}
-hide main circle
-hide main methods
 
 Texture <-down- TextureFormat
-
-RenderAssetManager *-down- Shader
-RenderAssetManager *-down- Texture
-RenderAssetManager *-left- Material
-RenderAssetManager *-right- Mesh
 
 Material <-- Shader
 Material <-- Texture
 
 Mesh <-down- Vertex
 
-main *-- RenderAssetManager
+Font <-left- Glyph
+
+ResourceManager *-down- Shader
+ResourceManager *-down- Texture
+ResourceManager *-left- Material
+ResourceManager *-right- Mesh
+ResourceManager *-up- Font
+ResourceManager *-up- Sound
 
 @enduml

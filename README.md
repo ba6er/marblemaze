@@ -24,54 +24,53 @@ For the release build, replace `Debug` with `Release`.
 
 # Design
 The game consists of 6 main namespaces which contain classes with a loosely similar purpose.  
-- `lin` for linear algebra and other math-related functionality
+- `la` for linear algebra and other math-related functionality
 - `in` for input handling
-- `geo` for generating mesh geometry
-- `ren` for rendering and managing underlying resources
-- `snd` for playing sound and managing sound resources
+- `rs` for managing resources
+- `rn` for rendering
+- `ge` for generating mesh geometry
 - `gm` for everything related to game logic
 
 ## Math
-The `lin` namespace contains `Vec2`, `Vec3`, `Vec4` and `Mat4` classes which are used by OpenGL for transformations.  
+The `la` namespace contains `Vec2`, `Vec3`, `Vec4` and `Mat4` classes which are used by OpenGL for transformations.  
 `Mat4` also contains static functions to generate commonly used matrices.  
-This is the specification UML diagram for `lin`.  
-![Math UML diagram](./design/math.png)
+![Math UML diagram](./design/la.png)
 
 ## Input
 The `in` namespace contains `Input` class, `KeyState` and `KeyName` enums.
 It keeps track of which keys and mouse buttons are pressed and where the mouse is.  
 Actual key names are held in `Input::KeyboardValues` which contains `GLFW_KEY` for each `KeyName`.  
-![Input UML diagram](./design/input.png)
+![Input UML diagram](./design/in.png)
 
-## Mesh geometry
-The `geo` namespace contains `GeometryData`, `GeometryGenerator` and `GeometryTransform` classes.  
-Class `GeometryData` has no functionality and all operations are done by helper classes.  
-![Shapes UML giagram](./design/shapes.png)
+## Resource management
+The `rs` namespace contains `ResourceManager` class
+which is responsible for creation and deletion of memory-related resources.
+Classes `Texture` and `Shader` encapsulate their OpenGL functions and data,
+while their references are used by `Material`.
+`Material` also hold relevant shader uniforms.  
+The `Mesh` class manages an OpenGL vertex array and it's relevant resources.  
+The `Font` class is responsible for loading TTF fonts into an OpenGL texture and holding glyph information.  
+The `Sound` class is a wrapper for miniaudio's `ma_sound` and it holds all logic needed for the game's audio.  
+![Resources UML diagram](./design/res.png)
 
 ## Rendering
-The `ren` namespace is roughly split in 3 parts; asset management, GUI and rendering.
-
-`RenderAssetManager` is the key in this role because it manages creation and deletion of
-resources required for rendering.  
-Classes `Texture` and `Shader` encapsulate their OpenGL functions and data,
-while their references are used by `Material`.  
-`Material` also hold relevant shader uniforms which can be an `int`, `uint`, `float` or `Mat4`.  
-The `Mesh` class manages an OpenGL vertex array and it's relevant resources.  
-![Assets UML diagram](./design/assets.png)
+The `rn` namespace is roughly split in 2 parts; rendering and GUI.
 
 Because separately using `Mesh` and `Material` would be tedious,
 `Renderable` holds those together, along with a transformation matrix.  
 Classes `Light` and `Camera` encapsulate data for OpenGL lighting and view/projection matrices.  
 Rendering is handled by the `Renderer` class, which only contains methods for rendering.  
 The game uses a forward-rendering pipeline so framebuffers aren't needed.  
-![Renderer UML diagram](./design/renderer.png)
+![Renderer UML diagram](./design/ren.png)
 
 User interface is handled by the `GUI` class which holds `Label`s.  
 Rendering of the UI is called by the `Game` class.  
-![GUI UML diagram](./design/label.png)
+![GUI UML diagram](./design/gui.png)
 
-## Sound
-Sound will be implemented in future versions.
+## Mesh geometry
+The `ge` namespace contains `GeometryData`, `GeometryGenerator` and `GeometryTransform` classes.  
+Class `GeometryData` has no functionality and all operations are done by helper classes.  
+![Geometry UML giagram](./design/geo.png)
 
 ## Game
 The `gm` namespace contains `Game` and `Scene` classes.  
@@ -79,4 +78,9 @@ The `gm` namespace contains `Game` and `Scene` classes.
 as well as the list of `Renderable`s, `Light`s and the game `Camera`.  
 `Scene`'s functionality is updating the physics simulation and the camera,
 while `Game` takes care of passing input and rendering accordingly.  
-![Game UML diagram](./design/game.png)
+![Game UML diagram](./design/gm.png)
+
+## How it all ties together
+The `main` function holds `Input`, `ResourceManager` and `Game` classes, initializing and destroying them .  
+It also does the initialization and destroying of resources for GLFW and miniaudio, as well as running the program loop at a fixed tick-rate.  
+![Main UML diagram](./design/main.png)

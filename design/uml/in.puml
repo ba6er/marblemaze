@@ -47,16 +47,7 @@ class in::Input {
 	-scrollX, scrollY: float
 }
 
-class main {
-	input: Input
-	ram: RenderAssetManager
-	game: Game
-}
-hide main circle
-hide main methods
-
 Input <-left- KeyState
 Input <-right- KeyName
-main *-down- Input
 
 @enduml

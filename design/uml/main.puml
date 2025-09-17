@@ -1,0 +1,25 @@
+@startuml
+set separator ::
+
+class in::Input
+hide Input members
+
+class rs::ResourceManager
+hide ResourceManager members
+
+class gm::Game
+hide Game members
+
+class main {
+	input: Input
+	resource: ResourceManager
+	game: Game
+}
+hide main circle
+hide main methods
+
+main *-up- Input
+main *-up- ResourceManager
+main *-up- Game
+
+@enduml

@@ -23,15 +23,8 @@ MATERIALS
 # ambient (0-100 rbg)   diffuse (0-100 rgb)     specular (0-100 rgb)    shininess
 sky                     basic3d                 1                       sky
 -
-blankBasic              basic3d                 1                       blank
--
-copperBasic             basic3d                 1                       copper
--
-blank                   lighting3d              1                       blank
-100 100 100             100 100 100             100 100 100             16
 copperTextured          lighting3d              1                       copper
 100 100 100             100 100 100             100 100 100             16
-# Materials from http://devernay.free.fr/cours/opengl/materials.html
 emerald                 lighting3d              1                       blank
 002 017 002             008 061 008             063 073 063             77
 

@@ -1,0 +1,59 @@
+@startuml
+set separator ::
+
+class rn::Renderable {
+	+create(&mesh, &material)
+	..
+	+mesh: &Mesh
+	+material: &Material
+	+transform: Mat4
+}
+
+class rn::Camera {
+	+project2d(left, right, bottom, top, near, far)
+	+project3d(fov, aspect, near, far)
+	..
+	+setPosition(pos)
+	+setTarget(target)
+	+setUp(up)
+	..
+	+getPosition() : Vec3
+	+getTarget() : Vec3
+	+getUp() : Vec3
+	..
+	+getViewMatrix() : Mat4
+	+getProjectionMatrix() : Mat4
+	--
+	-updateViewMatrix()
+	..
+	-pos: Vec3
+	-target: Vec3
+	-up: Vec3
+	..
+	-view: Mat4
+	-projection: Mat4
+}
+
+class rn::Light {
+	+position: Vec3
+	..
+	+ambient: Vec3
+	+diffuse: Vec3
+	+specular: Vec3
+}
+hide Light methods
+
+class rn::Renderer {
+	{static} +clear(red, green, blue)
+	{static} +render(&renderable)
+	{static} +render(&camera, &renderables[], &light)
+	..
+	{static} +resizeFrame(width, height)
+}
+hide Renderer fields
+
+Renderer <-- Camera
+Renderer <-- Renderable
+Renderer <-left- Light
+
+@enduml

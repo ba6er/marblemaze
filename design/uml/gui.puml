@@ -1,0 +1,48 @@
+@startuml
+set separator ::
+
+class rn::GUI {
+	+create(&shader, &font, &mesh)
+	+setFrame(left, right, bottom, top)
+	..
+	+addLabel(name) : &Label
+	+getLabel(name) : &Label
+	+removeLabel(name)
+	..
+	+display()
+	--
+	-updateMesh()
+	..
+	-shader: &Shader
+	-font: &Font
+	-mesh: &Mesh
+	..
+	-labels: map<str, Label>
+	..
+	-needsUpdate: bool
+}
+
+enum rn::TextAlign {
+	Center
+	Left
+	Right
+	Bottom
+	Top
+}
+hide TextAlign methods
+
+class rn::Label {
+	+create(size, text, position, color, align)
+	..
+	+size: float
+	+text: string
+	+position: Vec3
+	+color: Vec3
+	+align: uint
+}
+
+Label <-- TextAlign
+
+GUI *-left- Label
+
+@enduml

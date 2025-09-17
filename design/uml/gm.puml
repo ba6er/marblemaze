@@ -67,20 +67,11 @@ class gm::Marble {
 	+speed: float
 }
 
-class main {
-	input: Input
-	ram: RenderAssetManager
-	game: Game
-}
-hide main circle
-hide main methods
-
-main *-- Game
-Game <-- Scene
-
 Maze <-up- BlockType
 
 Scene *-left- Maze
 Scene *-down- Marble
+
+Game <-- Scene
 
 @enduml

@@ -1,7 +1,7 @@
 @startuml
 set separator ::
 
-enum geo::CubeFace {
+enum ge::CubeFace {
 	Front  	Back
 	Left   	Right
 	Top    	Bottom
@@ -9,7 +9,7 @@ enum geo::CubeFace {
 }
 hide CubeFace methods
 
-class geo::GeometryData {
+class ge::GeometryData {
 	+positions: Vec3[]
 	+colors: Vec3[]
 	+uvs: Vec2[]
@@ -19,7 +19,7 @@ class geo::GeometryData {
 }
 hide GeometryData methods
 
-class geo::GeometryGenerator {
+class ge::GeometryGenerator {
 	{static} +GenerateCube(faces) : GeometryData
 	{static} +GenerateIcosphere(subdivisions) : GeometryData
 	--
@@ -28,7 +28,7 @@ class geo::GeometryGenerator {
 }
 hide GeometryGenerator fields
 
-class geo::GeometryTransform {
+class ge::GeometryTransform {
 	{static} +ApplyMatrix(&gd, matrix)
 	..
 	{static} +Scale(&gd, scale)
