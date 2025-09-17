@@ -4,7 +4,9 @@
 
 using namespace rs;
 
-void ResourceManager::initFromConfig(std::string_view fileName) {
+void ResourceManager::initFromConfig(std::string_view fileName, ma_engine* audioEngine) {
+	this->audioEngine = audioEngine;
+
 	std::ifstream configIn(fileName.data());
 	CRITICAL_ASSERT(configIn.is_open(), "No configuration file by the name of %s", fileName.data());
 	std::string configLine = "", configLine2 = "";
@@ -50,6 +52,9 @@ void ResourceManager::initFromConfig(std::string_view fileName) {
 		}
 		if (stage == 4) {
 			stringToFont(configLine);
+		}
+		if (stage == 5) {
+			stringToSound(configLine);
 		}
 	}
 	CRITICAL_TRACE("Loaded asset configuration from %s", fileName.data());
@@ -102,6 +107,12 @@ Font& ResourceManager::createFont(
 	return fonts.at(name);
 }
 
+Sound& ResourceManager::createSound(const std::string& name, std::string_view fileName) {
+	sounds[name] = Sound();
+	sounds.at(name).create(fileName, audioEngine);
+	return sounds.at(name);
+}
+
 void ResourceManager::destroy() {
 	for (auto& shader : shaders) {
 		shader.second.destroy();
@@ -112,9 +123,16 @@ void ResourceManager::destroy() {
 	for (auto& mesh : meshes) {
 		mesh.second.destroy();
 	}
-	for (auto& font : fonts) {
-		font.second.destroy();
+	for (auto& sound : sounds) {
+		sound.second.destroy();
 	}
+	audioEngine = nullptr;
+	shaders.clear();
+	textures.clear();
+	materials.clear();
+	meshes.clear();
+	fonts.clear();
+	sounds.clear();
 }
 
 Shader& ResourceManager::getShader(std::string_view name) {
@@ -144,6 +162,12 @@ Mesh& ResourceManager::getMesh(std::string_view name) {
 Font& ResourceManager::getFont(std::string_view name) {
 	auto value = fonts.find(name);
 	DEBUG_ASSERT(value != fonts.end(), "No font by the name of \"%s\"", name.data());
+	return value->second;
+}
+
+Sound& ResourceManager::getSound(std::string_view name) {
+	auto value = sounds.find(name);
+	DEBUG_ASSERT(value != sounds.end(), "No sound by the name of \"%s\"", name.data());
 	return value->second;
 }
 
@@ -216,3 +240,14 @@ void ResourceManager::stringToFont(const std::string& configLine) {
 	DEBUG_TRACE("Loaded font \"%s\" from \"%s\"", name.c_str(), fileName.c_str());
 }
 
+void ResourceManager::stringToSound(const std::string& configLine) {
+	std::istringstream soundConfig(configLine);
+	std::string name, fileName;
+	soundConfig >> name >> fileName;
+
+	std::string ssf = std::string(_RES_PATH) + std::string("sound/") + fileName;
+
+	createSound(name, ssf.c_str());
+
+	DEBUG_TRACE("Loaded sound \"%s\" from \"%s\"", name.c_str(), fileName.c_str());
+}

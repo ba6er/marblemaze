@@ -65,7 +65,7 @@ int main() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	resource.initFromConfig(_RES_PATH "assets.txt");
+	resource.initFromConfig(_RES_PATH "assets.txt", &audioEngine);
 	game.onInit(width, height, resource);
 
 	float tickTime     = 1.0f / fps;

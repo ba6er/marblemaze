@@ -18,7 +18,6 @@ namespace rs {
 		Font();
 
 		void create(Texture& texture, std::string_view fileName, int size, bool filtered);
-		void destroy();
 
 		Texture& getTexture();
 		Glyph getGlyph(int glyph) const;
