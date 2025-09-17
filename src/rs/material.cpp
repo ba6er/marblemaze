@@ -18,7 +18,7 @@ void Material::use() const {
 		return;
 	}
 
-	for (auto &u: uniforms) {
+	for (auto &u : uniforms) {
 		shader->setUniform(u.first.c_str(), u.second);
 	}
 	for (int i = 0; i < MAX_TEXTURES; i++) {

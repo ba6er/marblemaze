@@ -80,7 +80,7 @@ void GUI::updateMesh() {
 		la::Vec2 offs = {0, -l.size / 4};
 		if (!(l.align & TextAlign::Left)) {
 			float width = 0;
-			for (auto& c : l.text) {
+			for (char c : l.text) {
 				width += font->getGlyph(c).advance * hScale;
 			}
 			if (l.align & TextAlign::Right) {
@@ -97,7 +97,7 @@ void GUI::updateMesh() {
 		}
 
 		float adv = 0;
-		for (auto& c : l.text) {
+		for (char c : l.text) {
 			Glyph g = font->getGlyph(c);
 
 			float cw = g.width * hScale;

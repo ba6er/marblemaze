@@ -39,23 +39,23 @@ void Game::onInit(int width, int height, rs::ResourceManager& resource) {
 	scene.camera.project3d(72 * la::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 	scene.updateCamera();
 
-	auto& maze = resource.createMesh("maze", 6 * 6 * 9 * 9 * 2);
+	rs::Mesh& maze = resource.createMesh("maze", 6 * 6 * 9 * 9 * 2);
 	maze.addGeometry(scene.maze.toGeometry());
 
 	scene.renderables.push_back(rn::Renderable());
 	scene.renderables[0].create(maze, resource.getMaterial("copperTextured"));
 
-	auto& marble = resource.createMesh("marble", 20 * 16 * 3);
+	rs::Mesh& marble = resource.createMesh("marble", 20 * 16 * 3);
 	marble.addGeometry(scene.marble.toGeometry());
 
 	scene.renderables.push_back(rn::Renderable());
 	scene.renderables[1].create(marble, resource.getMaterial("emerald"));
 
-	auto skybox = ge::GeometryGenerator::GenerateCube();
+	ge::GeometryData skybox = ge::GeometryGenerator::GenerateCube();
 	ge::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
 	ge::GeometryTransform::Translate(skybox, cameraTarget);
 
-	auto& sky = resource.createMesh("sky", 6 * 6);
+	rs::Mesh& sky = resource.createMesh("sky", 6 * 6);
 	sky.addGeometry(skybox);
 
 	scene.renderables.push_back(rn::Renderable());

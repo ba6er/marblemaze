@@ -107,7 +107,7 @@ void GeometryGenerator::AppendSubdivedTriangle(std::vector<Triangle>& tv, const 
 		return;
 	}
 	SubTriangle tArr = SubdivideTriangle(t);
-	for (auto& st : tArr) {
+	for (ge::GeometryGenerator::Triangle& st : tArr) {
 		AppendSubdivedTriangle(tv, st, subdivisions - 1);
 	}
 }

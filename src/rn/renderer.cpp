@@ -23,7 +23,7 @@ void Renderer::render(const Camera& camera, const std::vector<Renderable>& rende
 	la::Mat4 view = camera.getViewMatrix();
 	la::Mat4 projection = camera.getProjectionMatrix();
 
-	for (auto& r : renderables) {
+	for (const Renderable& r : renderables) {
 		r.material->setUniform("model", r.transform);
 		r.material->setUniform("view", view);
 		r.material->setUniform("projection", projection);

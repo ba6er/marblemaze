@@ -3,11 +3,11 @@
 using namespace ge;
 
 void GeometryTransform::ApplyMatrix(GeometryData& gd, const la::Mat4& matrix) {
-	for (auto& p : gd.positions) {
+	for (la::Vec3& p : gd.positions) {
 		p = matrix * p;
 	}
 	la::Mat4 inverseTransposeMatrix = matrix.inverse().transpose();
-	for (auto& n : gd.normals) {
+	for (la::Vec3& n : gd.normals) {
 		n = (inverseTransposeMatrix * n).normalize();
 	}
 }
@@ -25,8 +25,7 @@ void GeometryTransform::Translate(GeometryData& gd, la::Vec3 translation) {
 }
 
 void GeometryTransform::ApplyColor(GeometryData& gd, la::Vec3 color) {
-	for (auto& c : gd.colors) {
+	for (la::Vec3& c : gd.colors) {
 		c = color;
 	}
 }
-

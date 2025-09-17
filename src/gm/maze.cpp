@@ -65,7 +65,7 @@ ge::GeometryData Maze::toGeometry() const {
 		for (int y = 0; y < height; y++) {
 			for (int z = 0; z < depth; z++) {
 				if (getBlock(x, y, z) == Wall) {
-					auto cube = ge::GeometryGenerator::GenerateCube();
+					ge::GeometryData cube = ge::GeometryGenerator::GenerateCube();
 					la::Vec3 position = {(float)x, (float)y, (float)z};
 					ge::GeometryTransform::Translate(cube, position);
 					fullData += cube;

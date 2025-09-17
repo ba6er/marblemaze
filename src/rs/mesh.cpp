@@ -73,7 +73,7 @@ void Mesh::addVertex(const Vertex& v) {
 }
 
 void Mesh::addGeometry(const ge::GeometryData& gd) {
-	for (auto i : gd.indices) {
+	for (uint i : gd.indices) {
 		addVertex({gd.positions[i], gd.colors[i], gd.uvs[i], gd.normals[i]});
 	}
 }
