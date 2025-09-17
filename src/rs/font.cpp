@@ -12,8 +12,8 @@ Font::Font() : size(0), texture(nullptr) {
 	}
 }
 
-void Font::create(Texture* texture, std::string_view fileName, int size, bool filtered) {
-	this->texture = texture;
+void Font::create(Texture& texture, std::string_view fileName, int size, bool filtered) {
+	this->texture = &texture;
 	this->size = size;
 
 	std::ifstream fontFile(fileName.data(), std::ios::binary);
@@ -74,9 +74,9 @@ void Font::create(Texture* texture, std::string_view fileName, int size, bool fi
 	}
 
 	if (filtered) {
-		texture->create(atlasWidth, atlasHeight, atlasData, TextureFormat::LinearFont());
+		texture.create(atlasWidth, atlasHeight, atlasData, TextureFormat::LinearFont());
 	} else {
-		texture->create(atlasWidth, atlasHeight, atlasData, TextureFormat::NearestFont());
+		texture.create(atlasWidth, atlasHeight, atlasData, TextureFormat::NearestFont());
 	}
 	free(atlasData);
 }

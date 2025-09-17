@@ -19,7 +19,7 @@ namespace rs {
 	public:
 		Mesh();
 
-		void create(int initVerts = 6);
+		void create(int initVerts);
 		void destroy();
 
 		void addVertex(const Vertex& v);

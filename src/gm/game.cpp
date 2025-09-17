@@ -10,9 +10,7 @@ Game::Game() : gui(), scene() {}
 void Game::onInit(int width, int height, rs::ResourceManager& resource) {
 	rn::Renderer::resizeFrame(width, height);
 
-	auto& guiMesh = resource.createMesh("gui");
-	guiMesh.create();
-	gui.create(resource.getShader("text"), resource.getFont("noto48"), guiMesh);
+	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui"));
 	gui.setFrame(0, width, 0, height);
 	gui.addLabel("test").create(48, "Marble Maze", {width / 2.0f, 32, 0});
 
@@ -41,15 +39,13 @@ void Game::onInit(int width, int height, rs::ResourceManager& resource) {
 	scene.camera.project3d(72 * la::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 	scene.updateCamera();
 
-	auto& maze = resource.createMesh("maze");
-	maze.create(6 * 6 * 9 * 9 * 2);
+	auto& maze = resource.createMesh("maze", 6 * 6 * 9 * 9 * 2);
 	maze.addGeometry(scene.maze.toGeometry());
 
 	scene.renderables.push_back(rn::Renderable());
 	scene.renderables[0].create(maze, resource.getMaterial("copperTextured"));
 
-	auto& marble = resource.createMesh("marble");
-	marble.create(20 * 16 * 3);
+	auto& marble = resource.createMesh("marble", 20 * 16 * 3);
 	marble.addGeometry(scene.marble.toGeometry());
 
 	scene.renderables.push_back(rn::Renderable());
@@ -59,8 +55,7 @@ void Game::onInit(int width, int height, rs::ResourceManager& resource) {
 	ge::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
 	ge::GeometryTransform::Translate(skybox, cameraTarget);
 
-	auto& sky = resource.createMesh("sky");
-	sky.create(6 * 6);
+	auto& sky = resource.createMesh("sky", 6 * 6);
 	sky.addGeometry(skybox);
 
 	scene.renderables.push_back(rn::Renderable());

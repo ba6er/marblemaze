@@ -25,7 +25,7 @@ namespace rs {
 		Texture();
 
 		void create(int width, int height, void* data, TextureFormat format);
-		void create(std::string_view fileName, bool filtered, int mipmaps = 4);
+		void create(std::string_view fileName, bool filtered, int mipmaps);
 		void create();
 		void destroy();
 

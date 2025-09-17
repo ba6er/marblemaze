@@ -55,8 +55,9 @@ void ResourceManager::initFromConfig(std::string_view fileName) {
 	CRITICAL_TRACE("Loaded asset configuration from %s", fileName.data());
 }
 
-Shader& ResourceManager::createShader(const std::string& name) {
+Shader& ResourceManager::createShader(const std::string& name, std::string_view vertex, std::string_view fragment) {
 	shaders[name] = Shader();
+	shaders.at(name).create(vertex, fragment);
 	return shaders.at(name);
 }
 
@@ -65,18 +66,39 @@ Texture& ResourceManager::createTexture(const std::string& name) {
 	return textures.at(name);
 }
 
-Material& ResourceManager::createMaterial(const std::string& name) {
+Texture& ResourceManager::createTexture(
+		const std::string& name,
+		int width, int height, void* data, TextureFormat format) {
+	textures[name] = Texture();
+	textures.at(name).create(width, height, data, format);
+	return textures.at(name);
+}
+
+Texture& ResourceManager::createTexture(
+		const std::string& name,
+		std::string_view fileName, bool filtered, int mipmaps) {
+	textures[name] = Texture();
+	textures.at(name).create(fileName, filtered, mipmaps);
+	return textures.at(name);
+}
+
+Material& ResourceManager::createMaterial(const std::string& name, std::string_view shaderName) {
 	materials[name] = Material();
+	materials.at(name).create(getShader(shaderName));
 	return materials.at(name);
 }
 
-Mesh& ResourceManager::createMesh(const std::string& name) {
+Mesh& ResourceManager::createMesh(const std::string& name, int initVerts) {
 	meshes[name] = Mesh();
+	meshes.at(name).create(initVerts);
 	return meshes.at(name);
 }
 
-Font& ResourceManager::createFont(const std::string& name) {
+Font& ResourceManager::createFont(
+		const std::string& name,
+		const std::string& textureName, std::string_view fileName, int size, bool filtered) {
 	fonts[name] = Font();
+	fonts.at(name).create(createTexture(textureName), fileName, size, filtered);
 	return fonts.at(name);
 }
 
@@ -133,7 +155,7 @@ void ResourceManager::stringToShader(const std::string& configLine) {
 	std::string vsf = std::string(_RES_PATH) + std::string("shader/") + vertSource;
 	std::string fsf = std::string(_RES_PATH) + std::string("shader/") + fragSource;
 
-	createShader(name).create(vsf.c_str(), fsf.c_str());
+	createShader(name, vsf.c_str(), fsf.c_str());
 
 	DEBUG_TRACE("Loaded shader \"%s\" from \"%s\" and \"%s\"", name.c_str(), vertSource.c_str(), fragSource.c_str());
 }
@@ -145,7 +167,7 @@ void ResourceManager::stringToTexture(const std::string& configLine) {
 
 	std::string isf = std::string(_RES_PATH) + std::string("graphics/") + fileName;
 
-	createTexture(name).create(isf.c_str(), filtered == "T");
+	createTexture(name, isf.c_str(), filtered == "T");
 
 	DEBUG_TRACE("Loaded texture \"%s\" from \"%s\"", name.c_str(), fileName.c_str());
 }
@@ -156,8 +178,7 @@ void ResourceManager::stringToMaterial(const std::string& configLine1, const std
 	int numTextures = 0;
 	materialConfig1 >> name >> shader >> numTextures;
 
-	Material& m = createMaterial(name);
-	m.create(getShader(shader));
+	Material& m = createMaterial(name, shader);
 	for (int i = 0; i < numTextures; i++) {
 		materialConfig1 >> texture;
 		m.addTexture(i, getTexture(texture));
@@ -190,8 +211,7 @@ void ResourceManager::stringToFont(const std::string& configLine) {
 	std::string textureName = "_font_" + name;
 	std::string fsf = std::string(_RES_PATH) + std::string("font/") + fileName;
 
-	Texture& ft = createTexture(textureName);
-	createFont(name).create(&ft, fsf.c_str(), size, filtered == "T");
+	createFont(name, textureName, fsf.c_str(), size, filtered == "T");
 
 	DEBUG_TRACE("Loaded font \"%s\" from \"%s\"", name.c_str(), fileName.c_str());
 }

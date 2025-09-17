@@ -16,11 +16,14 @@ namespace rs {
 	public:
 		void initFromConfig(std::string_view fileName);
 
-		Shader& createShader(const std::string& name);
+		Shader& createShader(const std::string& name, std::string_view vertex, std::string_view fragment);
 		Texture& createTexture(const std::string& name);
-		Material& createMaterial(const std::string& name);
-		Mesh& createMesh(const std::string& name);
-		Font& createFont(const std::string& name);
+		Texture& createTexture(const std::string& name, int width, int height, void* data, TextureFormat format);
+		Texture& createTexture(const std::string& name, std::string_view fileName, bool filtered, int mipmaps = 4);
+		Material& createMaterial(const std::string& name, std::string_view shaderName);
+		Mesh& createMesh(const std::string& name, int initVerts = 6);
+		Font& createFont(
+			const std::string& name, const std::string& textureName, std::string_view fileName, int size, bool filtered);
 
 		void destroy();
 
