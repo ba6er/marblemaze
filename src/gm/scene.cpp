@@ -6,7 +6,8 @@ using namespace gm;
 Scene::Scene()
 		: camera(), renderables()
 		, marble(), maze()
-		, cameraDistance(10), cameraYaw(0), cameraPitch(0) {
+		, cameraDistance(10), cameraYaw(0), cameraPitch(0)
+		, marbleIsTouchingWalls({false, false, false}), marbleWasTouchingWalls({false, false, false}) {
 	light = {{0}};
 }
 
@@ -44,14 +45,12 @@ void Scene::updateMazeRotation(float deltaYaw, float deltaRoll) {
 	marble.transform = marble.transform * la::Mat4::Rotate(-deltaYaw, {-std::sin(cameraYaw), 0, std::cos(cameraYaw)});
 	marble.transform = marble.transform * la::Mat4::Rotate(-deltaRoll, {std::cos(cameraYaw), 0, std::sin(cameraYaw)});
 
-	marble.velocity = marble.transform * (la::Vec3){0, -marble.speed, 0};
-
 	la::Mat4 nt = la::Mat4::Translate(mazeCenter) * maze.transform * la::Mat4::Translate(-mazeCenter);
 	renderables[0].transform = nt;
 }
 
-
 void Scene::updatePhysics(float deltaTime) {
+	marble.velocity = marble.transform * (la::Vec3){0, -marble.speed, 0};
 
 	int minX = std::floor(marble.position.x - marble.radius);
 	int maxX = std::ceil(marble.position.x + marble.radius);
@@ -77,6 +76,8 @@ void Scene::updatePhysics(float deltaTime) {
 
 	// DEBUG_TRACE("%d %d %d %d %d %d", minX, maxX, minY, maxY, minZ, maxZ);
 
+	marbleWasTouchingWalls = marbleIsTouchingWalls;
+	marbleIsTouchingWalls = {false, false, false};
 	for (int y = minY; y <= maxY; y++) {
 		for (int z = minZ; z <= maxZ; z++) {
 			for (int x = minX; x <= maxX; x++) {
@@ -90,23 +91,33 @@ void Scene::updatePhysics(float deltaTime) {
 	marble.position += marble.velocity * deltaTime;
 }
 
+bool Scene::shouldPlaySound() {
+	bool tx = marbleWasTouchingWalls[0] != marbleIsTouchingWalls[0] && marbleIsTouchingWalls[0];
+	bool ty = marbleWasTouchingWalls[1] != marbleIsTouchingWalls[1] && marbleIsTouchingWalls[1];
+	bool tz = marbleWasTouchingWalls[2] != marbleIsTouchingWalls[2] && marbleIsTouchingWalls[2];
+	return tx || ty || tz;
+}
+
 void Scene::marbleBlockCollision(float x, float y, float z, float deltaTime) {
 	la::Vec3 newPosX = marble.position + (la::Vec3){marble.velocity.x * deltaTime, 0, 0};
 	float disX = DistanceSphereAABB({x, y, z}, newPosX);
 	if (disX < marble.radius) {
 		marble.velocity.x = 0;
+		marbleIsTouchingWalls[0] = true;
 	}
 
 	la::Vec3 newPosY = marble.position + (la::Vec3){0, marble.velocity.y * deltaTime, 0};
 	float disY = DistanceSphereAABB({x, y, z}, newPosY);
 	if (disY < marble.radius) {
 		marble.velocity.y = 0;
+		marbleIsTouchingWalls[1] = true;
 	}
 
 	la::Vec3 newPosZ = marble.position + (la::Vec3){0, 0, marble.velocity.z * deltaTime};
 	float disZ = DistanceSphereAABB({x, y, z}, newPosZ);
 	if (disZ < marble.radius) {
 		marble.velocity.z = 0;
+		marbleIsTouchingWalls[2] = true;
 	}
 }
 

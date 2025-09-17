@@ -96,6 +96,9 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 	}
 
 	scene.updatePhysics(deltaTime);
+	if (scene.shouldPlaySound()) {
+		resource.getSound("solid").play();
+	}
 
 	return true;
 }

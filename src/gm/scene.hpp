@@ -4,6 +4,7 @@
 #include <rn/camera.hpp>
 #include <rn/renderable.hpp>
 #include <rn/renderer.hpp>
+#include <array>
 #include <vector>
 
 namespace gm {
@@ -18,6 +19,8 @@ namespace gm {
 		void updateMazeRotation(float deltaPitch, float deltaRoll);
 		void updatePhysics(float deltaTime);
 
+		bool shouldPlaySound();
+
 		rn::Camera camera;
 		rn::Light light;
 		std::vector<rn::Renderable> renderables;
@@ -31,5 +34,9 @@ namespace gm {
 		void marbleBlockCollision(float x, float y, float z, float deltaTime);
 
 		static float DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere);
+
+		using BoolVec3 = std::array<bool, 3>;
+
+		BoolVec3 marbleIsTouchingWalls, marbleWasTouchingWalls;
 	};
 }
