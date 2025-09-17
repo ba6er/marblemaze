@@ -1,6 +1,6 @@
 #pragma once
-#include <geo/geometrydata.hpp>
-#include <lin/linalg.hpp>
+#include <ge/geometrydata.hpp>
+#include <la/linalg.hpp>
 
 namespace gm {
 
@@ -8,16 +8,16 @@ namespace gm {
 
 	public:
 		Marble();
-		Marble(lin::Vec3 position);
-		Marble(lin::Vec3 position, lin::Vec3 velocity);
-		Marble(lin::Vec3 position, lin::Vec3 velocity, float radius);
+		Marble(la::Vec3 position);
+		Marble(la::Vec3 position, la::Vec3 velocity);
+		Marble(la::Vec3 position, la::Vec3 velocity, float radius);
 
-		geo::GeometryData toGeometry() const;
+		ge::GeometryData toGeometry() const;
 
-		lin::Mat4 transform;
+		la::Mat4 transform;
 
-		lin::Vec3 position;
-		lin::Vec3 velocity;
+		la::Vec3 position;
+		la::Vec3 velocity;
 		float radius, speed;
 	};
 }

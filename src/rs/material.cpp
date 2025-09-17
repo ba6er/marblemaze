@@ -1,6 +1,6 @@
-#include <ren/material.hpp>
+#include <rs/material.hpp>
 
-using namespace ren;
+using namespace rs;
 
 Material::Material() : shader(nullptr) {
 	for (int i = 0; i < MAX_TEXTURES; i++) {

@@ -1,8 +1,8 @@
-#include <ren/mesh.hpp>
+#include <rs/mesh.hpp>
 #include <glad/glad.h>
 #include <cstdlib>
 
-using namespace ren;
+using namespace rs;
 
 Mesh::Mesh() : vao(0), vbo(0), numVerts(0), maxVerts(0), vertices(nullptr) {}
 
@@ -72,7 +72,7 @@ void Mesh::addVertex(const Vertex& v) {
 	numVerts++;
 }
 
-void Mesh::addGeometry(const geo::GeometryData& gd) {
+void Mesh::addGeometry(const ge::GeometryData& gd) {
 	for (auto i : gd.indices) {
 		addVertex({gd.positions[i], gd.colors[i], gd.uvs[i], gd.normals[i]});
 	}

@@ -2,7 +2,7 @@
 #include <util.hpp>
 #include <string_view>
 
-namespace ren {
+namespace rs {
 
 	class TextureFormat {
 

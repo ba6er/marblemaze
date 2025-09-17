@@ -1,6 +1,6 @@
 #include <gm/maze.hpp>
-#include <geo/geometrygenerator.hpp>
-#include <geo/geometrytransform.hpp>
+#include <ge/geometrygenerator.hpp>
+#include <ge/geometrytransform.hpp>
 #include <fstream>
 
 using namespace gm;
@@ -8,7 +8,7 @@ using namespace gm;
 Maze::Maze() : Maze(1, 1, 1) {}
 
 Maze::Maze(int width, int height, int depth)
-	: transform(lin::Mat4::Identity())
+	: transform(la::Mat4::Identity())
 	, width(width), height(height), depth(depth)
 	, blocks(width * height * depth, BlockType::Empty) {}
 
@@ -58,16 +58,16 @@ void Maze::setBlock(int x, int y, int z, BlockType block) {
 	blocks[index(x, y, z)] = block;
 }
 
-geo::GeometryData Maze::toGeometry() const {
-	geo::GeometryData fullData;
+ge::GeometryData Maze::toGeometry() const {
+	ge::GeometryData fullData;
 
 	for (int x = 0; x < width; x++) {
 		for (int y = 0; y < height; y++) {
 			for (int z = 0; z < depth; z++) {
 				if (getBlock(x, y, z) == Wall) {
-					auto cube = geo::GeometryGenerator::GenerateCube();
-					lin::Vec3 position = {(float)x, (float)y, (float)z};
-					geo::GeometryTransform::Translate(cube, position);
+					auto cube = ge::GeometryGenerator::GenerateCube();
+					la::Vec3 position = {(float)x, (float)y, (float)z};
+					ge::GeometryTransform::Translate(cube, position);
 					fullData += cube;
 				}
 			}

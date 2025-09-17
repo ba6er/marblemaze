@@ -1,8 +1,8 @@
 #pragma once
 #include <gm/scene.hpp>
 #include <in/input.hpp>
-#include <ren/gui.hpp>
-#include <ren/renderassetmanager.hpp>
+#include <rn/gui.hpp>
+#include <rs/resourcemanager.hpp>
 
 namespace gm {
 
@@ -11,13 +11,13 @@ namespace gm {
 	public:
 		Game();
 
-		void onInit(int width, int height, ren::RenderAssetManager& ram);
+		void onInit(int width, int height, rs::ResourceManager& resource);
 		bool onUpdate(float deltaTime, float currentTime, const in::Input& input);
-		void onRender(float deltaTime, float currentTime, ren::RenderAssetManager& ram);
+		void onRender(float deltaTime, float currentTime, rs::ResourceManager& resource);
 		void onResize(int width, int height);
 
 	private:
-		ren::GUI gui;
+		rn::GUI gui;
 		Scene scene;
 	};
 }

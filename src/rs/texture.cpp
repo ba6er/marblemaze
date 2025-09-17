@@ -1,8 +1,8 @@
-#include <ren/texture.hpp>
+#include <rs/texture.hpp>
 #include <glad/glad.h>
 #include <stb_image/stb_image.h>
 
-using namespace ren;
+using namespace rs;
 
 TextureFormat TextureFormat::NearestRGBA(int mipmaps) {
 	return {false, GL_RGBA8, GL_RGBA, mipmaps};

@@ -17,15 +17,15 @@ void Scene::updateCamera() {
 
 void Scene::updateCamera(float deltaYaw, float deltaPitch, float deltaDistance) {
 	cameraYaw += deltaYaw;
-	cameraPitch = std::min(std::max(cameraPitch + deltaPitch, -lin::Pi / 2 + 0.1f), lin::Pi / 2 - 0.1f);
+	cameraPitch = std::min(std::max(cameraPitch + deltaPitch, -la::Pi / 2 + 0.1f), la::Pi / 2 - 0.1f);
 
 	cameraDistance += deltaDistance;
 	if (cameraDistance <= 0) {
 		cameraDistance = 0.1f;
 	}
 
-	lin::Vec3 offset = camera.getTarget();
-	lin::Vec3 newPosition = {
+	la::Vec3 offset = camera.getTarget();
+	la::Vec3 newPosition = {
 		offset.x + std::cos(cameraPitch) * std::cos(cameraYaw) * cameraDistance,
 		offset.y + std::sin(cameraPitch) * cameraDistance,
 		offset.z + std::cos(cameraPitch) * std::sin(cameraYaw) * cameraDistance,
@@ -34,19 +34,19 @@ void Scene::updateCamera(float deltaYaw, float deltaPitch, float deltaDistance) 
 }
 
 void Scene::updateMazeRotation(float deltaYaw, float deltaRoll) {
-	lin::Vec3 mazeCenter = {
+	la::Vec3 mazeCenter = {
 		(int)(maze.getWidth() / 2) * 1.0f,
 		(int)(maze.getHeight() / 2) * 1.0f,
 		(int)(maze.getDepth() / 2) * 1.0f,
 	};
-	maze.transform = maze.transform * lin::Mat4::Rotate(deltaYaw, {-std::sin(cameraYaw), 0, std::cos(cameraYaw)});
-	maze.transform = maze.transform * lin::Mat4::Rotate(deltaRoll, {std::cos(cameraYaw), 0, std::sin(cameraYaw)});
-	marble.transform = marble.transform * lin::Mat4::Rotate(-deltaYaw, {-std::sin(cameraYaw), 0, std::cos(cameraYaw)});
-	marble.transform = marble.transform * lin::Mat4::Rotate(-deltaRoll, {std::cos(cameraYaw), 0, std::sin(cameraYaw)});
+	maze.transform = maze.transform * la::Mat4::Rotate(deltaYaw, {-std::sin(cameraYaw), 0, std::cos(cameraYaw)});
+	maze.transform = maze.transform * la::Mat4::Rotate(deltaRoll, {std::cos(cameraYaw), 0, std::sin(cameraYaw)});
+	marble.transform = marble.transform * la::Mat4::Rotate(-deltaYaw, {-std::sin(cameraYaw), 0, std::cos(cameraYaw)});
+	marble.transform = marble.transform * la::Mat4::Rotate(-deltaRoll, {std::cos(cameraYaw), 0, std::sin(cameraYaw)});
 
-	marble.velocity = marble.transform * (lin::Vec3){0, -marble.speed, 0};
+	marble.velocity = marble.transform * (la::Vec3){0, -marble.speed, 0};
 
-	lin::Mat4 nt = lin::Mat4::Translate(mazeCenter) * maze.transform * lin::Mat4::Translate(-mazeCenter);
+	la::Mat4 nt = la::Mat4::Translate(mazeCenter) * maze.transform * la::Mat4::Translate(-mazeCenter);
 	renderables[0].transform = nt;
 }
 
@@ -91,26 +91,26 @@ void Scene::updatePhysics(float deltaTime) {
 }
 
 void Scene::marbleBlockCollision(float x, float y, float z, float deltaTime) {
-	lin::Vec3 newPosX = marble.position + (lin::Vec3){marble.velocity.x * deltaTime, 0, 0};
+	la::Vec3 newPosX = marble.position + (la::Vec3){marble.velocity.x * deltaTime, 0, 0};
 	float disX = DistanceSphereAABB({x, y, z}, newPosX);
 	if (disX < marble.radius) {
 		marble.velocity.x = 0;
 	}
 
-	lin::Vec3 newPosY = marble.position + (lin::Vec3){0, marble.velocity.y * deltaTime, 0};
+	la::Vec3 newPosY = marble.position + (la::Vec3){0, marble.velocity.y * deltaTime, 0};
 	float disY = DistanceSphereAABB({x, y, z}, newPosY);
 	if (disY < marble.radius) {
 		marble.velocity.y = 0;
 	}
 
-	lin::Vec3 newPosZ = marble.position + (lin::Vec3){0, 0, marble.velocity.z * deltaTime};
+	la::Vec3 newPosZ = marble.position + (la::Vec3){0, 0, marble.velocity.z * deltaTime};
 	float disZ = DistanceSphereAABB({x, y, z}, newPosZ);
 	if (disZ < marble.radius) {
 		marble.velocity.z = 0;
 	}
 }
 
-float Scene::DistanceSphereAABB(lin::Vec3 box, lin::Vec3 sphere) {
+float Scene::DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere) {
 	float minPos[3] = {box.x - 0.5f, box.y - 0.5f, box.z - 0.5f};
 	float maxPos[3] = {box.x + 0.5f, box.y + 0.5f, box.z + 0.5f};
 	float sphPos[3] = {sphere.x, sphere.y, sphere.z};

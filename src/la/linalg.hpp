@@ -1,6 +1,6 @@
 #pragma once
 
-namespace lin {
+namespace la {
 
 	inline constexpr float Pi  = 3.1415926535897932385f;
 	inline constexpr float Tau = 6.2831853071795864769f;

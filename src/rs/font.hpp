@@ -1,15 +1,15 @@
 #pragma once
-#include <lin/linalg.hpp>
-#include <ren/texture.hpp>
+#include <la/linalg.hpp>
+#include <rs/texture.hpp>
 #include <string_view>
 
-namespace ren {
+namespace rs {
 
 	class Glyph {
 
 	public:
 		int width, advance;
-		lin::Vec4 uv;
+		la::Vec4 uv;
 	};
 
 	class Font {

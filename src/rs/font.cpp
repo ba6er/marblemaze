@@ -1,10 +1,10 @@
-#include <ren/font.hpp>
-#include <ren/renderassetmanager.hpp>
+#include <rs/font.hpp>
+#include <rs/resourcemanager.hpp>
 #include <stb_truetype/stb_truetype.h>
 #include <cmath>
 #include <fstream>
 
-using namespace ren;
+using namespace rs;
 
 Font::Font() : size(0), texture(nullptr) {
 	for (int i = 0; i < NumGlyphs; i++) {

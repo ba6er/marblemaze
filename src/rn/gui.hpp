@@ -1,13 +1,13 @@
 #pragma once
-#include <lin/linalg.hpp>
-#include <ren/font.hpp>
-#include <ren/mesh.hpp>
-#include <ren/shader.hpp>
+#include <la/linalg.hpp>
+#include <rs/font.hpp>
+#include <rs/mesh.hpp>
+#include <rs/shader.hpp>
 #include <map>
 #include <string>
 #include <string_view>
 
-namespace ren {
+namespace rn {
 
 	enum TextAlign : uint {
 		Center = 0,
@@ -22,13 +22,13 @@ namespace ren {
 	public:
 		Label();
 
-		void create(float size, std::string_view text, lin::Vec3 position, lin::Vec3 color, uint align = Center);
-		void create(float size, std::string_view text, lin::Vec3 position);
+		void create(float size, std::string_view text, la::Vec3 position, la::Vec3 color, uint align = Center);
+		void create(float size, std::string_view text, la::Vec3 position);
 
 		float size;
 		std::string text;
-		lin::Vec3 position;
-		lin::Vec3 color;
+		la::Vec3 position;
+		la::Vec3 color;
 		uint align;
 	};
 
@@ -37,7 +37,7 @@ namespace ren {
 	public:
 		GUI();
 
-		void create(Shader& shader, Font& font, Mesh& mesh);
+		void create(rs::Shader& shader, rs::Font& font, rs::Mesh& mesh);
 		void setFrame(float left, float right, float bottom, float top);
 
 		Label& addLabel(const std::string& name);
@@ -49,9 +49,9 @@ namespace ren {
 	private:
 		void updateMesh();
 
-		Shader* shader;
-		Font* font;
-		Mesh* mesh;
+		rs::Shader* shader;
+		rs::Font* font;
+		rs::Mesh* mesh;
 
 		std::map<std::string, Label, std::less<>> labels;
 

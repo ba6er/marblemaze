@@ -1,12 +1,12 @@
 #pragma once
-#include <lin/linalg.hpp>
-#include <ren/shader.hpp>
-#include <ren/texture.hpp>
+#include <la/linalg.hpp>
+#include <rs/shader.hpp>
+#include <rs/texture.hpp>
 #include <util.hpp>
 #include <map>
 #include <string>
 
-namespace ren {
+namespace rs {
 
 	class Material {
 

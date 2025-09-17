@@ -1,18 +1,18 @@
 #pragma once
-#include <ren/camera.hpp>
-#include <ren/renderable.hpp>
+#include <rn/camera.hpp>
+#include <rn/renderable.hpp>
 #include <vector>
 
-namespace ren {
+namespace rn {
 
 	class Light {
 
 	public:
-		lin::Vec3 position;
+		la::Vec3 position;
 
-		lin::Vec3 ambient;
-		lin::Vec3 diffuse;
-		lin::Vec3 specular;
+		la::Vec3 ambient;
+		la::Vec3 diffuse;
+		la::Vec3 specular;
 	};
 
 	class Renderer {

@@ -1,17 +1,17 @@
 #pragma once
-#include <lin/linalg.hpp>
+#include <la/linalg.hpp>
 #include <util.hpp>
 #include <vector>
 
-namespace geo {
+namespace ge {
 
 	class GeometryData {
 
 	public:
-		std::vector<lin::Vec3> positions;
-		std::vector<lin::Vec3> colors;
-		std::vector<lin::Vec2> uvs;
-		std::vector<lin::Vec3> normals;
+		std::vector<la::Vec3> positions;
+		std::vector<la::Vec3> colors;
+		std::vector<la::Vec2> uvs;
+		std::vector<la::Vec3> normals;
 
 		std::vector<uint> indices;
 

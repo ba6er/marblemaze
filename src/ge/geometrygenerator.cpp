@@ -1,13 +1,13 @@
-#include <geo/geometrygenerator.hpp>
+#include <ge/geometrygenerator.hpp>
 #include <cmath>
 
-using namespace geo;
+using namespace ge;
 
-GeometryData GeometryGenerator::GenerateCube(lin::Vec3 color, CubeFaceMask faces) {
+GeometryData GeometryGenerator::GenerateCube(la::Vec3 color, CubeFaceMask faces) {
 	GeometryData gd;
 	uint vertexOffset = 0;
 
-	constexpr lin::Vec3 positions[] = {
+	constexpr la::Vec3 positions[] = {
 		{-0.5f, -0.5f,  0.5f}, { 0.5f, -0.5f,  0.5f}, { 0.5f,  0.5f,  0.5f}, {-0.5f,  0.5f,  0.5f},
 		{ 0.5f, -0.5f, -0.5f}, {-0.5f, -0.5f, -0.5f}, {-0.5f,  0.5f, -0.5f}, { 0.5f,  0.5f, -0.5f},
 		{-0.5f, -0.5f, -0.5f}, {-0.5f, -0.5f,  0.5f}, {-0.5f,  0.5f,  0.5f}, {-0.5f,  0.5f, -0.5f},
@@ -15,10 +15,10 @@ GeometryData GeometryGenerator::GenerateCube(lin::Vec3 color, CubeFaceMask faces
 		{-0.5f,  0.5f,  0.5f}, { 0.5f,  0.5f,  0.5f}, { 0.5f,  0.5f, -0.5f}, {-0.5f,  0.5f, -0.5f},
 		{-0.5f, -0.5f, -0.5f}, { 0.5f, -0.5f, -0.5f}, { 0.5f, -0.5f,  0.5f}, {-0.5f, -0.5f,  0.5f},
 	};
-	constexpr lin::Vec3 normals[] = {
+	constexpr la::Vec3 normals[] = {
 		{0, 0, 1}, {0, 0, -1}, {-1, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, -1, 0},
 	};
-	constexpr lin::Vec2 uvs[] = {
+	constexpr la::Vec2 uvs[] = {
 		{0, 0}, {1, 0}, {1, 1}, {0, 1},
 	};
 	constexpr uint faceIndices[] = {0, 1, 2, 2, 3, 0};
@@ -46,11 +46,11 @@ GeometryData GeometryGenerator::GenerateCube(CubeFaceMask faces) {
 	return GenerateCube({1, 1, 1}, faces);
 }
 
-GeometryData GeometryGenerator::GenerateIcosphere(lin::Vec3 color, int subdivisions) {
+GeometryData GeometryGenerator::GenerateIcosphere(la::Vec3 color, int subdivisions) {
 	// Golden ratio square used for an icosahedron
 	constexpr float g = 1.61803398875f;
 
-	constexpr lin::Vec3 corners[] = {
+	constexpr la::Vec3 corners[] = {
 		{ g,  1,  0}, { 0,  g, -1}, { 0,  g,  1},
 		{ 1,  0, -g}, { 1,  0,  g}, { g, -1,  0},
 		{-1,  0, -g}, {-g,  1,  0}, {-1,  0,  g},
@@ -73,10 +73,10 @@ GeometryData GeometryGenerator::GenerateIcosphere(lin::Vec3 color, int subdivisi
 	GeometryData gd;
 	for (int i = 0; i < triangles.size(); i++) {
 		for (int j = 0; j < 3; j++) {
-			lin::Vec3 nc = triangles[i][j].normalize();
-			lin::Vec2 uv = { // Spherical projection
-				0.5f + std::atan2(nc.z, nc.x) / (2 * lin::Pi),
-				0.5f - std::asin(nc.y) / lin::Pi
+			la::Vec3 nc = triangles[i][j].normalize();
+			la::Vec2 uv = { // Spherical projection
+				0.5f + std::atan2(nc.z, nc.x) / (2 * la::Pi),
+				0.5f - std::asin(nc.y) / la::Pi
 			};
 			gd.indices.push_back(i * 3 + j);
 			gd.positions.push_back(nc / 2);
@@ -93,7 +93,7 @@ GeometryData GeometryGenerator::GenerateIcosphere(int subdivisions) {
 }
 
 GeometryGenerator::SubTriangle GeometryGenerator::SubdivideTriangle(const Triangle& t) {
-	lin::Vec3 m[] = {(t[0] + t[1]) / 2, (t[1] + t[2]) / 2, (t[2] + t[0]) / 2};
+	la::Vec3 m[] = {(t[0] + t[1]) / 2, (t[1] + t[2]) / 2, (t[2] + t[0]) / 2};
 	Triangle t1 = {m[2], t[0], m[0]};
 	Triangle t2 = {m[0], t[1], m[1]};
 	Triangle t3 = {m[1], t[2], m[2]};

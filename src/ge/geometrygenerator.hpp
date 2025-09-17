@@ -1,8 +1,8 @@
 #pragma once
-#include <geo/geometrydata.hpp>
+#include <ge/geometrydata.hpp>
 #include <array>
 
-namespace geo {
+namespace ge {
 
 	enum CubeFace : uint {
 		Front  = 1 << 0,
@@ -18,13 +18,13 @@ namespace geo {
 	class GeometryGenerator {
 
 	public:
-		static GeometryData GenerateCube(lin::Vec3 color, CubeFaceMask faces = CubeFace::All);
+		static GeometryData GenerateCube(la::Vec3 color, CubeFaceMask faces = CubeFace::All);
 		static GeometryData GenerateCube(CubeFaceMask faces = CubeFace::All);
-		static GeometryData GenerateIcosphere(lin::Vec3 color, int subdivisions = 0);
+		static GeometryData GenerateIcosphere(la::Vec3 color, int subdivisions = 0);
 		static GeometryData GenerateIcosphere(int subdivisions = 0);
 
 	private:
-		using Triangle = std::array<lin::Vec3, 3>;
+		using Triangle = std::array<la::Vec3, 3>;
 		using SubTriangle = std::array<Triangle, 4>;
 
 		static SubTriangle SubdivideTriangle(const Triangle& t);

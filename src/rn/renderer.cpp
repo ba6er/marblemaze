@@ -1,7 +1,7 @@
-#include <ren/renderer.hpp>
+#include <rn/renderer.hpp>
 #include <glad/glad.h>
 
-using namespace ren;
+using namespace rn;
 
 void Renderer::clear(float red, float green, float blue) {
 	glEnable(GL_DEPTH_TEST);
@@ -13,15 +13,15 @@ void Renderer::clear(float red, float green, float blue) {
 
 void Renderer::render(Renderable& renderable) {
 	renderable.material->setUniform("model", renderable.transform);
-	renderable.material->setUniform("view", lin::Mat4::Identity());
-	renderable.material->setUniform("projection", lin::Mat4::Identity());
+	renderable.material->setUniform("view", la::Mat4::Identity());
+	renderable.material->setUniform("projection", la::Mat4::Identity());
 	renderable.material->use();
 	renderable.mesh->draw();
 }
 
 void Renderer::render(const Camera& camera, const std::vector<Renderable>& renderables, const Light& light) {
-	lin::Mat4 view = camera.getViewMatrix();
-	lin::Mat4 projection = camera.getProjectionMatrix();
+	la::Mat4 view = camera.getViewMatrix();
+	la::Mat4 projection = camera.getProjectionMatrix();
 
 	for (auto& r : renderables) {
 		r.material->setUniform("model", r.transform);

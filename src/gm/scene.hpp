@@ -1,9 +1,9 @@
 #pragma once
 #include <gm/marble.hpp>
 #include <gm/maze.hpp>
-#include <ren/camera.hpp>
-#include <ren/renderable.hpp>
-#include <ren/renderer.hpp>
+#include <rn/camera.hpp>
+#include <rn/renderable.hpp>
+#include <rn/renderer.hpp>
 #include <vector>
 
 namespace gm {
@@ -18,9 +18,9 @@ namespace gm {
 		void updateMazeRotation(float deltaPitch, float deltaRoll);
 		void updatePhysics(float deltaTime);
 
-		ren::Camera camera;
-		ren::Light light;
-		std::vector<ren::Renderable> renderables;
+		rn::Camera camera;
+		rn::Light light;
+		std::vector<rn::Renderable> renderables;
 
 		Marble marble;
 		Maze maze;
@@ -30,6 +30,6 @@ namespace gm {
 	private:
 		void marbleBlockCollision(float x, float y, float z, float deltaTime);
 
-		static float DistanceSphereAABB(lin::Vec3 box, lin::Vec3 sphere);
+		static float DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere);
 	};
 }

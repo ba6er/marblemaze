@@ -3,7 +3,7 @@
 #include <miniaudio/miniaudio.h>
 #include <in/input.hpp>
 #include <gm/game.hpp>
-#include <ren/renderassetmanager.hpp>
+#include <rs/resourcemanager.hpp>
 #include <util.hpp>
 
 static void callbackError(int code, const char* text) {
@@ -11,16 +11,16 @@ static void callbackError(int code, const char* text) {
 }
 
 static const char* title = "Marble Maze";
-static const int width  = 720;
-static const int height = 480;
-static const int fps    = 60;
+static const int width   = 720;
+static const int height  = 480;
+static const int fps     = 60;
 
 static ma_engine audioEngine;
 static GLFWwindow* window;
 
 static gm::Game game;
 static in::Input input;
-static ren::RenderAssetManager ram;
+static rs::ResourceManager resource;
 
 static void callbackScroll(GLFWwindow*, double x, double y) {
 	input.setScroll(x, y);
@@ -65,8 +65,8 @@ int main() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	ram.initFromConfig(_RES_PATH "assets.txt");
-	game.onInit(width, height, ram);
+	resource.initFromConfig(_RES_PATH "assets.txt");
+	game.onInit(width, height, resource);
 
 	float tickTime     = 1.0f / fps;
 	float currentTime  = 0.0f;
@@ -132,7 +132,7 @@ int main() {
 			isRunning = game.onUpdate(tickTime, currentTime, input);
 			lagTime -= tickTime;
 		}
-		game.onRender(deltaTime, currentTime, ram);
+		game.onRender(deltaTime, currentTime, resource);
 
 		// Update system
 		glfwSwapBuffers(window);
@@ -149,7 +149,7 @@ void FreeSystemResources() {
 	CRITICAL_TRACE("Freeing system resources");
 
 	// Free render assets
-	ram.destroy();
+	resource.destroy();
 
 	// Free GLFW objects
 	glfwDestroyWindow(window);

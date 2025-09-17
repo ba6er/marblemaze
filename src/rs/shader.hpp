@@ -1,12 +1,12 @@
 #pragma once
-#include <lin/linalg.hpp>
+#include <la/linalg.hpp>
 #include <util.hpp>
 #include <string_view>
 #include <variant>
 
-namespace ren {
+namespace rs {
 
-	using UniformType = std::variant<int, uint, float, lin::Vec2, lin::Vec3, lin::Vec4, lin::Mat4>;
+	using UniformType = std::variant<int, uint, float, la::Vec2, la::Vec3, la::Vec4, la::Mat4>;
 
 	class Shader {
 

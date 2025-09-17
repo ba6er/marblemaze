@@ -1,8 +1,8 @@
-#include <lin/linalg.hpp>
+#include <la/linalg.hpp>
 #include <util.hpp>
 #include <cmath>
 
-using namespace lin;
+using namespace la;
 
 Vec2 Vec2::operator-() const {
 	Vec2 r = {-x, -y};

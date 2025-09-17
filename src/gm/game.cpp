@@ -1,20 +1,20 @@
-#include <geo/geometrygenerator.hpp>
-#include <geo/geometrytransform.hpp>
+#include <ge/geometrygenerator.hpp>
+#include <ge/geometrytransform.hpp>
 #include <gm/game.hpp>
-#include <ren/renderer.hpp>
+#include <rn/renderer.hpp>
 
 using namespace gm;
 
 Game::Game() : gui(), scene() {}
 
-void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
-	ren::Renderer::resizeFrame(width, height);
+void Game::onInit(int width, int height, rs::ResourceManager& resource) {
+	rn::Renderer::resizeFrame(width, height);
 
-	auto& guiMesh = ram.createMesh("gui");
+	auto& guiMesh = resource.createMesh("gui");
 	guiMesh.create();
-	gui.create(ram.getShader("text"), ram.getFont("noto48"), guiMesh);
+	gui.create(resource.getShader("text"), resource.getFont("noto48"), guiMesh);
 	gui.setFrame(0, width, 0, height);
-	gui.addLabel("test").create(48, "Marble Maze", {width / 2.0f, 32, 0}, {0, 0, 0});
+	gui.addLabel("test").create(48, "Marble Maze", {width / 2.0f, 32, 0});
 
 	scene.light = {
 		{1.0f, 9.9f, 1.0f},
@@ -29,47 +29,47 @@ void Game::onInit(int width, int height, ren::RenderAssetManager& ram) {
 	scene.marble.speed = 2;
 
 	scene.cameraYaw = 0;
-	scene.cameraPitch = lin::Pi / 4;
+	scene.cameraPitch = la::Pi / 4;
 	scene.cameraDistance = scene.maze.getWidth() / 2 + 5;
 
-	lin::Vec3 cameraTarget = {
+	la::Vec3 cameraTarget = {
 		(int)(scene.maze.getWidth() / 2) * 1.0f,
 		(int)(scene.maze.getHeight() / 2) * 1.0f,
 		(int)(scene.maze.getDepth() / 2) * 1.0f,
 	};
 	scene.camera.setTarget(cameraTarget);
-	scene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
+	scene.camera.project3d(72 * la::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 	scene.updateCamera();
 
-	auto& maze = ram.createMesh("maze");
+	auto& maze = resource.createMesh("maze");
 	maze.create(6 * 6 * 9 * 9 * 2);
 	maze.addGeometry(scene.maze.toGeometry());
 
-	scene.renderables.push_back(ren::Renderable());
-	scene.renderables[0].create(maze, ram.getMaterial("copperTextured"));
+	scene.renderables.push_back(rn::Renderable());
+	scene.renderables[0].create(maze, resource.getMaterial("copperTextured"));
 
-	auto& marble = ram.createMesh("marble");
+	auto& marble = resource.createMesh("marble");
 	marble.create(20 * 16 * 3);
 	marble.addGeometry(scene.marble.toGeometry());
 
-	scene.renderables.push_back(ren::Renderable());
-	scene.renderables[1].create(marble, ram.getMaterial("emerald"));
+	scene.renderables.push_back(rn::Renderable());
+	scene.renderables[1].create(marble, resource.getMaterial("emerald"));
 
-	auto skybox = geo::GeometryGenerator::GenerateCube();
-	geo::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
-	geo::GeometryTransform::Translate(skybox, cameraTarget);
+	auto skybox = ge::GeometryGenerator::GenerateCube();
+	ge::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
+	ge::GeometryTransform::Translate(skybox, cameraTarget);
 
-	auto& sky = ram.createMesh("sky");
+	auto& sky = resource.createMesh("sky");
 	sky.create(6 * 6);
 	sky.addGeometry(skybox);
 
-	scene.renderables.push_back(ren::Renderable());
-	scene.renderables[2].create(sky, ram.getMaterial("sky"));
+	scene.renderables.push_back(rn::Renderable());
+	scene.renderables[2].create(sky, resource.getMaterial("sky"));
 }
 
 void Game::onResize(int width, int height) {
-	ren::Renderer::resizeFrame(width, height);
-	scene.camera.project3d(72 * lin::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
+	rn::Renderer::resizeFrame(width, height);
+	scene.camera.project3d(72 * la::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 
 	float ox = (720 - width * 480 / height) / 2;
 	gui.setFrame(ox, 720 - ox, 0, 480);
@@ -105,13 +105,13 @@ bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) 
 	return true;
 }
 
-void Game::onRender(float deltaTime, float currentTime, ren::RenderAssetManager& ram) {
-	lin::Mat4 marTr = scene.renderables[0].transform;
-	marTr = marTr * lin::Mat4::Translate(scene.marble.position);
+void Game::onRender(float deltaTime, float currentTime, rs::ResourceManager& resource) {
+	la::Mat4 marTr = scene.renderables[0].transform;
+	marTr = marTr * la::Mat4::Translate(scene.marble.position);
 	scene.renderables[1].transform = marTr;
 
-	ren::Renderer::clear(0.5f, 0.5f, 0.5f);
-	ren::Renderer::render(scene.camera, scene.renderables, scene.light);
+	rn::Renderer::clear(0.5f, 0.5f, 0.5f);
+	rn::Renderer::render(scene.camera, scene.renderables, scene.light);
 
 	gui.display();
 }

@@ -1,10 +1,10 @@
-#include <ren/renderassetmanager.hpp>
+#include <rs/resourcemanager.hpp>
 #include <fstream>
 #include <sstream>
 
-using namespace ren;
+using namespace rs;
 
-void RenderAssetManager::initFromConfig(std::string_view fileName) {
+void ResourceManager::initFromConfig(std::string_view fileName) {
 	std::ifstream configIn(fileName.data());
 	CRITICAL_ASSERT(configIn.is_open(), "No configuration file by the name of %s", fileName.data());
 	std::string configLine = "", configLine2 = "";
@@ -33,6 +33,10 @@ void RenderAssetManager::initFromConfig(std::string_view fileName) {
 			stage = 4;
 			continue;
 		}
+		if (configLine == "SOUNDS") {
+			stage = 5;
+			continue;
+		}
 
 		if (stage == 1) {
 			stringToShader(configLine);
@@ -51,32 +55,32 @@ void RenderAssetManager::initFromConfig(std::string_view fileName) {
 	CRITICAL_TRACE("Loaded asset configuration from %s", fileName.data());
 }
 
-Shader& RenderAssetManager::createShader(const std::string& name) {
+Shader& ResourceManager::createShader(const std::string& name) {
 	shaders[name] = Shader();
 	return shaders.at(name);
 }
 
-Texture& RenderAssetManager::createTexture(const std::string& name) {
+Texture& ResourceManager::createTexture(const std::string& name) {
 	textures[name] = Texture();
 	return textures.at(name);
 }
 
-Material& RenderAssetManager::createMaterial(const std::string& name) {
+Material& ResourceManager::createMaterial(const std::string& name) {
 	materials[name] = Material();
 	return materials.at(name);
 }
 
-Mesh& RenderAssetManager::createMesh(const std::string& name) {
+Mesh& ResourceManager::createMesh(const std::string& name) {
 	meshes[name] = Mesh();
 	return meshes.at(name);
 }
 
-Font& RenderAssetManager::createFont(const std::string& name) {
+Font& ResourceManager::createFont(const std::string& name) {
 	fonts[name] = Font();
 	return fonts.at(name);
 }
 
-void RenderAssetManager::destroy() {
+void ResourceManager::destroy() {
 	for (auto& shader : shaders) {
 		shader.second.destroy();
 	}
@@ -91,37 +95,37 @@ void RenderAssetManager::destroy() {
 	}
 }
 
-Shader& RenderAssetManager::getShader(std::string_view name) {
+Shader& ResourceManager::getShader(std::string_view name) {
 	auto value = shaders.find(name);
 	DEBUG_ASSERT(value != shaders.end(), "No shader by the name of \"%s\"", name.data());
 	return value->second;
 }
 
-Texture& RenderAssetManager::getTexture(std::string_view name) {
+Texture& ResourceManager::getTexture(std::string_view name) {
 	auto value = textures.find(name);
 	DEBUG_ASSERT(value != textures.end(), "No texture by the name of \"%s\"", name.data());
 	return value->second;
 }
 
-Material& RenderAssetManager::getMaterial(std::string_view name) {
+Material& ResourceManager::getMaterial(std::string_view name) {
 	auto value = materials.find(name);
 	DEBUG_ASSERT(value != materials.end(), "No material by the name of \"%s\"", name.data());
 	return value->second;
 }
 
-Mesh& RenderAssetManager::getMesh(std::string_view name) {
+Mesh& ResourceManager::getMesh(std::string_view name) {
 	auto value = meshes.find(name);
 	DEBUG_ASSERT(value != meshes.end(), "No mesh by the name of \"%s\"", name.data());
 	return value->second;
 }
 
-Font& RenderAssetManager::getFont(std::string_view name) {
+Font& ResourceManager::getFont(std::string_view name) {
 	auto value = fonts.find(name);
 	DEBUG_ASSERT(value != fonts.end(), "No font by the name of \"%s\"", name.data());
 	return value->second;
 }
 
-void RenderAssetManager::stringToShader(const std::string& configLine) {
+void ResourceManager::stringToShader(const std::string& configLine) {
 	std::istringstream shaderConfig(configLine);
 	std::string name, vertSource, fragSource;
 	shaderConfig >> name >> vertSource >> fragSource;
@@ -134,7 +138,7 @@ void RenderAssetManager::stringToShader(const std::string& configLine) {
 	DEBUG_TRACE("Loaded shader \"%s\" from \"%s\" and \"%s\"", name.c_str(), vertSource.c_str(), fragSource.c_str());
 }
 
-void RenderAssetManager::stringToTexture(const std::string& configLine) {
+void ResourceManager::stringToTexture(const std::string& configLine) {
 	std::istringstream textureConfig(configLine);
 	std::string name, fileName, filtered;
 	textureConfig >> name >> fileName >> filtered;
@@ -146,7 +150,7 @@ void RenderAssetManager::stringToTexture(const std::string& configLine) {
 	DEBUG_TRACE("Loaded texture \"%s\" from \"%s\"", name.c_str(), fileName.c_str());
 }
 
-void RenderAssetManager::stringToMaterial(const std::string& configLine1, const std::string& configLine2) {
+void ResourceManager::stringToMaterial(const std::string& configLine1, const std::string& configLine2) {
 	std::istringstream materialConfig1(configLine1);
 	std::string name, shader, texture;
 	int numTextures = 0;
@@ -161,7 +165,7 @@ void RenderAssetManager::stringToMaterial(const std::string& configLine1, const 
 
 	if (configLine2 != "-") {
 		std::istringstream materialConfig2(configLine2);
-		lin::Vec3 ambient, diffuse, specular;
+		la::Vec3 ambient, diffuse, specular;
 		float shininess;
 		materialConfig2 >> ambient.x >> ambient.y >> ambient.z;
 		materialConfig2 >> diffuse.x >> diffuse.y >> diffuse.z;
@@ -177,7 +181,7 @@ void RenderAssetManager::stringToMaterial(const std::string& configLine1, const 
 	DEBUG_TRACE("Loaded material \"%s\" from shader \"%s\"", name.c_str(), shader.c_str());
 }
 
-void RenderAssetManager::stringToFont(const std::string& configLine) {
+void ResourceManager::stringToFont(const std::string& configLine) {
 	std::istringstream fontConfig(configLine);
 	std::string name, fileName, filtered;
 	int size;

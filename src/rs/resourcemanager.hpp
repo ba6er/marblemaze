@@ -1,17 +1,17 @@
 #pragma once
-#include <ren/font.hpp>
-#include <ren/shader.hpp>
-#include <ren/texture.hpp>
-#include <ren/material.hpp>
-#include <ren/mesh.hpp>
+#include <rs/texture.hpp>
+#include <rs/shader.hpp>
+#include <rs/font.hpp>
+#include <rs/material.hpp>
+#include <rs/mesh.hpp>
 #include <util.hpp>
 #include <map>
 #include <string>
 #include <string_view>
 
-namespace ren {
+namespace rs {
 
-	class RenderAssetManager {
+	class ResourceManager {
 
 	public:
 		void initFromConfig(std::string_view fileName);

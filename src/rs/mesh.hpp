@@ -1,17 +1,17 @@
 #pragma once
-#include <geo/geometrydata.hpp>
-#include <lin/linalg.hpp>
+#include <ge/geometrydata.hpp>
+#include <la/linalg.hpp>
 #include <util.hpp>
 
-namespace ren {
+namespace rs {
 
 	class Vertex {
 
 	public:
-		lin::Vec3 position;
-		lin::Vec3 color;
-		lin::Vec2 atlas;
-		lin::Vec3 normal;
+		la::Vec3 position;
+		la::Vec3 color;
+		la::Vec2 atlas;
+		la::Vec3 normal;
 	};
 
 	class Mesh {
@@ -23,7 +23,7 @@ namespace ren {
 		void destroy();
 
 		void addVertex(const Vertex& v);
-		void addGeometry(const geo::GeometryData& gd);
+		void addGeometry(const ge::GeometryData& gd);
 
 		void clear();
 		void draw();

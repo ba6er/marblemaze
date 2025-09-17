@@ -1,18 +1,18 @@
-#include <geo/geometrydata.hpp>
+#include <ge/geometrydata.hpp>
 
-using namespace geo;
+using namespace ge;
 
 GeometryData GeometryData::operator+(const GeometryData& gd) const {
-	std::vector<lin::Vec3> newPositions = positions;
+	std::vector<la::Vec3> newPositions = positions;
 	newPositions.insert(newPositions.end(), gd.positions.begin(), gd.positions.end());
 
-	std::vector<lin::Vec3> newColors = colors;
+	std::vector<la::Vec3> newColors = colors;
 	newColors.insert(newColors.end(), gd.colors.begin(), gd.colors.end());
 
-	std::vector<lin::Vec2> newUVs = uvs;
+	std::vector<la::Vec2> newUVs = uvs;
 	newUVs.insert(newUVs.end(), gd.uvs.begin(), gd.uvs.end());
 
-	std::vector<lin::Vec3> newNormals = normals;
+	std::vector<la::Vec3> newNormals = normals;
 	newNormals.insert(newNormals.end(), gd.normals.begin(), gd.normals.end());
 
 	std::vector<uint> newIndices = indices;

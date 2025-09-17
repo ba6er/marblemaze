@@ -1,11 +1,12 @@
-#include <ren/gui.hpp>
+#include <rn/gui.hpp>
 #include <glad/glad.h>
 
-using namespace ren;
+using namespace rn;
+using namespace rs;
 
 Label::Label() : size(0), text(""), position({0}), color({0}), align(0) {}
 
-void Label::create(float size, std::string_view text, lin::Vec3 position, lin::Vec3 color, uint align) {
+void Label::create(float size, std::string_view text, la::Vec3 position, la::Vec3 color, uint align) {
 	this->size = size;
 	this->text = std::string(text);
 	this->position = position;
@@ -13,7 +14,7 @@ void Label::create(float size, std::string_view text, lin::Vec3 position, lin::V
 	this->align = align;
 }
 
-void Label::create(float size, std::string_view text, lin::Vec3 position) {
+void Label::create(float size, std::string_view text, la::Vec3 position) {
 	create(size, text, position, {1, 1, 1});
 }
 
@@ -30,7 +31,7 @@ void GUI::setFrame(float left, float right, float bottom, float top) {
 		DEBUG_WARNING("GUI doesn't have a valid shader attached");
 		return;
 	}
-	shader->setUniform("projection", lin::Mat4::Project2d(left, right, bottom, top, -1000, 1000));
+	shader->setUniform("projection", la::Mat4::Project2d(left, right, bottom, top, -1000, 1000));
 }
 
 Label& GUI::addLabel(const std::string& name) {
@@ -66,7 +67,7 @@ void GUI::display() {
 	mesh->draw();
 }
 
-void ren::GUI::updateMesh() {
+void GUI::updateMesh() {
 	mesh->clear();
 
 	for (auto& labelKV : labels) {
@@ -76,7 +77,7 @@ void ren::GUI::updateMesh() {
 		}
 
 		float hScale = l.size / font->getHeight();
-		lin::Vec2 offs = {0, -l.size / 4};
+		la::Vec2 offs = {0, -l.size / 4};
 		if (!(l.align & TextAlign::Left)) {
 			float width = 0;
 			for (auto& c : l.text) {
@@ -100,7 +101,7 @@ void ren::GUI::updateMesh() {
 			Glyph g = font->getGlyph(c);
 
 			float cw = g.width * hScale;
-			lin::Vec2 vp = {adv + l.position.x + offs.x, l.position.y + offs.y};
+			la::Vec2 vp = {adv + l.position.x + offs.x, l.position.y + offs.y};
 			Vertex square[] = {
 				{{vp.x,      vp.y,          0}, l.color, {g.uv.x, g.uv.y}, {0}},
 				{{vp.x + cw, vp.y,          0}, l.color, {g.uv.z, g.uv.y}, {0}},
