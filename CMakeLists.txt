@@ -22,6 +22,7 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(thirdparty/glfw-3.4)
 add_subdirectory(thirdparty/glad)
+add_subdirectory(thirdparty/miniaudio)
 add_subdirectory(thirdparty/stb_image)
 add_subdirectory(thirdparty/stb_truetype)
 
@@ -42,5 +43,4 @@ endif()
 
 target_sources(marblemaze PRIVATE "${SOURCE_FILES}")
 target_include_directories(marblemaze PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/")
-target_link_libraries(marblemaze PRIVATE glfw glad stb_image stb_truetype)
-
+target_link_libraries(marblemaze PRIVATE glfw glad miniaudio stb_image stb_truetype)

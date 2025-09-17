@@ -1,12 +1,9 @@
 # Marble Maze
-
 Marble Maze is a 3D game where you move the marble from start to finish by turning and tilting the maze.  
-The game was made in C++, using GLFW for windowing and input, OpenGL for rendering and OpenAL for sound.  
+The game was made in C++, using GLFW for windowing and input, OpenGL for rendering and miniaudio for sound.  
 ![Example 1](./design/_example1.jpg)
 
-
 # Building
-
 This project uses CMake, so make sure you have it installed.  
 
 ## UNIX systems (Linux, Mac, BSD)
@@ -25,9 +22,7 @@ For the release build, replace `Debug` with `Release`.
 
 **When building the release version, make sure to move `res` to the `build` directory!**
 
-
 # Design
-
 The game consists of 6 main namespaces which contain classes with a loosely similar purpose.  
 - `lin` for linear algebra and other math-related functionality
 - `in` for input handling
