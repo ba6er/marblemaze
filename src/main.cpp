@@ -129,7 +129,7 @@ int main() {
 
 		// Update and render the game
 		while (lagTime > tickTime) {
-			isRunning = game.onUpdate(tickTime, currentTime, input);
+			isRunning = game.onUpdate(tickTime, currentTime, resource, input);
 			lagTime -= tickTime;
 		}
 		game.onRender(deltaTime, currentTime, resource);

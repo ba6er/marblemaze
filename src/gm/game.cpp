@@ -75,7 +75,7 @@ void Game::onResize(int width, int height) {
 	gui.setFrame(ox, 720 - ox, 0, 480);
 }
 
-bool Game::onUpdate(float deltaTime, float currentTime, const in::Input& input) {
+bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
 	if (input.getKey(in::Quit) == in::JustReleased) {
 		return false;
 	}
