@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <miniaudio/miniaudio.h>
 #include <in/input.hpp>
 #include <gm/game.hpp>
 #include <ren/renderassetmanager.hpp>
@@ -14,6 +15,7 @@ static const int width  = 720;
 static const int height = 480;
 static const int fps    = 60;
 
+static ma_engine audioEngine;
 static GLFWwindow* window;
 
 static gm::Game game;
@@ -28,6 +30,11 @@ int main() {
 	DEBUG_TRACE("This is a debug build");
 	CRITICAL_TRACE("Initializing system");
 
+	// Initialize miniaudio
+	if (ma_engine_init(nullptr, &audioEngine) != MA_SUCCESS) {
+		return 1;
+	}
+
 	// Initialize GLFW
 	glfwInit();
 	glfwSetErrorCallback(callbackError);
@@ -39,6 +46,7 @@ int main() {
 	// Create the GLFW window
 	window = glfwCreateWindow(width, height, title, NULL, NULL);
 	if (window == nullptr) {
+		ma_engine_uninit(&audioEngine);
 		glfwTerminate();
 		return 1;
 	}
@@ -47,6 +55,7 @@ int main() {
 
 	// Loading OpenGL functions via glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+		ma_engine_uninit(&audioEngine);
 		glfwDestroyWindow(window);
 		glfwTerminate();
 		return 1;
@@ -145,4 +154,7 @@ void FreeSystemResources() {
 	// Free GLFW objects
 	glfwDestroyWindow(window);
 	glfwTerminate();
+
+	// Free miniaudio objects
+	ma_engine_uninit(&audioEngine);
 }
