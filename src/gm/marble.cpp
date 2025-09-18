@@ -11,7 +11,9 @@ Marble::Marble(la::Vec3 position) : Marble(position, {0, 0, 0}) {}
 Marble::Marble(la::Vec3 position, la::Vec3 velocity) : Marble(position, velocity, 0.25f) {}
 
 Marble::Marble(la::Vec3 position, la::Vec3 velocity, float radius)
-	: transform(la::Mat4::Identity()), position(position), velocity(velocity), radius(radius), speed(0) {}
+	: transform(la::Mat4::Identity())
+	, position(position), velocity(velocity), direction({0, 0, 0})
+	, radius(radius), speed(0) {}
 
 ge::GeometryData Marble::toGeometry() const {
 	ge::GeometryData gd = ge::GeometryGenerator::GenerateIcosphere(2);

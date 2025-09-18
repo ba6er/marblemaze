@@ -2,16 +2,19 @@
 set separator ::
 
 class gm::Game {
-	+onInit(width, height, resource)
+	+onInit(width, height, internalWidth, internalHeight, resource)
 	+onUpdate(deltaTime, currentTime, resource, input) : bool
 	+onRender(deltaTime, currentTime, resource)
 	+onResize(width, height)
 	..
+	-internalSize: Vec2
 	-gui: GUI
 	-scene: Scene
 }
 
 class gm::Scene {
+	+createFromFile(fileName, resource) : bool
+	..
 	+updateCamera(deltaYaw, deltaPitch, deltaDistance)
 	+updateMazeRotation(deltaPitch, deltaRoll)
 	+updatePhysics(deltaTime)
@@ -39,7 +42,7 @@ enum gm::BlockType {
 hide BlockType methods
 
 class gm::Maze {
-	+loadFromFile(fileName)
+	+create(initBlocks)
 	..
 	+getBlock(x, y, z) : BlockType
 	+setBlock(x, y, z, block)
@@ -53,7 +56,7 @@ class gm::Maze {
 	+transform: Mat4
 	--
 	-width, height, depth: int
-	-bricks: BlockType[]
+	-blocks: BlockType[]
 }
 
 class gm::Marble {
@@ -63,6 +66,7 @@ class gm::Marble {
 	..
 	+position: Vec3
 	+velocity: Vec3
+	+direction: Vec3
 	+radius: float
 	+speed: float
 }

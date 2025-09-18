@@ -1,21 +1,70 @@
-9 9 2
+# This is an example of how a level configuration file should look.
+# When reading this file, if an error is found, the game will skip loading this level.
+# Note: comments must be on their own line starting with "#".
 
-#########
-#########
-#########
-#########
-#########
-#########
-#########
-#########
-#########
+# Position and distance values are in "maze block width" units.
+# Angles are in degrees (0 to 360).
 
-#####.###
-#...#...#
-#.#...#.#
-#######.#
-....#...#
-###.#.#.#
-#.#.#.#.#
-#.....#.#
-#########
+# Each scene has 1 light (multiple lights will be implemented in the future).
+# Light's position is relative to the center of the maze.
+# Ambient, diffuse and specular values are RGB normalized between 0 and 100.
+LIGHT_POSITION  10  99  10
+LIGHT_AMBIENT  030 030 030
+LIGHT_DIFFUSE  100 100 100
+LIGHT_SPECULAR 050 050 050
+
+# Each scene has a camera, whose position is determined in radial coordinates.
+# Yaw is the horizontal angle, pitch is vertical (capped at +-90 degrees).
+# Distance is from the maze's center.
+CAMERA_YAW      90
+CAMERA_PITCH    60
+CAMERA_DISTANCE 10
+
+# Maze, marble and skybox materials are defined in assets.txt
+MAZE_MATERIAL   copperTextured
+MARBLE_MATERIAL emerald
+SKYBOX_MATERIAL sky
+
+# The game will apply marble's speed in it's direction.
+# The usual for gravity direction is negative Y.
+# Example: MARBLE_DIRECTION 0 -1 0
+MARBLE_DIRECTION 0 -1 0
+MARBLE_SPEED     2
+MARBLE_RADIUS    0.25
+
+# Maze dimensions:
+# Width determines the number of characters in one line.
+# Depth determines the number of lines in one layer.
+# Height determines the number of layers, going top to bottom.
+MAZE_WIDTH  9
+MAZE_DEPTH  9
+MAZE_HEIGHT 2
+
+# Maze elements:
+# . - empty space
+# W - wall
+# s - start
+# f - finish
+MAZE_BEGIN
+
+WWWWWsWWW
+W...W...W
+W.W...W.W
+WWWWWWW.W
+....W...W
+WWW.W.W.W
+W.W.W.W.W
+W.....W.W
+WWWWWWWWW
+
+WWWWWWWWW
+WWWWWWWWW
+WWWWWWWWW
+WWWWWWWWW
+fWWWWWWWW
+WWWWWWWWW
+WWWWWWWWW
+WWWWWWWWW
+WWWWWWWWW
+
+MAZE_END

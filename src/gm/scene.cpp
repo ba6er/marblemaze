@@ -1,5 +1,9 @@
 #include <gm/scene.hpp>
+#include <ge/geometrygenerator.hpp>
+#include <ge/geometrytransform.hpp>
 #include <cmath>
+#include <fstream>
+#include <sstream>
 
 using namespace gm;
 
@@ -11,10 +15,152 @@ Scene::Scene()
 	light = {{0}};
 }
 
+bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resource) {
+	std::ifstream configIn(fileName.data());
+	if (configIn.is_open() == false) {
+		CRITICAL_ERROR("No maze file by the name of %s", fileName.data());
+		return false;
+	}
+
+	std::string configLine;
+	std::string marbleMaterialName = "", mazeMaterialName = "", skyboxMaterialName = "";
+	int mazeWidth = 0, mazeDepth = 0, mazeHeight = 0;
+	BlockVector3D initBlocks;
+	while (std::getline(configIn, configLine)) {
+		if (configLine.length() == 0 || configLine.at(0) == '#') {
+			continue;
+		}
+
+		std::string configToken;
+		std::istringstream configStream(configLine);
+		configStream >> configToken;
+		if (configToken == "LIGHT_POSITION") {
+			configStream >> light.position.x >> light.position.y >> light.position.z;
+		}
+		else if (configToken == "LIGHT_AMBIENT") {
+			configStream >> light.ambient.x >> light.ambient.y >> light.ambient.z;
+			light.ambient /= 100;
+		}
+		else if (configToken == "LIGHT_DIFFUSE") {
+			configStream >> light.diffuse.x >> light.diffuse.y >> light.diffuse.z;
+			light.diffuse /= 100;
+		}
+		else if (configToken == "LIGHT_SPECULAR") {
+			configStream >> light.specular.x >> light.specular.y >> light.specular.z;
+			light.specular /= 100;
+		}
+		else if (configToken == "CAMERA_YAW") {
+			configStream >> cameraYaw;
+			cameraYaw *= la::DegToRad;
+		}
+		else if (configToken == "CAMERA_PITCH") {
+			configStream >> cameraPitch;
+			cameraPitch *= la::DegToRad;
+		}
+		else if (configToken == "CAMERA_DISTANCE") {
+			configStream >> cameraDistance;
+		}
+		else if (configToken == "MAZE_MATERIAL") {
+			configStream >> mazeMaterialName;
+		}
+		else if (configToken == "MARBLE_MATERIAL") {
+			configStream >> marbleMaterialName;
+		}
+		else if (configToken == "SKYBOX_MATERIAL") {
+			configStream >> skyboxMaterialName;
+		}
+		else if (configToken == "MARBLE_DIRECTION") {
+			configStream >> marble.direction.x >> marble.direction.y >> marble.direction.z;
+			marble.direction = marble.direction.normalize();
+		}
+		else if (configToken == "MARBLE_SPEED") {
+			configStream >> marble.speed;
+		}
+		else if (configToken == "MARBLE_RADIUS") {
+			configStream >> marble.radius;
+		}
+		else if (configToken == "MAZE_WIDTH") {
+			configStream >> mazeWidth;
+		}
+		else if (configToken == "MAZE_DEPTH") {
+			configStream >> mazeDepth;
+		}
+		else if (configToken == "MAZE_HEIGHT") {
+			configStream >> mazeHeight;
+		}
+		else if (configToken == "MAZE_BEGIN") {
+			if (mazeWidth == 0 || mazeHeight == 0 || mazeDepth == 0) {
+				CRITICAL_ERROR("Maze dimension aren't properly defined (or are defined after the maze)");
+				return false;
+			}
+			for (int i = 0; i < mazeDepth * mazeHeight;) {
+				std::string mazeLine = "";
+				std::getline(configIn, mazeLine);
+				if (mazeLine.length() == 0 || mazeLine.at(0) == '#') {
+					continue;
+				}
+				if (mazeLine == "MAZE_END") {
+					CRITICAL_ERROR("Maze ends before it should");
+					return false;
+				}
+				if (mazeLine.size() != mazeWidth) {
+					CRITICAL_ERROR("Maze line %s doesn't have %d elements", mazeLine.c_str(), mazeWidth);
+					return false;
+				}
+				if (i % mazeDepth == 0) {
+					initBlocks.push_back(std::vector<std::string>());
+				}
+				int mazeStartPos = mazeLine.find('s');
+				if (mazeStartPos != std::string::npos) {
+					marble.position = {
+						mazeStartPos * 1.0f,
+						(int)(mazeHeight - (int)(i / mazeDepth) - 1) * 1.0f,
+						(int)(i % mazeDepth) * 1.0f
+					};
+					mazeLine[mazeStartPos] = '.';
+				}
+				initBlocks[i / mazeDepth].push_back(mazeLine);
+				i++;
+			}
+		}
+		else if (configToken == "MAZE_END") {
+			maze.create(initBlocks);
+		}
+	}
+
+	la::Vec3 cameraTarget = {
+		(int)(maze.getWidth() / 2) * 1.0f,
+		(int)(maze.getHeight() / 2) * 1.0f,
+		(int)(maze.getDepth() / 2) * 1.0f,
+	};
+	camera.setTarget(cameraTarget);
+	updateCamera();
+
+	rs::Mesh& mazeMesh = resource.createMesh("maze", 36 * mazeWidth * mazeHeight * mazeDepth);
+	mazeMesh.addGeometry(maze.toGeometry());
+
+	rs::Mesh& marbleMesh = resource.createMesh("marble", 960);
+	marbleMesh.addGeometry(marble.toGeometry());
+
+	ge::GeometryData skybox = ge::GeometryGenerator::GenerateCube();
+	ge::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
+	ge::GeometryTransform::Translate(skybox, cameraTarget);
+	rs::Mesh& skyboxMesh = resource.createMesh("sky", 36);
+	skyboxMesh.addGeometry(skybox);
+
+	renderables.push_back(rn::Renderable());
+	renderables[0].create(mazeMesh, resource.getMaterial(mazeMaterialName));
+	renderables.push_back(rn::Renderable());
+	renderables[1].create(marbleMesh, resource.getMaterial(marbleMaterialName));
+	renderables.push_back(rn::Renderable());
+	renderables[2].create(skyboxMesh, resource.getMaterial(skyboxMaterialName));
+
+	return true;
+}
+
 void Scene::updateCamera() {
 	updateCamera(0, 0, 0);
 }
-
 
 void Scene::updateCamera(float deltaYaw, float deltaPitch, float deltaDistance) {
 	cameraYaw += deltaYaw;
@@ -50,7 +196,7 @@ void Scene::updateMazeRotation(float deltaYaw, float deltaRoll) {
 }
 
 void Scene::updatePhysics(float deltaTime) {
-	marble.velocity = marble.transform * (la::Vec3){0, -marble.speed, 0};
+	marble.velocity = marble.transform * marble.direction * marble.speed;
 
 	int minX = std::floor(marble.position.x - marble.radius);
 	int maxX = std::ceil(marble.position.x + marble.radius);

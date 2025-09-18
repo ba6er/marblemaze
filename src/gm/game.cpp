@@ -1,73 +1,31 @@
-#include <ge/geometrygenerator.hpp>
-#include <ge/geometrytransform.hpp>
 #include <gm/game.hpp>
 #include <rn/renderer.hpp>
 
 using namespace gm;
 
-Game::Game() : gui(), scene() {}
+Game::Game() : internalSize({0, 0}), gui(), scene() {}
 
-void Game::onInit(int width, int height, rs::ResourceManager& resource) {
+void Game::onInit(int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource) {
 	rn::Renderer::resizeFrame(width, height);
+	internalSize = {internalWidth, internalHeight};
 
 	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui"));
 	gui.setFrame(0, width, 0, height);
-	gui.addLabel("test").create(48, "Marble Maze", {width / 2.0f, 32, 0});
+	gui.addLabel("test").create(48, "Marble Maze", {internalWidth / 2, internalHeight / 12, 0});
 
-	scene.light = {
-		{1.0f, 9.9f, 1.0f},
-		{0.3f, 0.3f, 0.3f},
-		{1.0f, 1.0f, 1.0f},
-		{0.5f, 0.5f, 0.5f},
-	};
-
-	scene.maze.loadFromFile(_RES_PATH "testLevel.txt");
-
-	scene.marble.position = {5, 1, 4};
-	scene.marble.speed = 2;
-
-	scene.cameraYaw = 0;
-	scene.cameraPitch = la::Pi / 4;
-	scene.cameraDistance = scene.maze.getWidth() / 2 + 5;
-
-	la::Vec3 cameraTarget = {
-		(int)(scene.maze.getWidth() / 2) * 1.0f,
-		(int)(scene.maze.getHeight() / 2) * 1.0f,
-		(int)(scene.maze.getDepth() / 2) * 1.0f,
-	};
-	scene.camera.setTarget(cameraTarget);
+	bool success = scene.createFromFile(_RES_PATH "testLevel.txt", resource);
+	if (!success) {
+		DEBUG_ERROR("Failed to load test maze");
+	}
 	scene.camera.project3d(72 * la::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
-	scene.updateCamera();
-
-	rs::Mesh& maze = resource.createMesh("maze", 6 * 6 * 9 * 9 * 2);
-	maze.addGeometry(scene.maze.toGeometry());
-
-	scene.renderables.push_back(rn::Renderable());
-	scene.renderables[0].create(maze, resource.getMaterial("copperTextured"));
-
-	rs::Mesh& marble = resource.createMesh("marble", 20 * 16 * 3);
-	marble.addGeometry(scene.marble.toGeometry());
-
-	scene.renderables.push_back(rn::Renderable());
-	scene.renderables[1].create(marble, resource.getMaterial("emerald"));
-
-	ge::GeometryData skybox = ge::GeometryGenerator::GenerateCube();
-	ge::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
-	ge::GeometryTransform::Translate(skybox, cameraTarget);
-
-	rs::Mesh& sky = resource.createMesh("sky", 6 * 6);
-	sky.addGeometry(skybox);
-
-	scene.renderables.push_back(rn::Renderable());
-	scene.renderables[2].create(sky, resource.getMaterial("sky"));
 }
 
 void Game::onResize(int width, int height) {
 	rn::Renderer::resizeFrame(width, height);
 	scene.camera.project3d(72 * la::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 
-	float ox = (640 - width * 480 / height) / 2;
-	gui.setFrame(ox, 640 - ox, 0, 480);
+	float ox = (internalSize.x - width * internalSize.y / height) / 2;
+	gui.setFrame(ox, internalSize.x - ox, 0, internalSize.y);
 }
 
 bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {

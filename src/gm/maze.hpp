@@ -1,10 +1,12 @@
 #pragma once
 #include <ge/geometrydata.hpp>
 #include <util.hpp>
-#include <string_view>
+#include <string>
 #include <vector>
 
 namespace gm {
+
+	using BlockVector3D = std::vector<std::vector<std::string>>;
 
 	enum BlockType : uchar {
 		Empty = 0,
@@ -16,10 +18,11 @@ namespace gm {
 	class Maze {
 
 	public:
+
 		Maze();
 		Maze(int width, int height, int depth);
 
-		void loadFromFile(std::string_view fileName);
+		void create(const BlockVector3D& initBlocks);
 
 		BlockType getBlock(int x, int y, int z) const;
 		void setBlock(int x, int y, int z, BlockType block);

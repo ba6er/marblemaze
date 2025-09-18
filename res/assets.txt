@@ -1,4 +1,4 @@
-# This is the file that RenderAssetManager uses to import Textures, Shaders and Materials.
+# This is the file that ResourceManager uses to import textures, shaders, materials, fonts and sounds.
 # Note: set tab size to 8 for proper table alignment.
 # Note: comments must be on their own line starting with "#".
 
@@ -20,7 +20,7 @@ sky                     sky.png                 T
 MATERIALS
 # Table format for materials:
 # name                  shader name             number of textures      texture names
-# ambient (0-100 rbg)   diffuse (0-100 rgb)     specular (0-100 rgb)    shininess
+# ambient (0-100 RGB)   diffuse (0-100 RGB)     specular (0-100 RGB)    shininess
 sky                     basic3d                 1                       sky
 -
 copperTextured          lighting3d              1                       copper

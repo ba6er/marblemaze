@@ -4,7 +4,9 @@
 #include <rn/camera.hpp>
 #include <rn/renderable.hpp>
 #include <rn/renderer.hpp>
+#include <rs/resourcemanager.hpp>
 #include <array>
+#include <string_view>
 #include <vector>
 
 namespace gm {
@@ -13,6 +15,8 @@ namespace gm {
 
 	public:
 		Scene();
+
+		bool createFromFile(std::string_view fileName, rs::ResourceManager& resource);
 
 		void updateCamera();
 		void updateCamera(float deltaYaw, float deltaPitch, float deltaDistance);

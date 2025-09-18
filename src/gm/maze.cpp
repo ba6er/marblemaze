@@ -1,7 +1,6 @@
 #include <gm/maze.hpp>
 #include <ge/geometrygenerator.hpp>
 #include <ge/geometrytransform.hpp>
-#include <fstream>
 
 using namespace gm;
 
@@ -12,31 +11,21 @@ Maze::Maze(int width, int height, int depth)
 	, width(width), height(height), depth(depth)
 	, blocks(width * height * depth, BlockType::Empty) {}
 
-void Maze::loadFromFile(std::string_view fileName) {
-	std::ifstream in(fileName.data());
-	if (in.is_open() == false) {
-		DEBUG_ERROR("No maze file by the name of %s", fileName.data());
-		return;
-	}
+void Maze::create(const BlockVector3D& initBlocks) {
+	height = initBlocks.size();
+	depth = initBlocks[0].size();
+	width = initBlocks[0][0].size();
 
-	in >> width >> depth >> height;
 	blocks = std::vector(width * height * depth, BlockType::Empty);
 
 	for (int y = 0; y < height; y++) {
 		for (int z = 0; z < depth; z++) {
-			std::string line = "";
-			do {
-				std::getline(in, line);
-			} while (line.length() == 0);
-			if (line.length() != width) {
-				DEBUG_WARNING("Line %s doesn't have the with of %d", line.c_str(), width);
-			}
 			for (int x = 0; x < width; x++) {
 				BlockType b = Empty;
-				if (line[x] == '#') {
+				if (initBlocks[y][z][x] == 'W') {
 					b = Wall;
 				}
-				setBlock(x, y, z, b);
+				setBlock(x, height - 1 - y, z, b);
 			}
 		}
 	}

@@ -18,6 +18,7 @@ namespace gm {
 
 		la::Vec3 position;
 		la::Vec3 velocity;
+		la::Vec3 direction;
 		float radius, speed;
 	};
 }
