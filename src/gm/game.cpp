@@ -1,5 +1,7 @@
 #include <gm/game.hpp>
 #include <rn/renderer.hpp>
+#include <iomanip>
+#include <sstream>
 
 using namespace gm;
 
@@ -10,7 +12,7 @@ void Game::onInit(int width, int height, float internalWidth, float internalHeig
 	internalSize = {internalWidth, internalHeight};
 
 	paused = true;
-	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui"));
+	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui", 600));
 	gui.setFrame(0, width, 0, height);
 	gui.addLabel("title").create(96, "Marble Maze", {320, 80, 0});
 	gui.addLabel("paused").create(48, "Press P to play", {320, 440, 0});
@@ -37,6 +39,7 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 
 	if (input.getKey(in::Restart) == in::JustPressed) {
 		scene.restart();
+		resource.getSound("select").play();
 	}
 
 	if (input.getKey(in::Pause) == in::JustPressed) {
@@ -47,10 +50,23 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 			gui.removeLabel("title");
 			gui.removeLabel("paused");
 		}
+		resource.getSound("select").play();
 	}
 
 	if (paused) {
 		return true;
+	}
+
+	if (scene.checkWinCondition()) {
+		std::stringstream timeText;
+		timeText << "Time: " << std::setprecision(4) << scene.getTime() << "s";
+		gui.addLabel("title").create(48, timeText.str(), {320, 415, 0});
+		gui.addLabel("paused").create(48, "Press P to play again", {320, 440, 0});
+
+		togglePause();
+		scene.restart();
+
+		resource.getSound("select").play();
 	}
 
 	// Update the scene when not paused
@@ -78,8 +94,6 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 	if (scene.shouldPlaySound()) {
 		resource.getSound("solid").play();
 	}
-	scene.checkWinCondition();
-
 	return true;
 }
 
