@@ -76,12 +76,13 @@ Class `GeometryData` has no functionality and all operations are done by helper 
 The `gm` namespace contains `Game` and `Scene` classes.  
 `Scene` holds data for the `Maze` and the `Ball`,
 as well as the list of `Renderable`s, `Light`s and the game `Camera`.  
-`Scene`'s functionality is updating the physics simulation and the camera,
-while `Game` takes care of passing input and rendering accordingly.  
+`Scene`'s functionality is updating the physics simulation, camera, and rendering,
+while `Game` takes care of passing required input and pausing if needed.  
 `Game` also takes care of creating and deleting `Scene`s and `GUI`s.  
 ![Game UML diagram](./design/gm.png)
 
 ## How it all ties together
 The `main` function holds `Input`, `ResourceManager` and `Game` classes, initializing and destroying them .  
-It also does the initialization and destroying of resources for GLFW and miniaudio, as well as running the program loop at a fixed tick-rate.  
+It also does the initialization and destroying of resources for GLFW and miniaudio,
+as well as running the program loop at a fixed tick-rate.  
 ![Main UML diagram](./design/main.png)

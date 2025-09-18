@@ -22,8 +22,16 @@ namespace gm {
 		void updateCamera(float deltaYaw, float deltaPitch, float deltaDistance);
 		void updateMazeRotation(float deltaPitch, float deltaRoll);
 		void updatePhysics(float deltaTime);
+		bool checkWinCondition();
 
+		void setProjection(float fov, float ratio);
+		void display();
 		bool shouldPlaySound();
+
+	private:
+		void marbleBlockCollision(float x, float y, float z, float deltaTime);
+
+		static float DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere);
 
 		rn::Camera camera;
 		rn::Light light;
@@ -31,16 +39,10 @@ namespace gm {
 
 		Marble marble;
 		Maze maze;
+		la::Vec3 finish;
 
 		float cameraDistance, cameraYaw, cameraPitch;
 
-	private:
-		void marbleBlockCollision(float x, float y, float z, float deltaTime);
-
-		static float DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere);
-
-		using BoolVec3 = std::array<bool, 3>;
-
-		BoolVec3 marbleIsTouchingWalls, marbleWasTouchingWalls;
+		std::array<bool, 3> marbleIsTouchingWalls, marbleWasTouchingWalls;
 	};
 }

@@ -25,6 +25,12 @@ void Maze::create(const BlockVector3D& initBlocks) {
 				if (initBlocks[y][z][x] == 'W') {
 					b = Wall;
 				}
+				else if (initBlocks[y][z][x] == 's') {
+					b = Start;
+				}
+				else if (initBlocks[y][z][x] == 'f') {
+					b = Finish;
+				}
 				setBlock(x, height - 1 - y, z, b);
 			}
 		}

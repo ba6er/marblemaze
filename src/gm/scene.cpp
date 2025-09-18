@@ -9,7 +9,7 @@ using namespace gm;
 
 Scene::Scene()
 		: camera(), renderables()
-		, marble(), maze()
+		, marble(), maze(), finish({0})
 		, cameraDistance(10), cameraYaw(0), cameraPitch(0)
 		, marbleIsTouchingWalls({false, false, false}), marbleWasTouchingWalls({false, false, false}) {
 	light = {{0}};
@@ -23,7 +23,7 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 	}
 
 	std::string configLine;
-	std::string marbleMaterialName = "", mazeMaterialName = "", skyboxMaterialName = "";
+	std::string marbleMaterialName, mazeMaterialName, finishMaterialName, skyboxMaterialName;
 	int mazeWidth = 0, mazeDepth = 0, mazeHeight = 0;
 	BlockVector3D initBlocks;
 	while (std::getline(configIn, configLine)) {
@@ -65,6 +65,9 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 		}
 		else if (configToken == "MARBLE_MATERIAL") {
 			configStream >> marbleMaterialName;
+		}
+		else if (configToken == "FINISH_MATERIAL") {
+			configStream >> finishMaterialName;
 		}
 		else if (configToken == "SKYBOX_MATERIAL") {
 			configStream >> skyboxMaterialName;
@@ -117,7 +120,14 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 						(int)(mazeHeight - (int)(i / mazeDepth) - 1) * 1.0f,
 						(int)(i % mazeDepth) * 1.0f
 					};
-					mazeLine[mazeStartPos] = '.';
+				}
+				int mazeFinishPos = mazeLine.find('f');
+				if (mazeFinishPos != std::string::npos) {
+					finish = {
+						mazeFinishPos * 1.0f,
+						(int)(mazeHeight - (int)(i / mazeDepth) - 1) * 1.0f,
+						(int)(i % mazeDepth) * 1.0f
+					};
 				}
 				initBlocks[i / mazeDepth].push_back(mazeLine);
 				i++;
@@ -142,6 +152,11 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 	rs::Mesh& marbleMesh = resource.createMesh("marble", 960);
 	marbleMesh.addGeometry(marble.toGeometry());
 
+	ge::GeometryData finishCube = ge::GeometryGenerator::GenerateCube();
+	ge::GeometryTransform::Translate(finishCube, finish);
+	rs::Mesh& finishMesh = resource.createMesh("finish", 36);
+	finishMesh.addGeometry(finishCube);
+
 	ge::GeometryData skybox = ge::GeometryGenerator::GenerateCube();
 	ge::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
 	ge::GeometryTransform::Translate(skybox, cameraTarget);
@@ -153,7 +168,9 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 	renderables.push_back(rn::Renderable());
 	renderables[1].create(marbleMesh, resource.getMaterial(marbleMaterialName));
 	renderables.push_back(rn::Renderable());
-	renderables[2].create(skyboxMesh, resource.getMaterial(skyboxMaterialName));
+	renderables[2].create(finishMesh, resource.getMaterial(finishMaterialName));
+	renderables.push_back(rn::Renderable());
+	renderables[3].create(skyboxMesh, resource.getMaterial(skyboxMaterialName));
 
 	return true;
 }
@@ -235,6 +252,22 @@ void Scene::updatePhysics(float deltaTime) {
 		}
 	}
 	marble.position += marble.velocity * deltaTime;
+}
+
+bool Scene::checkWinCondition() {
+	return DistanceSphereAABB(finish, marble.position) <= marble.radius;
+}
+
+void Scene::setProjection(float fov, float ratio) {
+	camera.project3d(fov, ratio, 0.0001f, 9999.9f);
+}
+
+void Scene::display() {
+	la::Mat4 mazeTr = renderables[0].transform;
+	renderables[1].transform = mazeTr * la::Mat4::Translate(marble.position);
+	renderables[2].transform = mazeTr;
+
+	rn::Renderer::render(camera, renderables, light);
 }
 
 bool Scene::shouldPlaySound() {

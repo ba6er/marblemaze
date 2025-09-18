@@ -17,12 +17,12 @@ void Game::onInit(int width, int height, float internalWidth, float internalHeig
 	if (!success) {
 		DEBUG_ERROR("Failed to load test maze");
 	}
-	scene.camera.project3d(72 * la::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
+	scene.setProjection(72 * la::DegToRad, (float)width / (float)height);
 }
 
 void Game::onResize(int width, int height) {
 	rn::Renderer::resizeFrame(width, height);
-	scene.camera.project3d(72 * la::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
+	scene.setProjection(72 * la::DegToRad, (float)width / (float)height);
 
 	float ox = (internalSize.x - width * internalSize.y / height) / 2;
 	gui.setFrame(ox, internalSize.x - ox, 0, internalSize.y);
@@ -57,17 +57,14 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 	if (scene.shouldPlaySound()) {
 		resource.getSound("solid").play();
 	}
+	scene.checkWinCondition();
 
 	return true;
 }
 
 void Game::onRender(float deltaTime, float currentTime, rs::ResourceManager& resource) {
-	la::Mat4 marTr = scene.renderables[0].transform;
-	marTr = marTr * la::Mat4::Translate(scene.marble.position);
-	scene.renderables[1].transform = marTr;
+	rn::Renderer::clear(0, 0, 0);
 
-	rn::Renderer::clear(0.5f, 0.5f, 0.5f);
-	rn::Renderer::render(scene.camera, scene.renderables, scene.light);
-
+	scene.display();
 	gui.display();
 }

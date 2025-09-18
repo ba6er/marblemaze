@@ -7,6 +7,11 @@ class gm::Game {
 	+onRender(deltaTime, currentTime, resource)
 	+onResize(width, height)
 	..
+	+togglePause() : bool
+	+isPaused() : bool
+	--
+	-paused: bool
+	..
 	-internalSize: Vec2
 	-gui: GUI
 	-scene: Scene
@@ -19,18 +24,27 @@ class gm::Scene {
 	+updateMazeRotation(deltaPitch, deltaRoll)
 	+updatePhysics(deltaTime)
 	..
-	+marble: Marble
-	+maze: Maze
+	+checkWinCondition() : bool
 	..
-	+camera: Camera
-	+renderables: Renderable[]
-	+lights: Light[]
-	..
-	+cameraDistance, cameraYaw, cameraPitch: float
+	+setProjection(fov, aspect)
+	+display()
+	+shoudPlaySound() : bool
 	--
 	-marbleBlockCollision(x, y, z, deltaTime)
 	..
 	{static} -DistanceSphereAABB(box, sphere) : float
+	..
+	-camera: Camera
+	-renderables: Renderable[]
+	-lights: Light[]
+	..
+	-marble: Marble
+	-maze: Maze
+	-finish: Vec3
+	..
+	-cameraDistance, cameraYaw, cameraPitch: float
+	-marbleIsTouchingWalls: bool[3]
+	-marbleWasTouchingWalls: bool[3]
 }
 
 enum gm::BlockType {

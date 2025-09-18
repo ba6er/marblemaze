@@ -23,6 +23,7 @@ CAMERA_DISTANCE 10
 # Maze, marble and skybox materials are defined in assets.txt
 MAZE_MATERIAL   copperTextured
 MARBLE_MATERIAL emerald
+FINISH_MATERIAL emerald
 SKYBOX_MATERIAL sky
 
 # The game will apply marble's speed in it's direction.
