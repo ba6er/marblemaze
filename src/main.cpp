@@ -11,7 +11,7 @@ static void callbackError(int code, const char* text) {
 }
 
 static const char* title = "Marble Maze";
-static const int width   = 720;
+static const int width   = 640;
 static const int height  = 480;
 static const int fps     = 60;
 

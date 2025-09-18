@@ -66,8 +66,8 @@ void Game::onResize(int width, int height) {
 	rn::Renderer::resizeFrame(width, height);
 	scene.camera.project3d(72 * la::DegToRad, (float)width / (float)height, 0.001f, 999.9f);
 
-	float ox = (720 - width * 480 / height) / 2;
-	gui.setFrame(ox, 720 - ox, 0, 480);
+	float ox = (640 - width * 480 / height) / 2;
+	gui.setFrame(ox, 640 - ox, 0, 480);
 }
 
 bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
