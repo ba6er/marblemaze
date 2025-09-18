@@ -12,6 +12,9 @@ void Sound::create(std::string_view fileName, ma_engine* audioEngine) {
 
 void Sound::destroy() {
 	ma_sound_uninit(&source);
+	source = {};
+	playing = false;
+	looping = false;
 }
 
 void Sound::play() {

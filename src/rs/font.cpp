@@ -81,6 +81,14 @@ void Font::create(Texture& texture, std::string_view fileName, int size, bool fi
 	free(atlasData);
 }
 
+void Font::destroy() {
+	size = 0;
+	texture = nullptr;
+	for (int i = 0; i < NumGlyphs; i++) {
+		glyphs[i] = {0, 0, {0, 0, 0, 0}};
+	}
+}
+
 Texture& Font::getTexture() {
 	DEBUG_ASSERT(texture != nullptr, "This font hasn't been initialized");
 	return *texture;

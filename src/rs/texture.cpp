@@ -82,6 +82,9 @@ void Texture::create() {
 
 void Texture::destroy() {
 	glDeleteTextures(1, &id);
+	width = 0;
+	height = 0;
+	id = 0;
 }
 
 void Texture::use(int index) const {

@@ -12,6 +12,13 @@ void Material::create(Shader& shader) {
 	this->shader = &shader;
 }
 
+void Material::destroy() {
+	shader = nullptr;
+	for (int i = 0; i < MAX_TEXTURES; i++) {
+		textures[i] = nullptr;
+	}
+}
+
 void Material::use() const {
 	if (shader == nullptr) {
 		DEBUG_WARNING("No shader set for material");

@@ -14,6 +14,7 @@ namespace rs {
 		Material();
 
 		void create(Shader& shader);
+		void destroy();
 
 		void use() const;
 

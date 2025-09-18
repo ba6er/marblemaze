@@ -51,6 +51,12 @@ void Mesh::destroy() {
 	glDeleteBuffers(1, &vbo);
 
 	std::free(vertices);
+
+	vao = 0;
+	vbo = 0;
+	numVerts = 0;
+	maxVerts = 0;
+	vertices = nullptr;
 }
 
 void Mesh::addVertex(const Vertex& v) {

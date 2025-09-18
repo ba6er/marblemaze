@@ -61,12 +61,20 @@ void ResourceManager::initFromConfig(std::string_view fileName, ma_engine* audio
 }
 
 Shader& ResourceManager::createShader(const std::string& name, std::string_view vertex, std::string_view fragment) {
+	if (shaders.find(name) != shaders.end()) {
+		DEBUG_WARNING("Shader \"%s\" already exists, recreating", name.c_str());
+		shaders.at(name).destroy();
+	}
 	shaders[name] = Shader();
 	shaders.at(name).create(vertex, fragment);
 	return shaders.at(name);
 }
 
 Texture& ResourceManager::createTexture(const std::string& name) {
+	if (textures.find(name) != textures.end()) {
+		DEBUG_WARNING("Texture \"%s\" already exists, recreating", name.c_str());
+		textures.at(name).destroy();
+	}
 	textures[name] = Texture();
 	return textures.at(name);
 }
@@ -74,6 +82,10 @@ Texture& ResourceManager::createTexture(const std::string& name) {
 Texture& ResourceManager::createTexture(
 		const std::string& name,
 		int width, int height, void* data, TextureFormat format) {
+	if (textures.find(name) != textures.end()) {
+		DEBUG_WARNING("Texture \"%s\" already exists, recreating", name.c_str());
+		textures.at(name).destroy();
+	}
 	textures[name] = Texture();
 	textures.at(name).create(width, height, data, format);
 	return textures.at(name);
@@ -82,18 +94,30 @@ Texture& ResourceManager::createTexture(
 Texture& ResourceManager::createTexture(
 		const std::string& name,
 		std::string_view fileName, bool filtered, int mipmaps) {
+	if (textures.find(name) != textures.end()) {
+		DEBUG_WARNING("Texture \"%s\" already exists, recreating", name.c_str());
+		textures.at(name).destroy();
+	}
 	textures[name] = Texture();
 	textures.at(name).create(fileName, filtered, mipmaps);
 	return textures.at(name);
 }
 
 Material& ResourceManager::createMaterial(const std::string& name, std::string_view shaderName) {
+	if (materials.find(name) != materials.end()) {
+		DEBUG_WARNING("Material \"%s\" already exists, recreating", name.c_str());
+		materials.at(name).destroy();
+	}
 	materials[name] = Material();
 	materials.at(name).create(getShader(shaderName));
 	return materials.at(name);
 }
 
 Mesh& ResourceManager::createMesh(const std::string& name, int initVerts) {
+	if (meshes.find(name) != meshes.end()) {
+		DEBUG_WARNING("Mesh \"%s\" already exists, recreating", name.c_str());
+		meshes.at(name).destroy();
+	}
 	meshes[name] = Mesh();
 	meshes.at(name).create(initVerts);
 	return meshes.at(name);
@@ -102,12 +126,20 @@ Mesh& ResourceManager::createMesh(const std::string& name, int initVerts) {
 Font& ResourceManager::createFont(
 		const std::string& name,
 		const std::string& textureName, std::string_view fileName, int size, bool filtered) {
+	if (fonts.find(name) != fonts.end()) {
+		DEBUG_WARNING("Font \"%s\" already exists, recreating", name.c_str());
+		fonts.at(name).destroy();
+	}
 	fonts[name] = Font();
 	fonts.at(name).create(createTexture(textureName), fileName, size, filtered);
 	return fonts.at(name);
 }
 
 Sound& ResourceManager::createSound(const std::string& name, std::string_view fileName) {
+	if (sounds.find(name) != sounds.end()) {
+		DEBUG_WARNING("Font \"%s\" already exists, recreating", name.c_str());
+		sounds.at(name).destroy();
+	}
 	sounds[name] = Sound();
 	sounds.at(name).create(fileName, audioEngine);
 	return sounds.at(name);
@@ -120,8 +152,14 @@ void ResourceManager::destroy() {
 	for (auto& texture : textures) {
 		texture.second.destroy();
 	}
+	for (auto& material : meshes) {
+		material.second.destroy();
+	}
 	for (auto& mesh : meshes) {
 		mesh.second.destroy();
+	}
+	for (auto& font : fonts) {
+		font.second.destroy();
 	}
 	for (auto& sound : sounds) {
 		sound.second.destroy();
