@@ -8,9 +8,9 @@
 using namespace gm;
 
 Scene::Scene()
-		: camera(), renderables()
-		, marble(), maze(), finish({0})
-		, cameraDistance(10), cameraYaw(0), cameraPitch(0)
+		: timer(0), camera(), renderables()
+		, marble(), maze(), start({0, 0, 0}), finish({0, 0, 0}), initCameraValues({0, 0, 0})
+		, cameraDistance(0), cameraYaw(0), cameraPitch(0)
 		, marbleIsTouchingWalls({false, false, false}), marbleWasTouchingWalls({false, false, false}) {
 	light = {{0}};
 }
@@ -115,11 +115,12 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 				}
 				int mazeStartPos = mazeLine.find('s');
 				if (mazeStartPos != std::string::npos) {
-					marble.position = {
+					start = {
 						mazeStartPos * 1.0f,
 						(int)(mazeHeight - (int)(i / mazeDepth) - 1) * 1.0f,
 						(int)(i % mazeDepth) * 1.0f
 					};
+					marble.position = start;
 				}
 				int mazeFinishPos = mazeLine.find('f');
 				if (mazeFinishPos != std::string::npos) {
@@ -145,6 +146,7 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 	};
 	camera.setTarget(cameraTarget);
 	updateCamera();
+	initCameraValues = {cameraDistance, cameraYaw, cameraPitch};
 
 	rs::Mesh& mazeMesh = resource.createMesh("maze", 36 * mazeWidth * mazeHeight * mazeDepth);
 	mazeMesh.addGeometry(maze.toGeometry());
@@ -173,6 +175,26 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 	renderables[3].create(skyboxMesh, resource.getMaterial(skyboxMaterialName));
 
 	return true;
+}
+
+void Scene::restart() {
+	timer = 0;
+
+	cameraDistance = initCameraValues.x;
+	cameraYaw = initCameraValues.y;
+	cameraPitch = initCameraValues.z;
+
+	marble.position = start;
+	marble.velocity = {0, 0, 0};
+
+	marble.transform = la::Mat4::Identity();
+	maze.transform = la::Mat4::Identity();
+
+	updateCamera();
+	updateMazeRotation(0, 0);
+
+	marbleIsTouchingWalls = {false, false, false};
+	marbleWasTouchingWalls = marbleIsTouchingWalls;
 }
 
 void Scene::updateCamera() {
@@ -252,10 +274,15 @@ void Scene::updatePhysics(float deltaTime) {
 		}
 	}
 	marble.position += marble.velocity * deltaTime;
+	timer += deltaTime;
 }
 
 bool Scene::checkWinCondition() {
 	return DistanceSphereAABB(finish, marble.position) <= marble.radius;
+}
+
+float Scene::getTime() {
+	return timer;
 }
 
 void Scene::setProjection(float fov, float ratio) {
@@ -319,4 +346,3 @@ float Scene::DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere) {
 	}
 	return std::sqrt(distanceSquared);
 }
-

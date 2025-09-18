@@ -17,12 +17,15 @@ namespace gm {
 		Scene();
 
 		bool createFromFile(std::string_view fileName, rs::ResourceManager& resource);
+		void restart();
 
 		void updateCamera();
 		void updateCamera(float deltaYaw, float deltaPitch, float deltaDistance);
 		void updateMazeRotation(float deltaPitch, float deltaRoll);
 		void updatePhysics(float deltaTime);
+
 		bool checkWinCondition();
+		float getTime();
 
 		void setProjection(float fov, float ratio);
 		void display();
@@ -33,13 +36,15 @@ namespace gm {
 
 		static float DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere);
 
+		float timer;
+
 		rn::Camera camera;
 		rn::Light light;
 		std::vector<rn::Renderable> renderables;
 
 		Marble marble;
 		Maze maze;
-		la::Vec3 finish;
+		la::Vec3 start, finish, initCameraValues;
 
 		float cameraDistance, cameraYaw, cameraPitch;
 

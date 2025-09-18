@@ -35,6 +35,10 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 		return false;
 	}
 
+	if (input.getKey(in::Restart) == in::JustPressed) {
+		scene.restart();
+	}
+
 	if (input.getKey(in::Pause) == in::JustPressed) {
 		togglePause();
 		if (paused) {
