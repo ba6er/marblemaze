@@ -44,7 +44,7 @@ Actual key names are held in `Input::KeyboardValues` which contains `GLFW_KEY` f
 
 ## Resource management
 The `rs` namespace contains `ResourceManager` class
-which is responsible for creation and deletion of memory-related resources.
+which is responsible for creation and deletion of memory-related resources.  
 Classes `Texture` and `Shader` encapsulate their OpenGL functions and data,
 while their references are used by `Material`.  
 `Material` also hold relevant shader uniforms.  
