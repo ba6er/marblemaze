@@ -16,7 +16,12 @@ namespace gm {
 		void onRender(float deltaTime, float currentTime, rs::ResourceManager& resource);
 		void onResize(int width, int height);
 
+		bool togglePause();
+		bool isPaused();
+
 	private:
+		bool paused;
+
 		la::Vec2 internalSize;
 		rn::GUI gui;
 		Scene scene;

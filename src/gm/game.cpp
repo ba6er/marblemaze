@@ -3,15 +3,17 @@
 
 using namespace gm;
 
-Game::Game() : internalSize({0, 0}), gui(), scene() {}
+Game::Game() : paused(true), internalSize({0, 0}), gui(), scene() {}
 
 void Game::onInit(int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource) {
 	rn::Renderer::resizeFrame(width, height);
 	internalSize = {internalWidth, internalHeight};
 
+	paused = true;
 	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui"));
 	gui.setFrame(0, width, 0, height);
-	gui.addLabel("test").create(48, "Marble Maze", {internalWidth / 2, internalHeight / 12, 0});
+	gui.addLabel("title").create(96, "Marble Maze", {320, 80, 0});
+	gui.addLabel("paused").create(48, "Press P to play", {320, 440, 0});
 
 	bool success = scene.createFromFile(_RES_PATH "testLevel.txt", resource);
 	if (!success) {
@@ -33,6 +35,21 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 		return false;
 	}
 
+	if (input.getKey(in::Pause) == in::JustPressed) {
+		togglePause();
+		if (paused) {
+			gui.addLabel("paused").create(48, "Press P to resume", {320, 440, 0});
+		} else {
+			gui.removeLabel("title");
+			gui.removeLabel("paused");
+		}
+	}
+
+	if (paused) {
+		return true;
+	}
+
+	// Update the scene when not paused
 	int pressed[] = {
 		input.getKey(in::MazeYawDecrease) == in::Pressed,
 		input.getKey(in::MazeYawIncrease) == in::Pressed,
@@ -67,4 +84,13 @@ void Game::onRender(float deltaTime, float currentTime, rs::ResourceManager& res
 
 	scene.display();
 	gui.display();
+}
+
+bool Game::togglePause() {
+	paused = !paused;
+	return paused;
+}
+
+bool Game::isPaused() {
+	return paused;
 }

@@ -49,7 +49,10 @@ Label& GUI::getLabel(std::string_view name) {
 
 void GUI::removeLabel(std::string_view name) {
 	auto value = labels.find(name);
-	DEBUG_ASSERT(value != labels.end(), "No label by the name of \"%s\"", name.data());
+	if (value == labels.end()) {
+		DEBUG_WARNING("No label by the name of \"%s\"", name.data());
+		return;
+	}
 	labels.erase(value);
 	needsUpdate = true;
 }

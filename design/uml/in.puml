@@ -11,6 +11,8 @@ hide KeyState methods
 
 enum in::KeyName {
 	Quit
+	Restart
+	Pause
 	MazeRollDecrease
 	MazeRollIncrease
 	MazeYawDecrease

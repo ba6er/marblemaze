@@ -12,6 +12,8 @@ namespace in {
 
 	enum KeyName {
 		Quit,
+		Restart,
+		Pause,
 		MazeRollDecrease,
 		MazeRollIncrease,
 		MazeYawDecrease,
@@ -25,6 +27,8 @@ namespace in {
 
 		static constexpr int KeyboardValues[KEYBOARD_COUNT] = {
 			GLFW_KEY_ESCAPE, // Quit
+			GLFW_KEY_R,      // Restart
+			GLFW_KEY_P,      // Pause
 			GLFW_KEY_A,      // MazeRollDecrease
 			GLFW_KEY_D,      // MazeRollIncrease
 			GLFW_KEY_W,      // MazeYawDecrease
