@@ -46,7 +46,7 @@ Actual key names are held in `Input::KeyboardValues` which contains `GLFW_KEY` f
 The `rs` namespace contains `ResourceManager` class
 which is responsible for creation and deletion of memory-related resources.
 Classes `Texture` and `Shader` encapsulate their OpenGL functions and data,
-while their references are used by `Material`.
+while their references are used by `Material`.  
 `Material` also hold relevant shader uniforms.  
 The `Mesh` class manages an OpenGL vertex array and it's relevant resources.  
 The `Font` class is responsible for loading TTF fonts into an OpenGL texture and holding glyph information.  
@@ -78,6 +78,7 @@ The `gm` namespace contains `Game` and `Scene` classes.
 as well as the list of `Renderable`s, `Light`s and the game `Camera`.  
 `Scene`'s functionality is updating the physics simulation and the camera,
 while `Game` takes care of passing input and rendering accordingly.  
+`Game` also takes care of creating and deleting `Scene`s and `GUI`s.  
 ![Game UML diagram](./design/gm.png)
 
 ## How it all ties together
