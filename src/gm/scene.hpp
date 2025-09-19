@@ -18,6 +18,7 @@ namespace gm {
 
 		bool createFromFile(std::string_view fileName, rs::ResourceManager& resource);
 		void restart();
+		void destroy();
 
 		void updateCamera();
 		void updateCamera(float deltaYaw, float deltaPitch, float deltaDistance);

@@ -197,6 +197,27 @@ void Scene::restart() {
 	marbleWasTouchingWalls = marbleIsTouchingWalls;
 }
 
+void Scene::destroy() {
+	timer = 0;
+
+	camera = rn::Camera();
+	light = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+	renderables.clear();
+
+	marble = Marble();
+	maze = Maze();
+
+	start = {0, 0, 0};
+	finish = {0, 0, 0};
+	initCameraValues = {0, 0, 0};
+	cameraDistance = 0;
+	cameraYaw = 0;
+	cameraPitch = 0;
+
+	marbleIsTouchingWalls = {false, false, false};
+	marbleWasTouchingWalls = {false, false, false};
+}
+
 void Scene::updateCamera() {
 	updateCamera(0, 0, 0);
 }
