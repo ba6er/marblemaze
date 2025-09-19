@@ -22,14 +22,20 @@ namespace gm {
 		void restart();
 		void destroy();
 
+		void setCameraValues(float yaw, float pitch, float distance);
 		void updateCamera();
 		void updateCamera(float deltaYaw, float deltaPitch, float deltaDistance);
 		void updateMazeRotation(float deltaPitch, float deltaRoll);
 		void updatePhysics(float deltaTime);
 		void updateTimer(float deltaTime);
 
+		std::string_view getId();
 		bool checkWinCondition();
 		float getTime();
+
+		float getCameraYaw();
+		float getCameraPitch();
+		float getCameraDistance();
 
 		void setProjection(float fov, float ratio);
 		void display();
@@ -40,6 +46,7 @@ namespace gm {
 
 		static float DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere);
 
+		std::string id;
 		float timer;
 
 		rn::Camera camera;

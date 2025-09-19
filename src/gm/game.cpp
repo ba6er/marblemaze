@@ -9,6 +9,7 @@ using namespace gm;
 
 Game::Game()
 	: state(MenuMain), frameSize({0, 0}), internalSize({0, 0}), gui()
+	, menuCameraYaw(0), menuCameraPitch(0), menuCameraDistance(0)
 	, selectedSceneIndex(0), numLoadedScenes(0), scenes(), menuScene(), currentScene(nullptr) {}
 
 void Game::onInit(int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource) {
@@ -23,22 +24,27 @@ void Game::onInit(int width, int height, float internalWidth, float internalHeig
 	menuScene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 
 	std::set<std::filesystem::path> sceneFileNames;
-	for (const auto& entry : std::filesystem::directory_iterator(_RES_PATH "/scenes")) {
+	for (const auto& entry : std::filesystem::directory_iterator(_RES_PATH "scenes")) {
 		sceneFileNames.insert(entry.path());
 	}
 	for (const auto& fileName : sceneFileNames) {
 		scenes.push_back(Scene());
 		if (scenes[numLoadedScenes].createFromFile(fileName.c_str(), resource)) {
-			scenes[0].setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
-			DEBUG_TRACE("Loaded scene from %s", fileName.c_str());
+			DEBUG_TRACE("Loaded scene \"%s\" from %s", scenes[numLoadedScenes].getId().data(), fileName.c_str());
+			scenes[numLoadedScenes].setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+			numLoadedScenes++;
 		} else {
 			DEBUG_ERROR("Failed to load scene from %s", fileName.c_str());
 			scenes[numLoadedScenes].destroy();
 		}
-		numLoadedScenes++;
 	}
 
 	currentScene = &menuScene;
+
+	menuCameraYaw = currentScene->getCameraYaw();
+	menuCameraPitch = currentScene->getCameraPitch();
+	menuCameraDistance = currentScene->getCameraDistance();
+
 	setState(MenuMain);
 }
 
@@ -159,7 +165,8 @@ void Game::setState(GameState newState) {
 bool Game::onStateMenuMain(
 		float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
 
-	currentScene->updateCamera(deltaTime / 4, 0, 0);
+	menuCameraYaw += deltaTime / 4;
+	currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
@@ -181,6 +188,7 @@ bool Game::onStateMenuMain(
 	if (onPlay) {
 		resource.getSound("select").play();
 		currentScene = &scenes[selectedSceneIndex];
+		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 		setState(MenuLevels);
 	}
@@ -196,7 +204,8 @@ bool Game::onStateMenuOptions(
 bool Game::onStateMenuLevels(
 		float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
 
-	currentScene->updateCamera(deltaTime / 4, 0, 0);
+	menuCameraYaw += deltaTime / 4;
+	currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
@@ -220,6 +229,7 @@ bool Game::onStateMenuLevels(
 			selectedSceneIndex -= numLoadedScenes;
 		}
 		currentScene = &scenes[selectedSceneIndex];
+		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 	}
 	if (onPrev) {
@@ -229,6 +239,7 @@ bool Game::onStateMenuLevels(
 			selectedSceneIndex += numLoadedScenes;
 		}
 		currentScene = &scenes[selectedSceneIndex];
+		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 	}
 
@@ -312,6 +323,10 @@ bool Game::onStateSceneWin(
 		setState(ScenePlaying);
 	}
 	if (onQuit) {
+		menuCameraYaw = currentScene->getCameraYaw();
+		menuCameraPitch = currentScene->getCameraPitch();
+		menuCameraDistance = currentScene->getCameraDistance();
+
 		setState(MenuMain);
 	}
 	return true;

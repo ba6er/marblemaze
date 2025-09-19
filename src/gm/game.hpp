@@ -51,6 +51,8 @@ namespace gm {
 		la::Vec2 frameSize, internalSize;
 		rn::GUI gui;
 
+		float menuCameraYaw, menuCameraPitch, menuCameraDistance;
+
 		int selectedSceneIndex, numLoadedScenes;
 		std::vector<Scene> scenes;
 		Scene menuScene;

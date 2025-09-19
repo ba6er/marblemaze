@@ -8,7 +8,7 @@
 using namespace gm;
 
 Scene::Scene()
-		: timer(0), camera(), renderables()
+		: id(""), timer(0), camera(), renderables()
 		, marble(), maze(), start({0, 0, 0}), finish({0, 0, 0}), initCameraValues({0, 0, 0})
 		, cameraDistance(0), cameraYaw(0), cameraPitch(0)
 		, marbleIsTouchingWalls({false, false, false}), marbleWasTouchingWalls({false, false, false}) {
@@ -23,7 +23,7 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 	}
 
 	std::string configLine;
-	std::string id, marbleMaterialName, mazeMaterialName, finishMaterialName, skyboxMaterialName;
+	std::string marbleMaterialName, mazeMaterialName, finishMaterialName, skyboxMaterialName;
 	size_t mazeWidth = 0, mazeDepth = 0, mazeHeight = 0;
 	BlockVector3D initBlocks;
 	while (std::getline(configIn, configLine)) {
@@ -36,7 +36,6 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 		configStream >> configToken;
 		if (configToken == "INTERNAL_ID") {
 			configStream >> id;
-			id += "_";
 		}
 		if (configToken == "LIGHT_POSITION") {
 			configStream >> light.position.x >> light.position.y >> light.position.z;
@@ -152,21 +151,21 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 	updateCamera();
 	initCameraValues = {cameraDistance, cameraYaw, cameraPitch};
 
-	rs::Mesh& mazeMesh = resource.createMesh(id + "maze", 36 * mazeWidth * mazeHeight * mazeDepth);
+	rs::Mesh& mazeMesh = resource.createMesh(id + "_maze", 36 * mazeWidth * mazeHeight * mazeDepth);
 	mazeMesh.addGeometry(maze.toGeometry());
 
-	rs::Mesh& marbleMesh = resource.createMesh(id + "marble", 960);
+	rs::Mesh& marbleMesh = resource.createMesh(id + "_marble", 960);
 	marbleMesh.addGeometry(marble.toGeometry());
 
 	ge::GeometryData finishCube = ge::GeometryGenerator::GenerateCube();
 	ge::GeometryTransform::Translate(finishCube, finish);
-	rs::Mesh& finishMesh = resource.createMesh(id + "finish", 36);
+	rs::Mesh& finishMesh = resource.createMesh(id + "_finish", 36);
 	finishMesh.addGeometry(finishCube);
 
 	ge::GeometryData skybox = ge::GeometryGenerator::GenerateCube();
 	ge::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
 	ge::GeometryTransform::Translate(skybox, cameraTarget);
-	rs::Mesh& skyboxMesh = resource.createMesh(id + "skybox", 36);
+	rs::Mesh& skyboxMesh = resource.createMesh(id + "_skybox", 36);
 	skyboxMesh.addGeometry(skybox);
 
 	renderables.push_back(rn::Renderable());
@@ -214,7 +213,7 @@ void Scene::createMenuScene(rs::ResourceManager& resource) {
 	};
 	cameraYaw = la::Pi / 2;
 	cameraPitch = la::Pi / 4;
-	cameraDistance = 8;
+	cameraDistance = 10;
 
 	maze.create(initBlocks);
 	marble.position = {3, 1, 3};
@@ -291,18 +290,10 @@ void Scene::destroy() {
 	marbleWasTouchingWalls = {false, false, false};
 }
 
-void Scene::updateCamera() {
-	updateCamera(0, 0, 0);
-}
-
-void Scene::updateCamera(float deltaYaw, float deltaPitch, float deltaDistance) {
-	cameraYaw += deltaYaw;
-	cameraPitch = std::min(std::max(cameraPitch + deltaPitch, -la::Pi / 2 + 0.1f), la::Pi / 2 - 0.1f);
-
-	cameraDistance += deltaDistance;
-	if (cameraDistance <= 0) {
-		cameraDistance = 0.1f;
-	}
+void Scene::setCameraValues(float yaw, float pitch, float distance) {
+	cameraYaw = yaw;
+	cameraPitch = std::min(std::max(pitch, -la::Pi / 2 + 0.1f), la::Pi / 2 - 0.1f);
+	cameraDistance = std::max(distance, 0.1f);
 
 	la::Vec3 offset = camera.getTarget();
 	la::Vec3 newPosition = {
@@ -311,6 +302,20 @@ void Scene::updateCamera(float deltaYaw, float deltaPitch, float deltaDistance) 
 		offset.z + std::cos(cameraPitch) * std::sin(cameraYaw) * cameraDistance,
 	};
 	camera.setPosition(newPosition);
+}
+
+void Scene::updateCamera() {
+	la::Vec3 offset = camera.getTarget();
+	la::Vec3 newPosition = {
+		offset.x + std::cos(cameraPitch) * std::cos(cameraYaw) * cameraDistance,
+		offset.y + std::sin(cameraPitch) * cameraDistance,
+		offset.z + std::cos(cameraPitch) * std::sin(cameraYaw) * cameraDistance,
+	};
+	camera.setPosition(newPosition);
+}
+
+void Scene::updateCamera(float deltaYaw, float deltaPitch, float deltaDistance) {
+	setCameraValues(cameraYaw + deltaYaw, cameraPitch + deltaPitch, cameraDistance + deltaDistance);
 }
 
 void Scene::updateMazeRotation(float deltaYaw, float deltaRoll) {
@@ -374,12 +379,28 @@ void Scene::updateTimer(float deltaTime) {
 	timer += deltaTime;
 }
 
+std::string_view Scene::getId() {
+	return id;
+}
+
 bool Scene::checkWinCondition() {
 	return DistanceSphereAABB(finish, marble.position) <= marble.radius;
 }
 
 float Scene::getTime() {
 	return timer;
+}
+
+float Scene::getCameraYaw() {
+	return cameraYaw;
+}
+
+float Scene::getCameraPitch() {
+	return cameraPitch;
+}
+
+float Scene::getCameraDistance() {
+	return cameraDistance;
 }
 
 void Scene::setProjection(float fov, float ratio) {

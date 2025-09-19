@@ -35,6 +35,8 @@ class gm::Game {
 	-internalSize: Vec2
 	-gui: GUI
 	..
+	-menuCameraYaw, menuCameraPitch, menuCameraDistance: float
+	..
 	-selectedSceneIndex, numLoadedScenes: int
 	-scenes: Scene[]
 	-menuScene: Scene
@@ -47,13 +49,19 @@ class gm::Scene {
 	+restart()
 	+destroy()
 	..
+	+setCameraValues(yaw, pitch, distance)
 	+updateCamera(deltaYaw, deltaPitch, deltaDistance)
 	+updateMazeRotation(deltaPitch, deltaRoll)
 	+updatePhysics(deltaTime)
 	+updateTimer(deltaTime)
 	..
+	+getId() : str
 	+checkWinCondition() : bool
 	+getTime() : float
+	..
+	+getCameraYaw() : float
+	+getCameraPitch() : float
+	+getCameraDistance() : float
 	..
 	+setProjection(fov, aspect)
 	+display()
@@ -63,6 +71,7 @@ class gm::Scene {
 	..
 	{static} -DistanceSphereAABB(box, sphere) : float
 	..
+	-id: str
 	-timer: float
 	..
 	-camera: Camera
