@@ -26,6 +26,7 @@ namespace gm {
 		void updateCamera(float deltaYaw, float deltaPitch, float deltaDistance);
 		void updateMazeRotation(float deltaPitch, float deltaRoll);
 		void updatePhysics(float deltaTime);
+		void updateTimer(float deltaTime);
 
 		bool checkWinCondition();
 		float getTime();

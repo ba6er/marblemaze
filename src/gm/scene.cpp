@@ -364,6 +364,9 @@ void Scene::updatePhysics(float deltaTime) {
 		}
 	}
 	marble.position += marble.velocity * deltaTime;
+}
+
+void Scene::updateTimer(float deltaTime) {
 	timer += deltaTime;
 }
 

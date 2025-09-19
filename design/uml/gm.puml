@@ -20,12 +20,12 @@ class gm::Game {
 	+getState() : GameState
 	+setState(state)
 	--
-	-setStateMenuMain()
-	-setStateMenuOptions()
-	-setStateMenuLevels()
-	-setStateScenePlaying()
-	-setStateScenePaused()
-	-setStateSceneWin()
+	-onStateMenuMain(deltaTime, currentTime, resource, input) : bool
+	-onStateMenuOptions(deltaTime, currentTime, resource, input) : bool
+	-onStateMenuLevels(deltaTime, currentTime, resource, input) : bool
+	-onStateScenePlaying(deltaTime, currentTime, resource, input) : bool
+	-onStateScenePaused(deltaTime, currentTime, resource, input) : bool
+	-onStateSceneWin(deltaTime, currentTime, resource, input) : bool
 	..
 	-internalPosition(x, y) : Vec2
 	..
@@ -45,6 +45,7 @@ class gm::Scene {
 	+updateCamera(deltaYaw, deltaPitch, deltaDistance)
 	+updateMazeRotation(deltaPitch, deltaRoll)
 	+updatePhysics(deltaTime)
+	+updateTimer(deltaTime)
 	..
 	+checkWinCondition() : bool
 	+getTime() : float

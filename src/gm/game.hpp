@@ -28,15 +28,15 @@ namespace gm {
 		void onResize(int width, int height);
 
 		GameState getState();
-		void setState(GameState state);
+		void setState(GameState newState);
 
 	private:
-		void setStateMenuMain();
-		void setStateMenuOption();
-		void setStateMenuLevels();
-		void setStateScenePlaying();
-		void setStateScenePaused();
-		void setStateSceneWin();
+		bool onStateMenuMain(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input);
+		bool onStateMenuOptions(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input);
+		bool onStateMenuLevels(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input);
+		bool onStateScenePlaying(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input);
+		bool onStateScenePaused(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input);
+		bool onStateSceneWin(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input);
 
 		la::Vec2 internalPosition(float x, float y);
 
