@@ -15,6 +15,9 @@ void Game::onInit(int width, int height, float internalWidth, float internalHeig
 	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui", 600));
 	gui.setFrame(0, width, 0, height);
 
+	scene.createMenuScene(resource);
+	scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+
 	setStateMenuMain();
 }
 
@@ -25,9 +28,7 @@ void Game::onResize(int width, int height) {
 	float ox = (internalSize.x - width * internalSize.y / height) / 2;
 	gui.setFrame(ox, internalSize.x - ox, 0, internalSize.y);
 
-	if (state & InScene) {
-		scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
-	}
+	scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 }
 
 bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
@@ -36,11 +37,14 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 	}
 
 	if (state == MenuMain) {
-		gui.checkButton("title", input.getMouseX(), input.getMouseY());
+		la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
+		gui.checkButton("title", scaledMouse.x, scaledMouse.y);
+		scene.updateCamera(deltaTime / 4, 0, 0);
 
 		if (input.getKey(in::MenuSelect) != in::JustPressed) {
 			return true;
 		}
+		scene.destroy();
 		if (scene.createFromFile(_RES_PATH "testLevel.txt", resource) == true) {
 			scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 			setState(ScenePlaying);
@@ -118,9 +122,7 @@ void Game::onRender(float deltaTime, float currentTime, rs::ResourceManager& res
 		rn::Renderer::clear(0.0f, 0.0f, 0.0f);
 	}
 
-	if (state & InScene) {
-		scene.display();
-	}
+	scene.display();
 	gui.display();
 }
 
@@ -196,4 +198,9 @@ void Game::setStateSceneWin() {
 	gui.addLabel("play", 48, "Press P to play again", {320, 440});
 
 	scene.restart();
+}
+
+la::Vec2 Game::internalPosition(float x, float y) {
+	float ox = (frameSize.x - internalSize.x / internalSize.y * frameSize.y) / 2;
+	return {x / frameSize.y * internalSize.y - ox, y / frameSize.y * internalSize.y};
 }

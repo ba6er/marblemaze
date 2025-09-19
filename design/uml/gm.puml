@@ -27,6 +27,8 @@ class gm::Game {
 	-setStateScenePaused()
 	-setStateSceneWin()
 	..
+	-internalPosition(x, y) : Vec2
+	..
 	-state: GameState
 	..
 	-internalSize: Vec2
@@ -36,6 +38,7 @@ class gm::Game {
 
 class gm::Scene {
 	+createFromFile(fileName, resource) : bool
+	+createMenuScene(resource)
 	+restart()
 	+destroy()
 	..

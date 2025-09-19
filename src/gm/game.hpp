@@ -38,6 +38,8 @@ namespace gm {
 		void setStateScenePaused();
 		void setStateSceneWin();
 
+		la::Vec2 internalPosition(float x, float y);
+
 		GameState state;
 
 		la::Vec2 frameSize, internalSize;

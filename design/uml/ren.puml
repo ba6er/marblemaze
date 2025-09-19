@@ -4,6 +4,7 @@ set separator ::
 class rn::Renderable {
 	+create(&mesh, &material)
 	..
+	+tag: str
 	+mesh: &Mesh
 	+material: &Material
 	+transform: Mat4

@@ -14,9 +14,11 @@ namespace gm {
 	class Scene {
 
 	public:
+
 		Scene();
 
 		bool createFromFile(std::string_view fileName, rs::ResourceManager& resource);
+		void createMenuScene(rs::ResourceManager& resource);
 		void restart();
 		void destroy();
 

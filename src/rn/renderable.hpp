@@ -10,8 +10,9 @@ namespace rn {
 	public:
 		Renderable();
 
-		void create(rs::Mesh& mesh, rs::Material& material);
+		void create(rs::Mesh& mesh, rs::Material& material, const std::string tag);
 
+		std::string tag;
 		rs::Mesh* mesh;
 		rs::Material* material;
 		la::Mat4 transform;
