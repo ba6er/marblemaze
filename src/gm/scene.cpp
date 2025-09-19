@@ -12,7 +12,7 @@ Scene::Scene()
 		, marble(), maze(), start({0, 0, 0}), finish({0, 0, 0}), initCameraValues({0, 0, 0})
 		, cameraDistance(0), cameraYaw(0), cameraPitch(0)
 		, marbleIsTouchingWalls({false, false, false}), marbleWasTouchingWalls({false, false, false}) {
-	light = {{0}};
+	light = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 }
 
 bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resource) {
@@ -24,7 +24,7 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 
 	std::string configLine;
 	std::string marbleMaterialName, mazeMaterialName, finishMaterialName, skyboxMaterialName;
-	int mazeWidth = 0, mazeDepth = 0, mazeHeight = 0;
+	size_t mazeWidth = 0, mazeDepth = 0, mazeHeight = 0;
 	BlockVector3D initBlocks;
 	while (std::getline(configIn, configLine)) {
 		if (configLine.length() == 0 || configLine.at(0) == '#') {
@@ -96,7 +96,7 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 				CRITICAL_ERROR("Maze dimension aren't properly defined (or are defined after the maze)");
 				return false;
 			}
-			for (int i = 0; i < mazeDepth * mazeHeight;) {
+			for (size_t i = 0; i < mazeDepth * mazeHeight;) {
 				std::string mazeLine = "";
 				std::getline(configIn, mazeLine);
 				if (mazeLine.length() == 0 || mazeLine.at(0) == '#') {
@@ -107,13 +107,13 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 					return false;
 				}
 				if (mazeLine.size() != mazeWidth) {
-					CRITICAL_ERROR("Maze line %s doesn't have %d elements", mazeLine.c_str(), mazeWidth);
+					CRITICAL_ERROR("Maze line %s doesn't have %ld elements", mazeLine.c_str(), mazeWidth);
 					return false;
 				}
 				if (i % mazeDepth == 0) {
 					initBlocks.push_back(std::vector<std::string>());
 				}
-				int mazeStartPos = mazeLine.find('s');
+				size_t mazeStartPos = mazeLine.find('s');
 				if (mazeStartPos != std::string::npos) {
 					start = {
 						mazeStartPos * 1.0f,
@@ -122,7 +122,7 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 					};
 					marble.position = start;
 				}
-				int mazeFinishPos = mazeLine.find('f');
+				size_t mazeFinishPos = mazeLine.find('f');
 				if (mazeFinishPos != std::string::npos) {
 					finish = {
 						mazeFinishPos * 1.0f,
@@ -305,21 +305,24 @@ bool Scene::shouldPlaySound() {
 }
 
 void Scene::marbleBlockCollision(float x, float y, float z, float deltaTime) {
-	la::Vec3 newPosX = marble.position + (la::Vec3){marble.velocity.x * deltaTime, 0, 0};
+	la::Vec3 newPosX = marble.position;
+	newPosX.x += marble.velocity.x * deltaTime;
 	float disX = DistanceSphereAABB({x, y, z}, newPosX);
 	if (disX < marble.radius) {
 		marble.velocity.x = 0;
 		marbleIsTouchingWalls[0] = true;
 	}
 
-	la::Vec3 newPosY = marble.position + (la::Vec3){0, marble.velocity.y * deltaTime, 0};
+	la::Vec3 newPosY = marble.position;
+	newPosY.y += marble.velocity.y * deltaTime;
 	float disY = DistanceSphereAABB({x, y, z}, newPosY);
 	if (disY < marble.radius) {
 		marble.velocity.y = 0;
 		marbleIsTouchingWalls[1] = true;
 	}
 
-	la::Vec3 newPosZ = marble.position + (la::Vec3){0, 0, marble.velocity.z * deltaTime};
+	la::Vec3 newPosZ = marble.position;
+	newPosZ.z += marble.velocity.z * deltaTime;
 	float disZ = DistanceSphereAABB({x, y, z}, newPosZ);
 	if (disZ < marble.radius) {
 		marble.velocity.z = 0;

@@ -71,8 +71,8 @@ GeometryData GeometryGenerator::GenerateIcosphere(la::Vec3 color, int subdivisio
 	}
 
 	GeometryData gd;
-	for (int i = 0; i < triangles.size(); i++) {
-		for (int j = 0; j < 3; j++) {
+	for (size_t i = 0; i < triangles.size(); i++) {
+		for (size_t j = 0; j < 3; j++) {
 			la::Vec3 nc = triangles[i][j].normalize();
 			la::Vec2 uv = { // Spherical projection
 				0.5f + std::atan2(nc.z, nc.x) / (2 * la::Pi),

@@ -97,7 +97,7 @@ Texture& Font::getTexture() {
 Glyph Font::getGlyph(int glyph) const {
 	if (glyph < FirstGlyph || glyph >= LastGlyph) {
 		DEBUG_WARNING("Glyph %c (%d) is out of bounds for this font", (char)glyph, glyph);
-		return {0, 0, {0}};
+		return {0, 0, {0, 0, 0, 0}};
 	}
 	return glyphs[glyph - FirstGlyph];
 }

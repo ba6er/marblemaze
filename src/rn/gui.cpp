@@ -4,7 +4,7 @@
 using namespace rn;
 using namespace rs;
 
-Label::Label() : size(0), text(""), position({0}), color({0}), align(0) {}
+Label::Label() : size(0), text(""), position({0, 0, 0}), color({0, 0, 0}), align(0) {}
 
 void Label::create(float size, std::string_view text, la::Vec3 position, la::Vec3 color, uint align) {
 	this->size = size;
@@ -106,10 +106,10 @@ void GUI::updateMesh() {
 			float cw = g.width * hScale;
 			la::Vec2 vp = {adv + l.position.x + offs.x, l.position.y + offs.y};
 			Vertex square[] = {
-				{{vp.x,      vp.y,          0}, l.color, {g.uv.x, g.uv.y}, {0}},
-				{{vp.x + cw, vp.y,          0}, l.color, {g.uv.z, g.uv.y}, {0}},
-				{{vp.x + cw, vp.y + l.size, 0}, l.color, {g.uv.z, g.uv.w}, {0}},
-				{{vp.x,      vp.y + l.size, 0}, l.color, {g.uv.x, g.uv.w}, {0}},
+				{{vp.x,      vp.y,          0}, l.color, {g.uv.x, g.uv.y}, {0, 0, 0}},
+				{{vp.x + cw, vp.y,          0}, l.color, {g.uv.z, g.uv.y}, {0, 0, 0}},
+				{{vp.x + cw, vp.y + l.size, 0}, l.color, {g.uv.z, g.uv.w}, {0, 0, 0}},
+				{{vp.x,      vp.y + l.size, 0}, l.color, {g.uv.x, g.uv.w}, {0, 0, 0}},
 			};
 			mesh->addVertex(square[0]);
 			mesh->addVertex(square[1]);

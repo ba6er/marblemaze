@@ -9,6 +9,7 @@ else()
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
@@ -28,19 +29,18 @@ add_subdirectory(thirdparty/stb_truetype)
 
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
-add_executable(marblemaze)
-set_property(TARGET marblemaze PROPERTY CXX_STANDARD 17)
-
-add_compile_options(-Wall -Wextra -Wpedantic)
+add_executable(${PROJECT_NAME})
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-	target_compile_definitions(marblemaze PUBLIC _RES_PATH="./res/")
-	target_compile_definitions(marblemaze PUBLIC _DEBUG=0)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC _RES_PATH="./res/")
+	target_compile_definitions(${PROJECT_NAME} PUBLIC _DEBUG=0)
 else()
-	target_compile_definitions(marblemaze PUBLIC _RES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/")
-	target_compile_definitions(marblemaze PUBLIC _DEBUG=1)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC _RES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/")
+	target_compile_definitions(${PROJECT_NAME} PUBLIC _DEBUG=1)
 endif()
 
-target_sources(marblemaze PRIVATE "${SOURCE_FILES}")
-target_include_directories(marblemaze PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/")
-target_link_libraries(marblemaze PRIVATE glfw glad miniaudio stb_image stb_truetype)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Wno-unused-parameter)
+target_sources(${PROJECT_NAME} PRIVATE "${SOURCE_FILES}")
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/")
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw glad miniaudio stb_image stb_truetype)
