@@ -23,7 +23,7 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 	}
 
 	std::string configLine;
-	std::string marbleMaterialName, mazeMaterialName, finishMaterialName, skyboxMaterialName;
+	std::string id, marbleMaterialName, mazeMaterialName, finishMaterialName, skyboxMaterialName;
 	size_t mazeWidth = 0, mazeDepth = 0, mazeHeight = 0;
 	BlockVector3D initBlocks;
 	while (std::getline(configIn, configLine)) {
@@ -34,6 +34,10 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 		std::string configToken;
 		std::istringstream configStream(configLine);
 		configStream >> configToken;
+		if (configToken == "INTERNAL_ID") {
+			configStream >> id;
+			id += "_";
+		}
 		if (configToken == "LIGHT_POSITION") {
 			configStream >> light.position.x >> light.position.y >> light.position.z;
 		}
@@ -148,21 +152,21 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 	updateCamera();
 	initCameraValues = {cameraDistance, cameraYaw, cameraPitch};
 
-	rs::Mesh& mazeMesh = resource.createMesh("maze", 36 * mazeWidth * mazeHeight * mazeDepth);
+	rs::Mesh& mazeMesh = resource.createMesh(id + "maze", 36 * mazeWidth * mazeHeight * mazeDepth);
 	mazeMesh.addGeometry(maze.toGeometry());
 
-	rs::Mesh& marbleMesh = resource.createMesh("marble", 960);
+	rs::Mesh& marbleMesh = resource.createMesh(id + "marble", 960);
 	marbleMesh.addGeometry(marble.toGeometry());
 
 	ge::GeometryData finishCube = ge::GeometryGenerator::GenerateCube();
 	ge::GeometryTransform::Translate(finishCube, finish);
-	rs::Mesh& finishMesh = resource.createMesh("finish", 36);
+	rs::Mesh& finishMesh = resource.createMesh(id + "finish", 36);
 	finishMesh.addGeometry(finishCube);
 
 	ge::GeometryData skybox = ge::GeometryGenerator::GenerateCube();
 	ge::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
 	ge::GeometryTransform::Translate(skybox, cameraTarget);
-	rs::Mesh& skyboxMesh = resource.createMesh("sky", 36);
+	rs::Mesh& skyboxMesh = resource.createMesh(id + "skybox", 36);
 	skyboxMesh.addGeometry(skybox);
 
 	renderables.push_back(rn::Renderable());
@@ -223,16 +227,16 @@ void Scene::createMenuScene(rs::ResourceManager& resource) {
 	camera.setTarget(cameraTarget);
 	initCameraValues = {cameraDistance, cameraYaw, cameraPitch};
 
-	rs::Mesh& mazeMesh = resource.createMesh("maze", 36 * mazeWidth * mazeHeight * mazeDepth);
+	rs::Mesh& mazeMesh = resource.createMesh("maze_menu", 36 * mazeWidth * mazeHeight * mazeDepth);
 	mazeMesh.addGeometry(maze.toGeometry());
 
-	rs::Mesh& marbleMesh = resource.createMesh("marble", 960);
+	rs::Mesh& marbleMesh = resource.createMesh("marble_menu", 960);
 	marbleMesh.addGeometry(marble.toGeometry());
 
 	ge::GeometryData skybox = ge::GeometryGenerator::GenerateCube();
 	ge::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
 	ge::GeometryTransform::Translate(skybox, cameraTarget);
-	rs::Mesh& skyboxMesh = resource.createMesh("sky", 36);
+	rs::Mesh& skyboxMesh = resource.createMesh("skybox_menu", 36);
 	skyboxMesh.addGeometry(skybox);
 
 	renderables.push_back(rn::Renderable());

@@ -44,6 +44,10 @@ namespace gm {
 
 		la::Vec2 frameSize, internalSize;
 		rn::GUI gui;
-		Scene scene;
+
+		int selectedSceneIndex, numLoadedScenes;
+		std::vector<Scene> scenes;
+		Scene menuScene;
+		Scene* currentScene;
 	};
 }

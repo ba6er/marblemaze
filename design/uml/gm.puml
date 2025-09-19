@@ -31,9 +31,14 @@ class gm::Game {
 	..
 	-state: GameState
 	..
+	-frameSize: Vec2
 	-internalSize: Vec2
 	-gui: GUI
-	-scene: Scene
+	..
+	-selectedSceneIndex, numLoadedScenes: int
+	-scenes: Scene[]
+	-menuScene: Scene
+	-currentScene: &Scene
 }
 
 class gm::Scene {

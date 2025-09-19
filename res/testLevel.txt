@@ -2,6 +2,9 @@
 # When reading this file, if an error is found, the game will skip loading this level.
 # Note: comments must be on their own line starting with "#".
 
+DISPLAY_NAME Test Scene
+INTERNAL_ID  testScene
+
 # Position and distance values are in "maze block width" units.
 # Angles are in degrees (0 to 360).
 

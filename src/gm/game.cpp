@@ -5,7 +5,9 @@
 
 using namespace gm;
 
-Game::Game() : state(MenuMain), frameSize({0, 0}), internalSize({0, 0}), gui(), scene() {}
+Game::Game()
+	: state(MenuMain), frameSize({0, 0}), internalSize({0, 0}), gui()
+	, selectedSceneIndex(0), numLoadedScenes(0), scenes(), menuScene(), currentScene(nullptr) {}
 
 void Game::onInit(int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource) {
 	rn::Renderer::resizeFrame(width, height);
@@ -15,9 +17,20 @@ void Game::onInit(int width, int height, float internalWidth, float internalHeig
 	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui", 600));
 	gui.setFrame(0, width, 0, height);
 
-	scene.createMenuScene(resource);
-	scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+	menuScene.createMenuScene(resource);
+	menuScene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 
+	DEBUG_TRACE("a");
+	scenes.push_back(Scene());
+	if (scenes[0].createFromFile(_RES_PATH "testLevel.txt", resource)) {
+		scenes[0].setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+	} else {
+		DEBUG_ERROR("Failed to load test scene");
+		scenes[0].destroy();
+	}
+	DEBUG_TRACE("b");
+
+	currentScene = &menuScene;
 	setState(MenuMain);
 }
 
@@ -28,7 +41,7 @@ void Game::onResize(int width, int height) {
 	float ox = (internalSize.x - width * internalSize.y / height) / 2;
 	gui.setFrame(ox, internalSize.x - ox, 0, internalSize.y);
 
-	scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+	currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 }
 
 bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
@@ -65,7 +78,7 @@ void Game::onRender(float deltaTime, float currentTime, rs::ResourceManager& res
 		rn::Renderer::clear(0.0f, 0.0f, 0.0f);
 	}
 
-	scene.display();
+	currentScene->display();
 	gui.display();
 }
 
@@ -115,7 +128,7 @@ void Game::setState(GameState newState) {
 		gui.clear();
 
 		std::stringstream timeText;
-		timeText << "Time: " << std::setprecision(4) << scene.getTime() << "s";
+		timeText << "Time: " << std::setprecision(4) << currentScene->getTime() << "s";
 
 		constexpr la::Vec4 textCol = {1.0f, 1.0f, 1.0f, 1.0f};
 		constexpr la::Vec4 backCol = {1.0f, 1.0f, 1.0f, 0.2f};
@@ -136,7 +149,7 @@ void Game::setState(GameState newState) {
 bool Game::onStateMenuMain(
 		float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
 
-	scene.updateCamera(deltaTime / 4, 0, 0);
+	currentScene->updateCamera(deltaTime / 4, 0, 0);
 
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
@@ -155,11 +168,10 @@ bool Game::onStateMenuMain(
 		DEBUG_TRACE("GO TO OPTIONS");
 	}
 	if (onPlay) {
-		scene.destroy();
-		scene.createFromFile(_RES_PATH "testLevel.txt", resource);
-		scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
-		setState(ScenePlaying);
 		resource.getSound("select").play();
+
+		currentScene = &scenes[1];
+		setState(ScenePlaying);
 	}
 	return true;
 }
@@ -181,7 +193,7 @@ bool Game::onStateScenePlaying(
 
 	if (input.getKey(in::GameRestart) == in::JustPressed) {
 		resource.getSound("select").play();
-		scene.restart();
+		currentScene->restart();
 	}
 
 	if (input.getKey(in::GamePause) == in::JustPressed) {
@@ -189,13 +201,13 @@ bool Game::onStateScenePlaying(
 		return true;
 	}
 
-	if (scene.checkWinCondition() || input.getKey(in::MenuSelect) == in::JustPressed) {
+	if (currentScene->checkWinCondition() || input.getKey(in::MenuSelect) == in::JustPressed) {
 		resource.getSound("select").play();
 		setState(SceneWin);
 		return true;
 	}
 
-	if (scene.shouldPlaySound()) {
+	if (currentScene->shouldPlaySound()) {
 		resource.getSound("solid").play();
 	}
 
@@ -207,20 +219,20 @@ bool Game::onStateScenePlaying(
 	};
 
 	if (pressed[3] || pressed[2] || pressed[1] || pressed[0]) {
-		scene.updateMazeRotation(
+		currentScene->updateMazeRotation(
 			(pressed[1] - pressed[0]) * deltaTime,
 			(pressed[3] - pressed[2]) * deltaTime);
 	}
 
 	if (input.getMouseL() == in::Pressed || input.getScrollY() != 0) {
-		scene.updateCamera(
+		currentScene->updateCamera(
 			input.getDeltaMouseX() * deltaTime * 0.2f,
 			input.getDeltaMouseY() * deltaTime * 0.2f,
 			-input.getScrollY() * deltaTime * 10);
 	}
 
-	scene.updatePhysics(deltaTime);
-	scene.updateTimer(deltaTime);
+	currentScene->updatePhysics(deltaTime);
+	currentScene->updateTimer(deltaTime);
 
 	return true;
 }
@@ -249,7 +261,7 @@ bool Game::onStateSceneWin(
 	}
 
 	if (onPlay) {
-		scene.restart();
+		currentScene->restart();
 		setState(ScenePlaying);
 	}
 	if (onQuit) {
