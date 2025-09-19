@@ -36,7 +36,7 @@ namespace gm {
 
 		GameState state;
 
-		la::Vec2 internalSize;
+		la::Vec2 frameSize, internalSize;
 		rn::GUI gui;
 		Scene scene;
 	};

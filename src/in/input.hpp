@@ -12,23 +12,30 @@ namespace in {
 
 	enum KeyName {
 		Quit,
-		Restart,
-		Pause,
+		MenuSelect,
+		MenuBack,
+		MenuPrevious,
+		MenuNext,
+		GameRestart,
+		GamePause,
 		MazeRollDecrease,
 		MazeRollIncrease,
 		MazeYawDecrease,
 		MazeYawIncrease,
-		KEYBOARD_COUNT,
+		KeyboardCount,
 	};
 
 	class Input {
 
 	public:
-
-		static constexpr int KeyboardValues[KEYBOARD_COUNT] = {
+		static constexpr int KeyboardValues[KeyboardCount] = {
 			GLFW_KEY_ESCAPE, // Quit
-			GLFW_KEY_R,      // Restart
-			GLFW_KEY_P,      // Pause
+			GLFW_KEY_ENTER,  // MenuSelect
+			GLFW_KEY_ESCAPE, // MenuBack
+			GLFW_KEY_UP,     // MenuPrevious
+			GLFW_KEY_DOWN,   // MenuNext
+			GLFW_KEY_R,      // GameRestart
+			GLFW_KEY_P,      // GamePause
 			GLFW_KEY_A,      // MazeRollDecrease
 			GLFW_KEY_D,      // MazeRollIncrease
 			GLFW_KEY_W,      // MazeYawDecrease
@@ -56,7 +63,7 @@ namespace in {
 		void  setScroll(float x, float y);
 
 	private:
-		KeyState keyboard[KEYBOARD_COUNT];
+		KeyState keyboard[KeyboardCount];
 		KeyState mouseL;
 		KeyState mouseR;
 		float mouseX;

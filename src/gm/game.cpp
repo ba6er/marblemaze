@@ -5,32 +5,29 @@
 
 using namespace gm;
 
-Game::Game() : state(GameState::ScenePaused), internalSize({0, 0}), gui(), scene() {}
+Game::Game() : state(GameState::ScenePaused), frameSize({0, 0}), internalSize({0, 0}), gui(), scene() {}
 
 void Game::onInit(int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource) {
 	rn::Renderer::resizeFrame(width, height);
+	frameSize = {(float)width, (float)height};
 	internalSize = {internalWidth, internalHeight};
-
-	state = GameState::ScenePaused;
 
 	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui", 600));
 	gui.setFrame(0, width, 0, height);
-	gui.addLabel("title").create(96, "Marble Maze", {320, 80, 0});
-	gui.addLabel("paused").create(48, "Press P to play", {320, 440, 0});
 
-	bool success = scene.createFromFile(_RES_PATH "testLevel.txt", resource);
-	if (!success) {
-		DEBUG_ERROR("Failed to load test maze");
-	}
-	scene.setProjection(72 * la::DegToRad, (float)width / (float)height);
+	setStateMenuMain();
 }
 
 void Game::onResize(int width, int height) {
+	frameSize = {(float)width, (float)height};
 	rn::Renderer::resizeFrame(width, height);
-	scene.setProjection(72 * la::DegToRad, (float)width / (float)height);
 
 	float ox = (internalSize.x - width * internalSize.y / height) / 2;
 	gui.setFrame(ox, internalSize.x - ox, 0, internalSize.y);
+
+	if (state == GameState::ScenePlaying || state == GameState::ScenePaused) {
+		scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+	}
 }
 
 bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
@@ -38,12 +35,34 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 		return false;
 	}
 
-	if (input.getKey(in::Restart) == in::JustPressed) {
+	if (state == GameState::MenuMain) {
+		if (input.getKey(in::MenuSelect) != in::JustPressed) {
+			return true;
+		}
+		if (scene.createFromFile(_RES_PATH "testLevel.txt", resource) == true) {
+			scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+			setState(GameState::ScenePlaying);
+		} else {
+			DEBUG_ERROR("Failed to load test maze");
+		}
+		resource.getSound("select").play();
+		return true;
+	}
+	else if (state == GameState::MenuOptions) {
+		return true;
+	}
+	else if (state == GameState::MenuLevels) {
+		return true;
+	}
+
+	// Gameplay
+
+	if (input.getKey(in::GameRestart) == in::JustPressed) {
 		scene.restart();
 		resource.getSound("select").play();
 	}
 
-	if (input.getKey(in::Pause) == in::JustPressed) {
+	if (input.getKey(in::GamePause) == in::JustPressed) {
 		if (state == GameState::ScenePaused) {
 			setState(GameState::ScenePlaying);
 		}
@@ -129,6 +148,10 @@ void Game::setState(GameState state) {
 }
 
 void Game::setStateMenuMain() {
+	state = GameState::MenuMain;
+
+	gui.addLabel("title").create(96, "Marble Maze", {320, 80, 0});
+	gui.addLabel("paused").create(48, "Press ENTER to play", {320, 440, 0});
 }
 
 void Game::setStateMenuOption() {

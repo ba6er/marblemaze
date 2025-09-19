@@ -87,7 +87,7 @@ int main() {
 		lagTime     += deltaTime;
 
 		// Input
-		for (int i = 0; i < in::KEYBOARD_COUNT; i++) {
+		for (int i = 0; i < in::KeyboardCount; i++) {
 			int keyState = glfwGetKey(window, in::Input::KeyboardValues[i]);
 			if (input.getKey(i) == keyState) {
 				continue;

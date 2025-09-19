@@ -8,13 +8,13 @@ Input::Input()
 		, mouseX(0), mouseY(0)
 		, lastMouseX(0), lastMouseY(0)
 		, scrollX(0), scrollY(0) {
-	for (int i = 0; i < KEYBOARD_COUNT; i++) {
+	for (int i = 0; i < KeyboardCount; i++) {
 		keyboard[i] = Released;
 	}
 }
 
 KeyState Input::getKey(int key) const {
-	if (key >= KEYBOARD_COUNT) {
+	if (key >= KeyboardCount) {
 		DEBUG_WARNING("Key outside of possible values!");
 		return Released;
 	}
@@ -30,7 +30,7 @@ KeyState Input::getMouseR() const {
 }
 
 void Input::setKey(int key, KeyState value) {
-	if (key >= KEYBOARD_COUNT) {
+	if (key >= KeyboardCount) {
 		DEBUG_WARNING("Key outside of possible values!");
 		return;
 	}
