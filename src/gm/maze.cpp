@@ -60,7 +60,26 @@ ge::GeometryData Maze::toGeometry() const {
 		for (int y = 0; y < height; y++) {
 			for (int z = 0; z < depth; z++) {
 				if (getBlock(x, y, z) == Wall) {
-					ge::GeometryData cube = ge::GeometryGenerator::GenerateCube();
+					ge::CubeFaceMask faces = ge::CubeFace::All;
+					if ((x != 0) && getBlock(x - 1, y, z) == Wall) {
+						faces &= ~(ge::CubeFace::Left);
+					}
+					if ((x != width - 1) && getBlock(x + 1, y, z) == Wall) {
+						faces &= ~(ge::CubeFace::Right);
+					}
+					if (y != 0 && getBlock(x, y - 1, z) == Wall) {
+						faces &= ~(ge::CubeFace::Bottom);
+					}
+					if ((y != height - 1) && getBlock(x, y + 1, z) == Wall) {
+						faces &= ~(ge::CubeFace::Top);
+					}
+					if ((z != 0) && getBlock(x, y, z - 1) == Wall) {
+						faces &= ~(ge::CubeFace::Back);
+					}
+					if ((z != depth - 1) && getBlock(x, y, z + 1) == Wall) {
+						faces &= ~(ge::CubeFace::Front);
+					}
+					ge::GeometryData cube = ge::GeometryGenerator::GenerateCube(faces);
 					la::Vec3 position = {(float)x, (float)y, (float)z};
 					ge::GeometryTransform::Translate(cube, position);
 					fullData += cube;
