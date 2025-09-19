@@ -5,7 +5,7 @@
 
 using namespace gm;
 
-Game::Game() : state(GameState::ScenePaused), frameSize({0, 0}), internalSize({0, 0}), gui(), scene() {}
+Game::Game() : state(MenuMain), frameSize({0, 0}), internalSize({0, 0}), gui(), scene() {}
 
 void Game::onInit(int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource) {
 	rn::Renderer::resizeFrame(width, height);
@@ -25,7 +25,7 @@ void Game::onResize(int width, int height) {
 	float ox = (internalSize.x - width * internalSize.y / height) / 2;
 	gui.setFrame(ox, internalSize.x - ox, 0, internalSize.y);
 
-	if (state == GameState::ScenePlaying || state == GameState::ScenePaused) {
+	if (state & InScene) {
 		scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 	}
 }
@@ -35,23 +35,23 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 		return false;
 	}
 
-	if (state == GameState::MenuMain) {
+	if (state == MenuMain) {
 		if (input.getKey(in::MenuSelect) != in::JustPressed) {
 			return true;
 		}
 		if (scene.createFromFile(_RES_PATH "testLevel.txt", resource) == true) {
 			scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
-			setState(GameState::ScenePlaying);
+			setState(ScenePlaying);
 		} else {
 			DEBUG_ERROR("Failed to load test maze");
 		}
 		resource.getSound("select").play();
 		return true;
 	}
-	else if (state == GameState::MenuOptions) {
+	else if (state == MenuOptions) {
 		return true;
 	}
-	else if (state == GameState::MenuLevels) {
+	else if (state == MenuLevels) {
 		return true;
 	}
 
@@ -63,28 +63,21 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 	}
 
 	if (input.getKey(in::GamePause) == in::JustPressed) {
-		if (state == GameState::ScenePaused) {
-			setState(GameState::ScenePlaying);
+		if (state == ScenePaused) {
+			setState(ScenePlaying);
 		}
-		else if (state == GameState::ScenePlaying) {
-			setState(GameState::ScenePaused);
+		else if (state == ScenePlaying) {
+			setState(ScenePaused);
 		}
 		resource.getSound("select").play();
 	}
 
-	if (state == GameState::ScenePaused) {
+	if (state == ScenePaused || state == SceneWin) {
 		return true;
 	}
 
 	if (scene.checkWinCondition()) {
-		std::stringstream timeText;
-		timeText << "Time: " << std::setprecision(4) << scene.getTime() << "s";
-		gui.addLabel("title").create(48, timeText.str(), {320, 415, 0});
-		gui.addLabel("paused").create(48, "Press P to play again", {320, 440, 0});
-
-		setState(GameState::ScenePaused);
-		scene.restart();
-
+		setState(SceneWin);
 		resource.getSound("select").play();
 	}
 
@@ -119,7 +112,9 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 void Game::onRender(float deltaTime, float currentTime, rs::ResourceManager& resource) {
 	rn::Renderer::clear(0, 0, 0);
 
-	scene.display();
+	if (state & InScene) {
+		scene.display();
+	}
 	gui.display();
 }
 
@@ -129,43 +124,70 @@ GameState Game::getState() {
 
 void Game::setState(GameState state) {
 	switch (state) {
-	case GameState::MenuMain:
+	case MenuMain:
+		DEBUG_TRACE("State MenuMain");
 		setStateMenuMain();
 		break;
-	case GameState::MenuOptions:
+	case MenuOptions:
+		DEBUG_TRACE("State MenuOptions");
 		setStateMenuOption();
 		break;
-	case GameState::MenuLevels:
+	case MenuLevels:
+		DEBUG_TRACE("State MenuLevels");
 		setStateMenuLevels();
 		break;
-	case GameState::ScenePlaying:
+	case ScenePlaying:
+		DEBUG_TRACE("State ScenePlaying");
 		setStateScenePlaying();
 		break;
-	case GameState::ScenePaused:
+	case ScenePaused:
+		DEBUG_TRACE("State ScenePaused");
 		setStateScenePaused();
+		break;
+	case SceneWin:
+		DEBUG_TRACE("State SceneWin");
+		setStateSceneWin();
+		break;
+	default:
+		DEBUG_WARNING("Invalid state %d, not changing", state);
 		break;
 	}
 }
 
 void Game::setStateMenuMain() {
-	state = GameState::MenuMain;
+	state = MenuMain;
 
 	gui.addLabel("title").create(96, "Marble Maze", {320, 80, 0});
-	gui.addLabel("paused").create(48, "Press ENTER to play", {320, 440, 0});
+	gui.addLabel("play").create(48, "Press ENTER to play", {320, 440, 0});
 }
 
 void Game::setStateMenuOption() {
+	state = MenuOptions;
 }
 
 void Game::setStateMenuLevels() {
+	state = MenuLevels;
 }
 
 void Game::setStateScenePlaying() {
-	state = GameState::ScenePlaying;
+	state = ScenePlaying;
+
 	gui.clear();
 }
 
 void Game::setStateScenePaused() {
-	state = GameState::ScenePaused;
+	state = ScenePaused;
 	gui.addLabel("paused").create(48, "Press P to resume", {320, 440, 0});
+}
+
+void Game::setStateSceneWin() {
+	state = SceneWin;
+
+	std::stringstream timeText;
+	timeText << "Time: " << std::setprecision(4) << scene.getTime() << "s";
+
+	gui.addLabel("win").create(48, timeText.str(), {320, 415, 0});
+	gui.addLabel("play").create(48, "Press P to play again", {320, 440, 0});
+
+	scene.restart();
 }

@@ -7,6 +7,7 @@ enum gm::GameState {
 	MenuLevels
 	ScenePlaying
 	ScenePaused
+	SceneWin
 }
 hide GameState methods
 
@@ -24,6 +25,7 @@ class gm::Game {
 	-setStateMenuLevels()
 	-setStateScenePlaying()
 	-setStateScenePaused()
+	-setStateSceneWin()
 	..
 	-state: GameState
 	..

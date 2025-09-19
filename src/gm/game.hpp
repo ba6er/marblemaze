@@ -6,12 +6,15 @@
 
 namespace gm {
 
-	enum class GameState {
-		MenuMain,
-		MenuOptions,
-		MenuLevels,
-		ScenePlaying,
-		ScenePaused,
+	enum GameState : uint {
+		MenuMain     = 1 << 0,
+		MenuOptions  = 1 << 1,
+		MenuLevels   = 1 << 2,
+		ScenePlaying = 1 << 3,
+		ScenePaused  = 1 << 4,
+		SceneWin     = 1 << 5,
+		InMenu       = MenuMain | MenuOptions | MenuLevels,
+		InScene      = ScenePlaying | ScenePaused | SceneWin,
 	};
 
 	class Game {
@@ -33,6 +36,7 @@ namespace gm {
 		void setStateMenuLevels();
 		void setStateScenePlaying();
 		void setStateScenePaused();
+		void setStateSceneWin();
 
 		GameState state;
 
