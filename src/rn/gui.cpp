@@ -17,9 +17,11 @@ void Label::create(la::Vec2 size, std::string_view text, la::Vec2 position, la::
 
 Button::Button() : selected(false), position({0, 0}), size({0, 0}), back({0, 0, 0, 0}), selectedBack({0, 0, 0, 0}) {}
 
-void Button::create(const Label& label, la::Vec4 back, la::Vec4 selectedBack, la::Vec2 margin) {
-	this->position = label.position;
-	this->size = label.size + margin * 2;
+void Button::create(const Label& label, la::Vec4 back, la::Vec4 selectedBack, la::Vec4 margin) {
+	la::Vec2 marginSize = {margin.x + margin.z, margin.y + margin.w};
+	la::Vec2 marginOffset = {margin.z - margin.x, margin.w - margin.y};
+	this->position = label.position + marginOffset / 2;
+	this->size = label.size + marginSize;
 	this->back = back;
 	this->selectedBack = selectedBack;
 }
@@ -47,6 +49,7 @@ void GUI::setFrame(float left, float right, float bottom, float top) {
 
 Label& GUI::addLabel(
 		const std::string& name, float size, std::string_view text, la::Vec2 position, la::Vec4 color, uint align) {
+
 	needsUpdate = true;
 	labels[name] = Label();
 
@@ -75,15 +78,29 @@ void GUI::removeLabel(std::string_view name) {
 Button& GUI::addButton(
 		const std::string& name,
 		float size, std::string_view text, la::Vec2 position, la::Vec4 color,
-		la::Vec4 back, la::Vec4 selectedBack, la::Vec2 margin) {
+		la::Vec4 back, la::Vec4 selectedBack, la::Vec4 margin) {
+
 	addLabel(name, size, text, position, color, Center);
 	buttons[name] = Button();
 	buttons.at(name).create(labels.at(name), back, selectedBack, margin);
 	return buttons.at(name);
 }
 
+Button& GUI::addButton(
+		const std::string& name,
+		float size, std::string_view text, la::Vec2 position, la::Vec4 color,
+		la::Vec4 back, la::Vec4 selectedBack, float width, la::Vec2 verticalMargin) {
+
+	Label& l = addLabel(name, size, text, position, color, Center);
+	la::Vec4 margin = {(width - l.size.x) / 2, verticalMargin.x, (width - l.size.x) / 2, verticalMargin.y};
+
+	buttons[name] = Button();
+	buttons.at(name).create(l, back, selectedBack, margin);
+	return buttons.at(name);
+}
+
 Button& GUI::addButton(const std::string& name, float size, std::string_view text, la::Vec2 position) {
-	return addButton(name, size, text, position, {1, 1, 1, 1}, {0, 0, 0, 1}, {1, 0, 0, 1}, {0, 0});
+	return addButton(name, size, text, position, {1, 1, 1, 1}, {0, 0, 0, 1}, {1, 0, 0, 1}, {0, 0, 0, 0});
 }
 
 bool GUI::checkButton(std::string_view name, float x, float y) {

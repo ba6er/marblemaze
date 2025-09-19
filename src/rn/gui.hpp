@@ -35,7 +35,7 @@ namespace rn {
 	public:
 		Button();
 
-		void create(const Label& label, la::Vec4 back, la::Vec4 selectedBack, la::Vec2 margin);
+		void create(const Label& label, la::Vec4 back, la::Vec4 selectedBack, la::Vec4 margin);
 
 		bool isInside(float x, float y);
 
@@ -61,7 +61,11 @@ namespace rn {
 		Button& addButton(
 			const std::string& name,
 			float size, std::string_view text, la::Vec2 position, la::Vec4 color,
-			la::Vec4 back, la::Vec4 selectedBack, la::Vec2 margin);
+			la::Vec4 back, la::Vec4 selectedBack, la::Vec4 margin);
+		Button& addButton(
+			const std::string& name,
+			float size, std::string_view text, la::Vec2 position, la::Vec4 color,
+			la::Vec4 back, la::Vec4 selectedBack, float width, la::Vec2 verticalMargin);
 		Button& addButton(const std::string& name, float size, std::string_view text, la::Vec2 position);
 		bool checkButton(std::string_view name, float x, float y);
 		void removeButton(std::string_view name);

@@ -37,21 +37,33 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 	}
 
 	if (state == MenuMain) {
-		la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
-		gui.checkButton("title", scaledMouse.x, scaledMouse.y);
 		scene.updateCamera(deltaTime / 4, 0, 0);
 
-		if (input.getKey(in::MenuSelect) != in::JustPressed) {
+		la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
+		bool onPlay = gui.checkButton("play", scaledMouse.x, scaledMouse.y);
+		bool onOptions = gui.checkButton("options", scaledMouse.x, scaledMouse.y);
+		bool onQuit = gui.checkButton("quit", scaledMouse.x, scaledMouse.y);
+
+		if (input.getMouseL() != in::JustPressed) {
 			return true;
 		}
-		scene.destroy();
-		if (scene.createFromFile(_RES_PATH "testLevel.txt", resource) == true) {
-			scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
-			setState(ScenePlaying);
-		} else {
-			DEBUG_ERROR("Failed to load test maze");
+		if (onQuit) {
+			return false;
 		}
-		resource.getSound("select").play();
+		if (onOptions) {
+			DEBUG_TRACE("GO TO OPTIONS");
+			return true;
+		}
+		if (onPlay) {
+			scene.destroy();
+			if (scene.createFromFile(_RES_PATH "testLevel.txt", resource) == true) {
+				scene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+				setState(ScenePlaying);
+			} else {
+				DEBUG_ERROR("Failed to load test maze");
+			}
+			resource.getSound("select").play();
+		}
 		return true;
 	}
 	else if (state == MenuOptions) {
@@ -60,8 +72,32 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 	else if (state == MenuLevels) {
 		return true;
 	}
+	else if (state == ScenePaused) {
+		if (input.getKey(in::GamePause) == in::JustPressed) {
+			setState(ScenePlaying);
+		}
+		resource.getSound("select").play();
+	}
+	else if (state == SceneWin) {
+		la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
+		bool onPlay = gui.checkButton("play", scaledMouse.x, scaledMouse.y);
+		bool onQuit = gui.checkButton("quit", scaledMouse.x, scaledMouse.y);
 
-	// Gameplay
+		if (input.getMouseL() != in::JustPressed) {
+			return true;
+		}
+		if (onPlay) {
+			scene.restart();
+			setState(ScenePlaying);
+		}
+		if (onQuit) {
+			gui.clear();
+			setState(MenuMain);
+		}
+		return true;
+	}
+
+	// SceneGameplay
 
 	if (input.getKey(in::GameRestart) == in::JustPressed) {
 		scene.restart();
@@ -69,20 +105,14 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 	}
 
 	if (input.getKey(in::GamePause) == in::JustPressed) {
-		if (state == ScenePaused) {
-			setState(ScenePlaying);
-		}
-		else if (state == ScenePlaying) {
-			setState(ScenePaused);
-		}
-		resource.getSound("select").play();
+		setState(ScenePaused);
 	}
 
 	if (state == ScenePaused || state == SceneWin) {
 		return true;
 	}
 
-	if (scene.checkWinCondition()) {
+	if (scene.checkWinCondition() || input.getKey(in::MenuSelect) == in::JustPressed) {
 		setState(SceneWin);
 		resource.getSound("select").play();
 	}
@@ -165,8 +195,16 @@ void Game::setState(GameState state) {
 void Game::setStateMenuMain() {
 	state = MenuMain;
 
-	gui.addButton("title", 96, "Marble Maze", {320, 80});
-	gui.addLabel("play", 48, "Press ENTER to play", {320, 440});
+	constexpr la::Vec4 textCol = {1.0f, 1.0f, 1.0f, 1.0f};
+	constexpr la::Vec4 backCol = {1.0f, 1.0f, 1.0f, 0.2f};
+	constexpr la::Vec4 selCol  = {1.0f, 1.0f, 1.0f, 0.4f};
+	constexpr la::Vec2 margin  = {-6, 0};
+
+	gui.addLabel("title", 72, "Marble Maze", {320, 80}, textCol, rn::TextAlign::Center);
+
+	gui.addButton("play",    36, "Play",    {320, 320}, textCol, backCol, selCol, 160, margin);
+	gui.addButton("options", 36, "Options", {320, 360}, textCol, backCol, selCol, 160, margin);
+	gui.addButton("quit",    36, "Quit",    {320, 400}, textCol, backCol, selCol, 160, margin);
 }
 
 void Game::setStateMenuOption() {
@@ -185,7 +223,7 @@ void Game::setStateScenePlaying() {
 
 void Game::setStateScenePaused() {
 	state = ScenePaused;
-	gui.addLabel("paused", 48, "Press P to resume", {320, 440});
+	gui.addLabel("paused", 24, "Press P to resume", {320, 440});
 }
 
 void Game::setStateSceneWin() {
@@ -194,13 +232,18 @@ void Game::setStateSceneWin() {
 	std::stringstream timeText;
 	timeText << "Time: " << std::setprecision(4) << scene.getTime() << "s";
 
-	gui.addLabel("win", 48, timeText.str(), {320, 415});
-	gui.addLabel("play", 48, "Press P to play again", {320, 440});
+	constexpr la::Vec4 textCol = {1.0f, 1.0f, 1.0f, 1.0f};
+	constexpr la::Vec4 backCol = {1.0f, 1.0f, 1.0f, 0.2f};
+	constexpr la::Vec4 selCol  = {1.0f, 1.0f, 1.0f, 0.4f};
+	constexpr la::Vec2 margin  = {-6, 0};
 
-	scene.restart();
+	gui.addLabel("win", 48, timeText.str(), {320, 320}, textCol, rn::TextAlign::Center);
+
+	gui.addButton("play", 36, "Play again",   {320, 360}, textCol, backCol, selCol, 200, margin);
+	gui.addButton("quit", 36, "Quit to menu", {320, 400}, textCol, backCol, selCol, 200, margin);
 }
 
 la::Vec2 Game::internalPosition(float x, float y) {
 	float ox = (frameSize.x - internalSize.x / internalSize.y * frameSize.y) / 2;
-	return {x / frameSize.y * internalSize.y - ox, y / frameSize.y * internalSize.y};
+	return {(x - ox) / frameSize.y * internalSize.y, y / frameSize.y * internalSize.y};
 }
