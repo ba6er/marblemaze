@@ -110,7 +110,11 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 }
 
 void Game::onRender(float deltaTime, float currentTime, rs::ResourceManager& resource) {
-	rn::Renderer::clear(0, 0, 0);
+	if (state & InMenu) {
+		rn::Renderer::clear(0.2f, 0.2f, 0.3f);
+	} else {
+		rn::Renderer::clear(0.0f, 0.0f, 0.0f);
+	}
 
 	if (state & InScene) {
 		scene.display();
@@ -157,8 +161,8 @@ void Game::setState(GameState state) {
 void Game::setStateMenuMain() {
 	state = MenuMain;
 
-	gui.addLabel("title").create(96, "Marble Maze", {320, 80, 0});
-	gui.addLabel("play").create(48, "Press ENTER to play", {320, 440, 0});
+	gui.addLabel("title", 96, "Marble Maze", {320, 80, 0});
+	gui.addLabel("play", 48, "Press ENTER to play", {320, 440, 0});
 }
 
 void Game::setStateMenuOption() {
@@ -177,7 +181,7 @@ void Game::setStateScenePlaying() {
 
 void Game::setStateScenePaused() {
 	state = ScenePaused;
-	gui.addLabel("paused").create(48, "Press P to resume", {320, 440, 0});
+	gui.addLabel("paused", 48, "Press P to resume", {320, 440, 0});
 }
 
 void Game::setStateSceneWin() {
@@ -186,8 +190,8 @@ void Game::setStateSceneWin() {
 	std::stringstream timeText;
 	timeText << "Time: " << std::setprecision(4) << scene.getTime() << "s";
 
-	gui.addLabel("win").create(48, timeText.str(), {320, 415, 0});
-	gui.addLabel("play").create(48, "Press P to play again", {320, 440, 0});
+	gui.addLabel("win", 48, timeText.str(), {320, 415, 0});
+	gui.addLabel("play", 48, "Press P to play again", {320, 440, 0});
 
 	scene.restart();
 }
