@@ -8,6 +8,7 @@ layout (location = 3) in vec3 vNormal;
 out vec4 iModulate;
 out vec2 iTexCoord;
 out float iSolid;
+out float iAlpha;
 
 uniform mat4 projection;
 
@@ -17,4 +18,5 @@ void main() {
 	iModulate = vec4(vColor, 1.0);
 	iTexCoord = vTexture;
 	iSolid = vNormal.x;
+	iAlpha = vNormal.y;
 }

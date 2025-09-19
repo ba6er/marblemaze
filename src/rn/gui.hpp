@@ -22,12 +22,11 @@ namespace rn {
 	public:
 		Label();
 
-		void create(la::Vec2 size, std::string_view text, la::Vec2 position, la::Vec3 color, uint align);
-		void create(la::Vec2 size, std::string_view text, la::Vec2 position);
+		void create(la::Vec2 size, std::string_view text, la::Vec2 position, la::Vec4 color, uint align);
 
 		std::string text;
 		la::Vec2 position, size;
-		la::Vec3 color;
+		la::Vec4 color;
 		uint align;
 	};
 
@@ -36,14 +35,14 @@ namespace rn {
 	public:
 		Button();
 
-		void create(const Label& label, la::Vec3 back, la::Vec3 selectedBack, la::Vec2 margin);
+		void create(const Label& label, la::Vec4 back, la::Vec4 selectedBack, la::Vec2 margin);
 
 		bool isInside(float x, float y);
 
 		bool selected;
 
 		la::Vec2 position, size;
-		la::Vec3 back, selectedBack;
+		la::Vec4 back, selectedBack;
 	};
 
 	class GUI {
@@ -55,14 +54,14 @@ namespace rn {
 		void setFrame(float left, float right, float bottom, float top);
 
 		Label& addLabel(
-			const std::string& name, float size, std::string_view text, la::Vec2 position, la::Vec3 color, uint align);
+			const std::string& name, float size, std::string_view text, la::Vec2 position, la::Vec4 color, uint align);
 		Label& addLabel(const std::string& name, float size, std::string_view text, la::Vec2 position);
 		void removeLabel(std::string_view name);
 
 		Button& addButton(
 			const std::string& name,
-			float size, std::string_view text, la::Vec2 position, la::Vec3 color,
-			la::Vec3 back, la::Vec3 selectedBack, la::Vec2 margin);
+			float size, std::string_view text, la::Vec2 position, la::Vec4 color,
+			la::Vec4 back, la::Vec4 selectedBack, la::Vec2 margin);
 		Button& addButton(const std::string& name, float size, std::string_view text, la::Vec2 position);
 		bool checkButton(std::string_view name, float x, float y);
 		void removeButton(std::string_view name);

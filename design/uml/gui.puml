@@ -43,7 +43,7 @@ class rn::Label {
 	..
 	+text: string
 	+position, size: Vec2
-	+color: Vec3
+	+color: Vec4
 	+align: uint
 }
 
@@ -55,7 +55,7 @@ class rn::Button {
 	+selected: bool
 	..
 	+position, size: Vec2
-	+back, selectedBack: Vec3
+	+back, selectedBack: Vec4
 }
 
 Label <-- TextAlign

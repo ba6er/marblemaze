@@ -5,9 +5,9 @@
 using namespace rn;
 using namespace rs;
 
-Label::Label() : text(""), position({0, 0}), size({0, 0}), color({0, 0, 0}), align(0) {}
+Label::Label() : text(""), position({0, 0}), size({0, 0}), color({0, 0, 0, 0}), align(0) {}
 
-void Label::create(la::Vec2 size, std::string_view text, la::Vec2 position, la::Vec3 color, uint align) {
+void Label::create(la::Vec2 size, std::string_view text, la::Vec2 position, la::Vec4 color, uint align) {
 	this->text = std::string(text);
 	this->position = position;
 	this->size = size;
@@ -15,13 +15,9 @@ void Label::create(la::Vec2 size, std::string_view text, la::Vec2 position, la::
 	this->align = align;
 }
 
-void Label::create(la::Vec2 size, std::string_view text, la::Vec2 position) {
-	create(size, text, position, {1, 1, 1}, Center);
-}
+Button::Button() : selected(false), position({0, 0}), size({0, 0}), back({0, 0, 0, 0}), selectedBack({0, 0, 0, 0}) {}
 
-Button::Button() : selected(false), position({0, 0}), size({0, 0}), back({0, 0, 0}), selectedBack({0, 0, 0}) {}
-
-void Button::create(const Label& label, la::Vec3 back, la::Vec3 selectedBack, la::Vec2 margin) {
+void Button::create(const Label& label, la::Vec4 back, la::Vec4 selectedBack, la::Vec2 margin) {
 	this->position = label.position;
 	this->size = label.size + margin * 2;
 	this->back = back;
@@ -50,7 +46,7 @@ void GUI::setFrame(float left, float right, float bottom, float top) {
 }
 
 Label& GUI::addLabel(
-		const std::string& name, float size, std::string_view text, la::Vec2 position, la::Vec3 color, uint align) {
+		const std::string& name, float size, std::string_view text, la::Vec2 position, la::Vec4 color, uint align) {
 	needsUpdate = true;
 	labels[name] = Label();
 
@@ -63,7 +59,7 @@ Label& GUI::addLabel(
 }
 
 Label& GUI::addLabel(const std::string& name, float size, std::string_view text, la::Vec2 position) {
-	return addLabel(name, size, text, position, {1, 1, 1}, Center);
+	return addLabel(name, size, text, position, {1, 1, 1, 1}, Center);
 }
 
 void GUI::removeLabel(std::string_view name) {
@@ -78,8 +74,8 @@ void GUI::removeLabel(std::string_view name) {
 
 Button& GUI::addButton(
 		const std::string& name,
-		float size, std::string_view text, la::Vec2 position, la::Vec3 color,
-		la::Vec3 back, la::Vec3 selectedBack, la::Vec2 margin) {
+		float size, std::string_view text, la::Vec2 position, la::Vec4 color,
+		la::Vec4 back, la::Vec4 selectedBack, la::Vec2 margin) {
 	addLabel(name, size, text, position, color, Center);
 	buttons[name] = Button();
 	buttons.at(name).create(labels.at(name), back, selectedBack, margin);
@@ -87,7 +83,7 @@ Button& GUI::addButton(
 }
 
 Button& GUI::addButton(const std::string& name, float size, std::string_view text, la::Vec2 position) {
-	return addButton(name, size, text, position, {1, 1, 1}, {0, 0, 0}, {1, 0, 0}, {0, 0});
+	return addButton(name, size, text, position, {1, 1, 1, 1}, {0, 0, 0, 1}, {1, 0, 0, 1}, {0, 0});
 }
 
 bool GUI::checkButton(std::string_view name, float x, float y) {
@@ -140,11 +136,17 @@ void GUI::updateMesh() {
 		la::Vec2 vp1 = b.position - b.size / 2;
 		la::Vec2 vp2 = b.position + b.size / 2;
 
+		la::Vec3 col = {b.back.x, b.back.y, b.back.z};
+		if (b.selected) {
+			col = {b.selectedBack.x, b.selectedBack.y, b.selectedBack.z};
+		}
+		float alpha = b.selected ? b.selectedBack.w : b.back.w;
+
 		Vertex square[] = {
-			{{vp1.x, vp1.y, 0}, b.selected ? b.selectedBack : b.back, {0, 0}, {1, 0, 0}},
-			{{vp2.x, vp1.y, 0}, b.selected ? b.selectedBack : b.back, {0, 0}, {1, 0, 0}},
-			{{vp2.x, vp2.y, 0}, b.selected ? b.selectedBack : b.back, {0, 0}, {1, 0, 0}},
-			{{vp1.x, vp2.y, 0}, b.selected ? b.selectedBack : b.back, {0, 0}, {1, 0, 0}},
+			{{vp1.x, vp1.y, 0}, col, {0, 0}, {1, alpha, 0}},
+			{{vp2.x, vp1.y, 0}, col, {0, 0}, {1, alpha, 0}},
+			{{vp2.x, vp2.y, 0}, col, {0, 0}, {1, alpha, 0}},
+			{{vp1.x, vp2.y, 0}, col, {0, 0}, {1, alpha, 0}},
 		};
 		mesh->addVertex(square[0]);
 		mesh->addVertex(square[1]);
@@ -182,11 +184,12 @@ void GUI::updateMesh() {
 			float cw = g.width * scale;
 			float ch = l.size.y;
 			la::Vec2 vp = {adv + l.position.x + offs.x, l.position.y + offs.y};
+			la::Vec3 col = {l.color.x, l.color.y, l.color.z};
 			Vertex square[] = {
-				{{vp.x,      vp.y,      0}, l.color, {g.uv.x, g.uv.y}, {0, 0, 0}},
-				{{vp.x + cw, vp.y,      0}, l.color, {g.uv.z, g.uv.y}, {0, 0, 0}},
-				{{vp.x + cw, vp.y + ch, 0}, l.color, {g.uv.z, g.uv.w}, {0, 0, 0}},
-				{{vp.x,      vp.y + ch, 0}, l.color, {g.uv.x, g.uv.w}, {0, 0, 0}},
+				{{vp.x,      vp.y,      0}, col, {g.uv.x, g.uv.y}, {0, l.color.w, 0}},
+				{{vp.x + cw, vp.y,      0}, col, {g.uv.z, g.uv.y}, {0, l.color.w, 0}},
+				{{vp.x + cw, vp.y + ch, 0}, col, {g.uv.z, g.uv.w}, {0, l.color.w, 0}},
+				{{vp.x,      vp.y + ch, 0}, col, {g.uv.x, g.uv.w}, {0, l.color.w, 0}},
 			};
 			mesh->addVertex(square[0]);
 			mesh->addVertex(square[1]);
