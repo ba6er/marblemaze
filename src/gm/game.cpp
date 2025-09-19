@@ -1,6 +1,8 @@
 #include <gm/game.hpp>
 #include <rn/renderer.hpp>
+#include <filesystem>
 #include <iomanip>
+#include <set>
 #include <sstream>
 
 using namespace gm;
@@ -20,15 +22,21 @@ void Game::onInit(int width, int height, float internalWidth, float internalHeig
 	menuScene.createMenuScene(resource);
 	menuScene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 
-	DEBUG_TRACE("a");
-	scenes.push_back(Scene());
-	if (scenes[0].createFromFile(_RES_PATH "testLevel.txt", resource)) {
-		scenes[0].setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
-	} else {
-		DEBUG_ERROR("Failed to load test scene");
-		scenes[0].destroy();
+	std::set<std::filesystem::path> sceneFileNames;
+	for (const auto& entry : std::filesystem::directory_iterator(_RES_PATH "/scenes")) {
+		sceneFileNames.insert(entry.path());
 	}
-	DEBUG_TRACE("b");
+	for (const auto& fileName : sceneFileNames) {
+		scenes.push_back(Scene());
+		if (scenes[numLoadedScenes].createFromFile(fileName.c_str(), resource)) {
+			scenes[0].setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+			DEBUG_TRACE("Loaded scene from %s", fileName.c_str());
+		} else {
+			DEBUG_ERROR("Failed to load scene from %s", fileName.c_str());
+			scenes[numLoadedScenes].destroy();
+		}
+		numLoadedScenes++;
+	}
 
 	currentScene = &menuScene;
 	setState(MenuMain);
@@ -170,7 +178,8 @@ bool Game::onStateMenuMain(
 	if (onPlay) {
 		resource.getSound("select").play();
 
-		currentScene = &scenes[1];
+		currentScene = &scenes[selectedSceneIndex];
+		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 		setState(ScenePlaying);
 	}
 	return true;
