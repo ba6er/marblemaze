@@ -97,15 +97,16 @@ GameState Game::getState() {
 void Game::setState(GameState newState) {
 	state = newState;
 
+	constexpr la::Vec4 textCol = {1.0f, 1.0f, 1.0f, 1.0f};
+	constexpr la::Vec4 backCol = {1.0f, 1.0f, 1.0f, 0.2f};
+	constexpr la::Vec4 selCol  = {1.0f, 1.0f, 1.0f, 0.4f};
+	constexpr la::Vec2 margin  = {-6, 0};
+	constexpr la::Vec2 marginL = {-1, 1};
+
 	switch (state) {
 	case MenuMain: {
 		DEBUG_TRACE("State MenuMain");
 		gui.clear();
-
-		constexpr la::Vec4 textCol = {1.0f, 1.0f, 1.0f, 1.0f};
-		constexpr la::Vec4 backCol = {1.0f, 1.0f, 1.0f, 0.2f};
-		constexpr la::Vec4 selCol  = {1.0f, 1.0f, 1.0f, 0.4f};
-		constexpr la::Vec2 margin  = {-6, 0};
 
 		gui.addLabel("title", 72, "Marble Maze", {320, 80}, textCol, rn::TextAlign::Center);
 
@@ -120,6 +121,12 @@ void Game::setState(GameState newState) {
 	case MenuLevels: {
 		DEBUG_TRACE("State MenuLevels");
 		gui.clear();
+
+		gui.addLabel("title", 36, "Select a level", {320, 40}, textCol, rn::TextAlign::Center);
+
+		gui.addButton("play", 24, "Play", {320, 440}, textCol, backCol, selCol, 100, marginL);
+		gui.addButton("prev", 24, "<",    {200, 440}, textCol, backCol, selCol, 100, marginL);
+		gui.addButton("next", 24, ">",    {440, 440}, textCol, backCol, selCol, 100, marginL);
 	} break;
 	case ScenePlaying: {
 		DEBUG_TRACE("State ScenePlaying");
@@ -129,7 +136,7 @@ void Game::setState(GameState newState) {
 		DEBUG_TRACE("State ScenePaused");
 		gui.clear();
 
-		gui.addLabel("paused", 24, "Press P to resume", {320, 440});
+		gui.addLabel("paused", 36, "Press P to resume", {320, 400});
 	} break;
 	case SceneWin: {
 		DEBUG_TRACE("State SceneWin");
@@ -137,11 +144,6 @@ void Game::setState(GameState newState) {
 
 		std::stringstream timeText;
 		timeText << "Time: " << std::setprecision(4) << currentScene->getTime() << "s";
-
-		constexpr la::Vec4 textCol = {1.0f, 1.0f, 1.0f, 1.0f};
-		constexpr la::Vec4 backCol = {1.0f, 1.0f, 1.0f, 0.2f};
-		constexpr la::Vec4 selCol  = {1.0f, 1.0f, 1.0f, 0.4f};
-		constexpr la::Vec2 margin  = {-6, 0};
 
 		gui.addLabel("win", 48, timeText.str(), {320, 320}, textCol, rn::TextAlign::Center);
 
@@ -173,14 +175,14 @@ bool Game::onStateMenuMain(
 		return false;
 	}
 	if (onOptions) {
+		resource.getSound("select").play();
 		DEBUG_TRACE("GO TO OPTIONS");
 	}
 	if (onPlay) {
 		resource.getSound("select").play();
-
 		currentScene = &scenes[selectedSceneIndex];
 		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
-		setState(ScenePlaying);
+		setState(MenuLevels);
 	}
 	return true;
 }
@@ -193,6 +195,42 @@ bool Game::onStateMenuOptions(
 
 bool Game::onStateMenuLevels(
 		float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
+
+	currentScene->updateCamera(deltaTime / 4, 0, 0);
+
+	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
+
+	bool onPlay = gui.checkButton("play", scaledMouse.x, scaledMouse.y);
+	bool onNext = gui.checkButton("next", scaledMouse.x, scaledMouse.y);
+	bool onPrev = gui.checkButton("prev", scaledMouse.x, scaledMouse.y);
+
+	if (input.getMouseL() != in::JustPressed) {
+		return true;
+	}
+
+	if (onPlay) {
+		resource.getSound("select").play();
+		currentScene->restart();
+		setState(ScenePlaying);
+	}
+	if (onNext) {
+		resource.getSound("select").play();
+		selectedSceneIndex++;
+		if (selectedSceneIndex >= numLoadedScenes) {
+			selectedSceneIndex -= numLoadedScenes;
+		}
+		currentScene = &scenes[selectedSceneIndex];
+		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+	}
+	if (onPrev) {
+		resource.getSound("select").play();
+		selectedSceneIndex--;
+		if (selectedSceneIndex < 0) {
+			selectedSceneIndex += numLoadedScenes;
+		}
+		currentScene = &scenes[selectedSceneIndex];
+		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+	}
 
 	return true;
 }
