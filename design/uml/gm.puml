@@ -1,16 +1,31 @@
 @startuml
 set separator ::
 
+enum gm::GameState {
+	MenuMain
+	MenuOptions
+	MenuLevels
+	ScenePlaying
+	ScenePaused
+}
+hide GameState methods
+
 class gm::Game {
 	+onInit(width, height, internalWidth, internalHeight, resource)
 	+onUpdate(deltaTime, currentTime, resource, input) : bool
 	+onRender(deltaTime, currentTime, resource)
 	+onResize(width, height)
 	..
-	+togglePause() : bool
-	+isPaused() : bool
+	+getState() : GameState
+	+setState(state)
 	--
-	-paused: bool
+	-setStateMenuMain()
+	-setStateMenuOptions()
+	-setStateMenuLevels()
+	-setStateScenePlaying()
+	-setStateScenePaused()
+	..
+	-state: GameState
 	..
 	-internalSize: Vec2
 	-gui: GUI
@@ -90,11 +105,12 @@ class gm::Marble {
 	+speed: float
 }
 
-Maze <-up- BlockType
+Maze <-down- BlockType
 
 Scene *-left- Maze
 Scene *-down- Marble
 
+Game <-left- GameState
 Game <-- Scene
 
 @enduml

@@ -6,6 +6,14 @@
 
 namespace gm {
 
+	enum class GameState {
+		MenuMain,
+		MenuOptions,
+		MenuLevels,
+		ScenePlaying,
+		ScenePaused,
+	};
+
 	class Game {
 
 	public:
@@ -16,11 +24,17 @@ namespace gm {
 		void onRender(float deltaTime, float currentTime, rs::ResourceManager& resource);
 		void onResize(int width, int height);
 
-		bool togglePause();
-		bool isPaused();
+		GameState getState();
+		void setState(GameState state);
 
 	private:
-		bool paused;
+		void setStateMenuMain();
+		void setStateMenuOption();
+		void setStateMenuLevels();
+		void setStateScenePlaying();
+		void setStateScenePaused();
+
+		GameState state;
 
 		la::Vec2 internalSize;
 		rn::GUI gui;

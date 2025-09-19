@@ -45,9 +45,12 @@ namespace rn {
 		void removeLabel(std::string_view name);
 
 		void display();
+		void clear();
 
 	private:
 		void updateMesh();
+
+		la::Vec4 frame;
 
 		rs::Shader* shader;
 		rs::Font* font;

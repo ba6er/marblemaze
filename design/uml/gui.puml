@@ -10,8 +10,11 @@ class rn::GUI {
 	+removeLabel(name)
 	..
 	+display()
+	+clear()
 	--
 	-updateMesh()
+	..
+	-frame: Vec4
 	..
 	-shader: &Shader
 	-font: &Font

@@ -5,13 +5,14 @@
 
 using namespace gm;
 
-Game::Game() : paused(true), internalSize({0, 0}), gui(), scene() {}
+Game::Game() : state(GameState::ScenePaused), internalSize({0, 0}), gui(), scene() {}
 
 void Game::onInit(int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource) {
 	rn::Renderer::resizeFrame(width, height);
 	internalSize = {internalWidth, internalHeight};
 
-	paused = true;
+	state = GameState::ScenePaused;
+
 	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui", 600));
 	gui.setFrame(0, width, 0, height);
 	gui.addLabel("title").create(96, "Marble Maze", {320, 80, 0});
@@ -43,17 +44,16 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 	}
 
 	if (input.getKey(in::Pause) == in::JustPressed) {
-		togglePause();
-		if (paused) {
-			gui.addLabel("paused").create(48, "Press P to resume", {320, 440, 0});
-		} else {
-			gui.removeLabel("title");
-			gui.removeLabel("paused");
+		if (state == GameState::ScenePaused) {
+			setState(GameState::ScenePlaying);
+		}
+		else if (state == GameState::ScenePlaying) {
+			setState(GameState::ScenePaused);
 		}
 		resource.getSound("select").play();
 	}
 
-	if (paused) {
+	if (state == GameState::ScenePaused) {
 		return true;
 	}
 
@@ -63,7 +63,7 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 		gui.addLabel("title").create(48, timeText.str(), {320, 415, 0});
 		gui.addLabel("paused").create(48, "Press P to play again", {320, 440, 0});
 
-		togglePause();
+		setState(GameState::ScenePaused);
 		scene.restart();
 
 		resource.getSound("select").play();
@@ -104,11 +104,45 @@ void Game::onRender(float deltaTime, float currentTime, rs::ResourceManager& res
 	gui.display();
 }
 
-bool Game::togglePause() {
-	paused = !paused;
-	return paused;
+GameState Game::getState() {
+	return state;
 }
 
-bool Game::isPaused() {
-	return paused;
+void Game::setState(GameState state) {
+	switch (state) {
+	case GameState::MenuMain:
+		setStateMenuMain();
+		break;
+	case GameState::MenuOptions:
+		setStateMenuOption();
+		break;
+	case GameState::MenuLevels:
+		setStateMenuLevels();
+		break;
+	case GameState::ScenePlaying:
+		setStateScenePlaying();
+		break;
+	case GameState::ScenePaused:
+		setStateScenePaused();
+		break;
+	}
+}
+
+void Game::setStateMenuMain() {
+}
+
+void Game::setStateMenuOption() {
+}
+
+void Game::setStateMenuLevels() {
+}
+
+void Game::setStateScenePlaying() {
+	state = GameState::ScenePlaying;
+	gui.clear();
+}
+
+void Game::setStateScenePaused() {
+	state = GameState::ScenePaused;
+	gui.addLabel("paused").create(48, "Press P to resume", {320, 440, 0});
 }

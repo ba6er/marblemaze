@@ -18,7 +18,7 @@ void Label::create(float size, std::string_view text, la::Vec3 position) {
 	create(size, text, position, {1, 1, 1});
 }
 
-GUI::GUI() : shader(nullptr), font(nullptr), mesh(nullptr), labels(), needsUpdate(false) {}
+GUI::GUI() : frame({0, 0, 0, 0}), shader(nullptr), font(nullptr), mesh(nullptr), labels(), needsUpdate(false) {}
 
 void GUI::create(Shader& shader, Font& font, Mesh& mesh) {
 	this->shader = &shader;
@@ -31,6 +31,7 @@ void GUI::setFrame(float left, float right, float bottom, float top) {
 		DEBUG_WARNING("GUI doesn't have a valid shader attached");
 		return;
 	}
+	frame = {left, bottom, right, top};
 	shader->setUniform("projection", la::Mat4::Project2d(left, right, bottom, top, -1000, 1000));
 }
 
@@ -68,6 +69,11 @@ void GUI::display() {
 	font->getTexture().use(0);
 	shader->use();
 	mesh->draw();
+}
+
+void GUI::clear() {
+	labels.clear();
+	needsUpdate = true;
 }
 
 void GUI::updateMesh() {
