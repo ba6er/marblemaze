@@ -22,12 +22,11 @@ namespace rn {
 	public:
 		Label();
 
-		void create(la::Vec2 size, std::string_view text, la::Vec3 position, la::Vec3 color, uint align);
-		void create(la::Vec2 size, std::string_view text, la::Vec3 position);
+		void create(la::Vec2 size, std::string_view text, la::Vec2 position, la::Vec3 color, uint align);
+		void create(la::Vec2 size, std::string_view text, la::Vec2 position);
 
 		std::string text;
-		la::Vec2 size;
-		la::Vec3 position;
+		la::Vec2 position, size;
 		la::Vec3 color;
 		uint align;
 	};
@@ -43,8 +42,8 @@ namespace rn {
 
 		bool selected;
 
-		la::Vec3 back, selectedBack, position;
-		la::Vec2 size;
+		la::Vec2 position, size;
+		la::Vec3 back, selectedBack;
 	};
 
 	class GUI {
@@ -56,15 +55,15 @@ namespace rn {
 		void setFrame(float left, float right, float bottom, float top);
 
 		Label& addLabel(
-			const std::string& name, float size, std::string_view text, la::Vec3 position, la::Vec3 color, uint align);
-		Label& addLabel(const std::string& name, float size, std::string_view text, la::Vec3 position);
+			const std::string& name, float size, std::string_view text, la::Vec2 position, la::Vec3 color, uint align);
+		Label& addLabel(const std::string& name, float size, std::string_view text, la::Vec2 position);
 		void removeLabel(std::string_view name);
 
 		Button& addButton(
 			const std::string& name,
-			float size, std::string_view text, la::Vec3 position, la::Vec3 color,
+			float size, std::string_view text, la::Vec2 position, la::Vec3 color,
 			la::Vec3 back, la::Vec3 selectedBack, la::Vec2 margin);
-		Button& addButton(const std::string& name, float size, std::string_view text, la::Vec3 position);
+		Button& addButton(const std::string& name, float size, std::string_view text, la::Vec2 position);
 		bool checkButton(std::string_view name, float x, float y);
 		void removeButton(std::string_view name);
 

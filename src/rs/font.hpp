@@ -22,18 +22,17 @@ namespace rs {
 
 		Texture& getTexture();
 		Glyph getGlyph(int glyph) const;
-		int getSize() const;
 		int getWidth() const;
 		int getHeight() const;
+		int getAscent() const;
 
 	private:
 		static inline constexpr int FirstGlyph = ' '; // ' ' = 32
 		static inline constexpr int LastGlyph = '~' + 1;  // '~' = 126
 		static inline constexpr int NumGlyphs = LastGlyph - FirstGlyph;
 
-		int size;
+		int size, ascent;
 		Texture* texture;
 		Glyph glyphs[NumGlyphs];
-
 	};
 }

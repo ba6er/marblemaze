@@ -90,11 +90,11 @@ class rs::Font {
 	..
 	+getTexture() : &Texture
 	+getGlyph(c) : Glyph
-	+getSize() : int
 	+getWidth() : int
 	+getHeight() : int
+	+getAscent() : int
 	--
-	-size: int
+	-size, ascent: int
 	-texture: &Texture
 	-glyphs: Glyph[]
 }

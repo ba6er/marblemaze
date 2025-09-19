@@ -36,6 +36,8 @@ bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& res
 	}
 
 	if (state == MenuMain) {
+		gui.checkButton("title", input.getMouseX(), input.getMouseY());
+
 		if (input.getKey(in::MenuSelect) != in::JustPressed) {
 			return true;
 		}
@@ -161,8 +163,8 @@ void Game::setState(GameState state) {
 void Game::setStateMenuMain() {
 	state = MenuMain;
 
-	gui.addLabel("title", 96, "Marble Maze", {320, 80, 0});
-	gui.addLabel("play", 48, "Press ENTER to play", {320, 440, 0});
+	gui.addButton("title", 96, "Marble Maze", {320, 80});
+	gui.addLabel("play", 48, "Press ENTER to play", {320, 440});
 }
 
 void Game::setStateMenuOption() {
@@ -181,7 +183,7 @@ void Game::setStateScenePlaying() {
 
 void Game::setStateScenePaused() {
 	state = ScenePaused;
-	gui.addLabel("paused", 48, "Press P to resume", {320, 440, 0});
+	gui.addLabel("paused", 48, "Press P to resume", {320, 440});
 }
 
 void Game::setStateSceneWin() {
@@ -190,8 +192,8 @@ void Game::setStateSceneWin() {
 	std::stringstream timeText;
 	timeText << "Time: " << std::setprecision(4) << scene.getTime() << "s";
 
-	gui.addLabel("win", 48, timeText.str(), {320, 415, 0});
-	gui.addLabel("play", 48, "Press P to play again", {320, 440, 0});
+	gui.addLabel("win", 48, timeText.str(), {320, 415});
+	gui.addLabel("play", 48, "Press P to play again", {320, 440});
 
 	scene.restart();
 }

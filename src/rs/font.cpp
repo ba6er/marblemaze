@@ -6,7 +6,7 @@
 
 using namespace rs;
 
-Font::Font() : size(0), texture(nullptr) {
+Font::Font() : size(0), ascent(0), texture(nullptr) {
 	for (int i = 0; i < NumGlyphs; i++) {
 		glyphs[i] = {0, 0, {0, 0, 0, 0}};
 	}
@@ -28,19 +28,13 @@ void Font::create(Texture& texture, std::string_view fileName, int size, bool fi
 	int ascent;
 	stbtt_GetFontVMetrics(&info, &ascent, nullptr, nullptr);
 	ascent = std::round(ascent * scale);
+	this->ascent = ascent;
 
-	int atlasWidth = 0, atlasHeight = 0;
+	int atlasWidth = 0, atlasHeight = size;
 	for (char c = FirstGlyph; c < LastGlyph; c++) {
 		int advance;
 		stbtt_GetCodepointHMetrics(&info, c, &advance, nullptr);
-
-		int bottom, top;
-		stbtt_GetCodepointBitmapBox(&info, c, scale, scale, nullptr, &bottom, nullptr, &top);
-
-		if (ascent + top - bottom > atlasHeight) {
-			atlasHeight = ascent + top - bottom;
-		}
-		atlasWidth += std::round(advance * scale);
+		atlasWidth += std::round(advance * scale) + 1;
 	}
 	atlasWidth = pow(2, (int)log2(atlasWidth) + 1);
 
@@ -70,7 +64,7 @@ void Font::create(Texture& texture, std::string_view fileName, int size, bool fi
 			c);
 
 		glyphs[c - FirstGlyph] = {right - left, advance, {x / atlasWidth, 0, (x + right - left) / atlasWidth, 1}};
-		x += advance;
+		x += advance + 1;
 	}
 
 	if (filtered) {
@@ -102,10 +96,6 @@ Glyph Font::getGlyph(int glyph) const {
 	return glyphs[glyph - FirstGlyph];
 }
 
-int Font::getSize() const {
-	return size;
-}
-
 int Font::getWidth() const {
 	DEBUG_ASSERT(texture != nullptr, "This font hasn't been initialized");
 	return texture->getWidth();
@@ -113,5 +103,10 @@ int Font::getWidth() const {
 
 int Font::getHeight() const {
 	DEBUG_ASSERT(texture != nullptr, "This font hasn't been initialized");
-	return texture->getHeight();
+	return size;
+}
+
+int Font::getAscent() const {
+	DEBUG_ASSERT(texture != nullptr, "This font hasn't been initialized");
+	return ascent;
 }

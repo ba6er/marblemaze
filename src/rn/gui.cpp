@@ -5,27 +5,27 @@
 using namespace rn;
 using namespace rs;
 
-Label::Label() : text(""), size({0, 0}), position({0, 0, 0}), color({0, 0, 0}), align(0) {}
+Label::Label() : text(""), position({0, 0}), size({0, 0}), color({0, 0, 0}), align(0) {}
 
-void Label::create(la::Vec2 size, std::string_view text, la::Vec3 position, la::Vec3 color, uint align) {
-	this->size = size;
+void Label::create(la::Vec2 size, std::string_view text, la::Vec2 position, la::Vec3 color, uint align) {
 	this->text = std::string(text);
 	this->position = position;
+	this->size = size;
 	this->color = color;
 	this->align = align;
 }
 
-void Label::create(la::Vec2 size, std::string_view text, la::Vec3 position) {
+void Label::create(la::Vec2 size, std::string_view text, la::Vec2 position) {
 	create(size, text, position, {1, 1, 1}, Center);
 }
 
-Button::Button() : selected(false), back({0, 0, 0}), selectedBack({0, 0, 0}), position({0, 0, 0}), size({0, 0}) {}
+Button::Button() : selected(false), position({0, 0}), size({0, 0}), back({0, 0, 0}), selectedBack({0, 0, 0}) {}
 
 void Button::create(const Label& label, la::Vec3 back, la::Vec3 selectedBack, la::Vec2 margin) {
-	this->back = back;
-	this->selectedBack = selectedBack;
 	this->position = label.position;
 	this->size = label.size + margin * 2;
+	this->back = back;
+	this->selectedBack = selectedBack;
 }
 
 bool Button::isInside(float x, float y) {
@@ -50,7 +50,7 @@ void GUI::setFrame(float left, float right, float bottom, float top) {
 }
 
 Label& GUI::addLabel(
-		const std::string& name, float size, std::string_view text, la::Vec3 position, la::Vec3 color, uint align) {
+		const std::string& name, float size, std::string_view text, la::Vec2 position, la::Vec3 color, uint align) {
 	needsUpdate = true;
 	labels[name] = Label();
 
@@ -62,10 +62,9 @@ Label& GUI::addLabel(
 	return labels.at(name);
 }
 
-Label& GUI::addLabel(const std::string& name, float size, std::string_view text, la::Vec3 position) {
-	return addLabel(name, size,text, position, {1, 1, 1}, Center);
+Label& GUI::addLabel(const std::string& name, float size, std::string_view text, la::Vec2 position) {
+	return addLabel(name, size, text, position, {1, 1, 1}, Center);
 }
-
 
 void GUI::removeLabel(std::string_view name) {
 	auto value = labels.find(name);
@@ -79,22 +78,15 @@ void GUI::removeLabel(std::string_view name) {
 
 Button& GUI::addButton(
 		const std::string& name,
-		float size, std::string_view text, la::Vec3 position, la::Vec3 color,
+		float size, std::string_view text, la::Vec2 position, la::Vec3 color,
 		la::Vec3 back, la::Vec3 selectedBack, la::Vec2 margin) {
-	needsUpdate = true;
-	labels[name] = Label();
+	addLabel(name, size, text, position, color, Center);
 	buttons[name] = Button();
-
-	float width = 0;
-	for (char c : text) {
-		width += font->getGlyph(c).advance * size / font->getHeight();
-	}
-	labels.at(name).create({width, size}, text, position, color, Center);
 	buttons.at(name).create(labels.at(name), back, selectedBack, margin);
 	return buttons.at(name);
 }
 
-Button& GUI::addButton(const std::string& name, float size, std::string_view text, la::Vec3 position) {
+Button& GUI::addButton(const std::string& name, float size, std::string_view text, la::Vec2 position) {
 	return addButton(name, size, text, position, {1, 1, 1}, {0, 0, 0}, {1, 0, 0}, {0, 0});
 }
 
@@ -102,7 +94,11 @@ bool GUI::checkButton(std::string_view name, float x, float y) {
 	auto value = buttons.find(name);
 	DEBUG_ASSERT(value != buttons.end(), "No button by the name of \"%s\"", name.data());
 
-	value->second.selected = value->second.isInside(x, y);
+	bool posInsideButton = value->second.isInside(x, y);
+	if (posInsideButton != value->second.selected) {
+		needsUpdate = true;
+		value->second.selected = posInsideButton;
+	}
 	return value->second.selected;
 }
 
@@ -138,14 +134,34 @@ void GUI::clear() {
 void GUI::updateMesh() {
 	mesh->clear();
 
+	for (auto& buttonKV : buttons) {
+		Button& b = buttonKV.second;
+
+		la::Vec2 vp1 = b.position - b.size / 2;
+		la::Vec2 vp2 = b.position + b.size / 2;
+
+		Vertex square[] = {
+			{{vp1.x, vp1.y, 0}, b.selected ? b.selectedBack : b.back, {0, 0}, {1, 0, 0}},
+			{{vp2.x, vp1.y, 0}, b.selected ? b.selectedBack : b.back, {0, 0}, {1, 0, 0}},
+			{{vp2.x, vp2.y, 0}, b.selected ? b.selectedBack : b.back, {0, 0}, {1, 0, 0}},
+			{{vp1.x, vp2.y, 0}, b.selected ? b.selectedBack : b.back, {0, 0}, {1, 0, 0}},
+		};
+		mesh->addVertex(square[0]);
+		mesh->addVertex(square[1]);
+		mesh->addVertex(square[2]);
+		mesh->addVertex(square[2]);
+		mesh->addVertex(square[3]);
+		mesh->addVertex(square[0]);
+	}
+
 	for (auto& labelKV : labels) {
 		Label& l = labelKV.second;
 		if (l.text.empty()) {
 			continue;
 		}
 
-		float hScale = l.size.y / font->getHeight();
-		la::Vec2 offs = {-l.size.x / 2, -l.size.y / 4};
+		float scale = l.size.y / font->getHeight();
+		la::Vec2 offs = {-l.size.x / 2, -l.size.y / 2};
 		if (l.align & TextAlign::Left) {
 			offs.x = 0;
 		}
@@ -156,14 +172,14 @@ void GUI::updateMesh() {
 			offs.y = 0;
 		}
 		if (l.align & TextAlign::Bottom) {
-			offs.y = -l.size.y / 2;
+			offs.y = -l.size.y;
 		}
 
 		float adv = 0;
 		for (char c : l.text) {
 			Glyph g = font->getGlyph(c);
 
-			float cw = g.width * hScale;
+			float cw = g.width * scale;
 			float ch = l.size.y;
 			la::Vec2 vp = {adv + l.position.x + offs.x, l.position.y + offs.y};
 			Vertex square[] = {
@@ -179,7 +195,7 @@ void GUI::updateMesh() {
 			mesh->addVertex(square[3]);
 			mesh->addVertex(square[0]);
 
-			adv += g.advance * hScale;
+			adv += g.advance * scale;
 		}
 	}
 }
