@@ -15,11 +15,11 @@ uniform mat4 view;
 uniform mat4 projection;
 
 void main() {
-  gl_Position = projection * view * model * vec4(vPosition, 1.0);
+	gl_Position = projection * view * model * vec4(vPosition, 1.0);
 
-  iModulate = vec4(vColor, 1.0);
-  iTextureCoord = vTexture;
+	iModulate = vec4(vColor, 1.0);
+	iTextureCoord = vTexture;
 
-  iFragPosition = vec3(model * vec4(vPosition, 1.0));
-  iNormal = mat3(transpose(inverse(model))) * vNormal;
+	iFragPosition = vec3(model * vec4(vPosition, 1.0));
+	iNormal = mat3(transpose(inverse(model))) * vNormal;
 }

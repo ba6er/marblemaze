@@ -8,6 +8,6 @@ in vec2 iTexCoord;
 uniform sampler2D uTexture0;
 
 void main() {
-  vec4 texCol = texture(uTexture0, iTexCoord);
-  fragColor = texCol * iModulate;
+	vec4 texCol = texture(uTexture0, iTexCoord);
+	fragColor = texCol * iModulate;
 }
