@@ -35,13 +35,17 @@ namespace gm {
 	public:
 		Game();
 
-		void onInit(int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource);
+		void onInit(
+			int width, int height, float internalWidth, float internalHeight,
+			rs::ResourceManager& resource, const std::array<int, 5>& initOptions);
 		bool onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input);
 		void onRender(float deltaTime, float currentTime, rs::ResourceManager& resource);
 		void onResize(int width, int height);
 
 		GameState getState();
 		void setState(GameState newState);
+
+		std::array<int, 5> optionWholeValues;
 
 	private:
 		bool onStateMenuMain(
@@ -59,7 +63,6 @@ namespace gm {
 
 		la::Vec2 internalPosition(float x, float y);
 
-		std::array<int, 5> optionWholeValues;
 		GameOptions options;
 		GameState state;
 

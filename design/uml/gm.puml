@@ -23,13 +23,15 @@ class gm::GameOptions {
 hide GameOptions methods
 
 class gm::Game {
-	+onInit(width, height, internalWidth, internalHeight, resource)
+	+onInit(width, height, internalWidth, internalHeight, resource, initOptions)
 	+onUpdate(deltaTime, currentTime, resource, input) : bool
 	+onRender(deltaTime, currentTime, resource)
 	+onResize(width, height)
 	..
 	+getState() : GameState
 	+setState(state)
+	..
+	+optionWholeValues: int[]
 	--
 	-onStateMenuMain(deltaTime, currentTime, resource, input) : bool
 	-onStateMenuOptions(deltaTime, currentTime, resource, input) : bool

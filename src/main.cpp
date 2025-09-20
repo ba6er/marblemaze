@@ -5,15 +5,17 @@
 #include <gm/game.hpp>
 #include <rs/resourcemanager.hpp>
 #include <util.hpp>
+#include <array>
+#include <fstream>
 
 static void callbackError(int code, const char* text) {
 	DEBUG_WARNING("GLFW error: %d, %s", code, text);
 }
 
 static const char* title = "Marble Maze";
-static const int width   = 640;
-static const int height  = 480;
 static const int fps     = 60;
+static const int defaultWidth  = 640;
+static const int defaultHeight = 480;
 
 static ma_engine audioEngine;
 static GLFWwindow* window;
@@ -29,6 +31,42 @@ static void callbackScroll(GLFWwindow*, double x, double y) {
 int main() {
 	DEBUG_TRACE("This is a debug build");
 	CRITICAL_TRACE("Initializing system");
+
+	// Load configuration file
+	int width, height;
+	std::array<int, 5> initOptionWhileValues;
+
+	try {
+		std::ifstream configIn(_RES_PATH "options.txt");
+		if (!configIn.is_open()) {
+			throw 1;
+		}
+		if (!(configIn >> width)) {
+			throw 1;
+		}
+		if (width < 0 || width > 8196) {
+			throw 1;
+		}
+		if (!(configIn >> height)) {
+			throw 1;
+		}
+		if (height < 0 || height > 8196) {
+			throw 1;
+		}
+		for (int i = 0; i < 5; i++) {
+			if (!(configIn >> initOptionWhileValues[i])) {
+				throw 1;
+			}
+			if (initOptionWhileValues[i] < 1 || initOptionWhileValues[i] > 10) {
+				throw 1;
+			}
+		}
+	} catch(...) {
+		DEBUG_WARNING("Failed to read from options file, loading from default configuration");
+		width = defaultWidth;
+		height = defaultHeight;
+		initOptionWhileValues = {5, 5, 5, 5, 5};
+	}
 
 	// Initialize miniaudio
 	if (ma_engine_init(nullptr, &audioEngine) != MA_SUCCESS) {
@@ -66,7 +104,7 @@ int main() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	resource.initFromConfig(_RES_PATH "assets.txt", &audioEngine);
-	game.onInit(width, height, 640, 480, resource);
+	game.onInit(width, height, 640, 480, resource, initOptionWhileValues);
 
 	float tickTime     = 1.0f / fps;
 	float currentTime  = 0.0f;
@@ -74,9 +112,6 @@ int main() {
 	float deltaTime    = 0.0f;
 	float lagTime      = 0.0f;
 	bool  isRunning    = true;
-
-	int frameWidth = width;
-	int frameHeight = height;
 
 	// Main loop
 	while(isRunning && !glfwWindowShouldClose(window)) {
@@ -121,10 +156,10 @@ int main() {
 		// Frame size
 		int newFrameWidth, newFrameHeight;
 		glfwGetFramebufferSize(window, &newFrameWidth, &newFrameHeight);
-		if (frameWidth != newFrameWidth || frameHeight != newFrameHeight) {
-			frameWidth = newFrameWidth;
-			frameHeight = newFrameHeight;
-			game.onResize(frameWidth, frameHeight);
+		if (width != newFrameWidth || height != newFrameHeight) {
+			width = newFrameWidth;
+			height = newFrameHeight;
+			game.onResize(width, height);
 		}
 
 		// Update and render the game
@@ -138,6 +173,17 @@ int main() {
 		glfwSwapBuffers(window);
 		input.setScroll(0, 0);
 		glfwPollEvents();
+	}
+
+	// Write new configuration file
+	try {
+		std::ofstream configOut(_RES_PATH "options.txt");
+		configOut << width << std::endl << height << std::endl;
+		for (int i = 0; i < 5; i++) {
+			configOut << game.optionWholeValues[i] << std::endl;
+		}
+	} catch(...) {
+		DEBUG_WARNING("Failed to write to options file");
 	}
 
 	FreeSystemResources();

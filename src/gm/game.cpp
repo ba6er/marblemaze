@@ -17,13 +17,25 @@ Game::Game()
 	, menuCameraYaw(0), menuCameraPitch(0), menuCameraDistance(0)
 	, selectedSceneIndex(0), numLoadedScenes(0), scenes(), menuScene(), currentScene(nullptr) {}
 
-void Game::onInit(int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource) {
+void Game::onInit(
+		int width, int height, float internalWidth, float internalHeight,
+		rs::ResourceManager& resource, const std::array<int, 5>& initOptions) {
 	rn::Renderer::resizeFrame(width, height);
 	frameSize = {(float)width, (float)height};
 	internalSize = {internalWidth, internalHeight};
 
+	for (int i = 0; i < 5; i++) {
+		optionWholeValues[i] = initOptions[i];
+	}
+	options.mouseSensitivityX   *= initOptions[0] / 5.0f;
+	options.mouseSensitivityY   *= initOptions[1] / 5.0f;
+	options.scrollSensitivity   *= initOptions[2] / 5.0f;
+	options.mazeRollSensitivity *= initOptions[3] / 5.0f;
+	options.mazeYawSensitivity  *= initOptions[4] / 5.0f;
+
+	float ox = (internalSize.x - width * internalSize.y / height) / 2;
 	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui", 3072));
-	gui.setFrame(0, width, 0, height);
+	gui.setFrame(ox, internalSize.x - ox, 0, internalSize.y);
 
 	menuScene.createMenuScene(resource);
 	menuScene.setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
@@ -154,11 +166,16 @@ void Game::setState(GameState newState) {
 		gui.addButton("ryBg", 24, "", {bgX, 442}, textCol, backCol, selCol, textWidth, margin);
 
 		constexpr float vlX = bgX + textWidth / 2 + valueWidth / 2;
-		gui.addButton("mxVl", 24, "5", {vlX, 322}, textCol, backCol, selCol, valueWidth, margin);
-		gui.addButton("myVl", 24, "5", {vlX, 352}, textCol, backCol, selCol, valueWidth, margin);
-		gui.addButton("msVl", 24, "5", {vlX, 382}, textCol, backCol, selCol, valueWidth, margin);
-		gui.addButton("rxVl", 24, "5", {vlX, 412}, textCol, backCol, selCol, valueWidth, margin);
-		gui.addButton("ryVl", 24, "5", {vlX, 442}, textCol, backCol, selCol, valueWidth, margin);
+		gui.addButton(
+			"mxVl", 24, std::to_string(optionWholeValues[0]), {vlX, 322}, textCol, backCol, selCol, valueWidth, margin);
+		gui.addButton(
+			"myVl", 24, std::to_string(optionWholeValues[1]), {vlX, 352}, textCol, backCol, selCol, valueWidth, margin);
+		gui.addButton(
+			"msVl", 24, std::to_string(optionWholeValues[2]), {vlX, 382}, textCol, backCol, selCol, valueWidth, margin);
+		gui.addButton(
+			"rxVl", 24, std::to_string(optionWholeValues[3]), {vlX, 412}, textCol, backCol, selCol, valueWidth, margin);
+		gui.addButton(
+			"ryVl", 24, std::to_string(optionWholeValues[4]), {vlX, 442}, textCol, backCol, selCol, valueWidth, margin);
 
 		constexpr float decX = vlX + valueWidth / 2 + btnWidth / 2;
 		gui.addButton("0", 24, "-", {decX, 322}, textCol, backCol, selCol, btnWidth, margin);

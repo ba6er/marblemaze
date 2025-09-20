@@ -1,4 +1,5 @@
 build
+res/options.txt
 
 .kdev4
 *.kdev4
