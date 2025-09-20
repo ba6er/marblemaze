@@ -34,7 +34,7 @@ void Game::onInit(int width, int height, float internalWidth, float internalHeig
 			scenes[numLoadedScenes].setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 			numLoadedScenes++;
 		} else {
-			DEBUG_ERROR("Failed to load scene from %s", fileName.c_str());
+			CRITICAL_ERROR("Failed to load scene from %s", fileName.c_str());
 			scenes[numLoadedScenes].destroy();
 		}
 	}
@@ -107,7 +107,7 @@ void Game::setState(GameState newState) {
 	constexpr la::Vec4 backCol = {1.0f, 1.0f, 1.0f, 0.2f};
 	constexpr la::Vec4 selCol  = {1.0f, 1.0f, 1.0f, 0.4f};
 	constexpr la::Vec2 margin  = {-6, 0};
-	constexpr la::Vec2 marginL = {-1, 1};
+	constexpr la::Vec2 marginL = { 0, 2};
 
 	switch (state) {
 	case MenuMain: {
@@ -123,16 +123,21 @@ void Game::setState(GameState newState) {
 	case MenuOptions: {
 		DEBUG_TRACE("State MenuOptions");
 		gui.clear();
+
+		gui.addLabel("title", 36, "Options", {320, 30}, textCol, rn::TextAlign::Center);
+
+		gui.addButton("back", 24, "Back", {580, 24}, textCol, backCol, selCol, 96, marginL);
 	} break;
 	case MenuLevels: {
 		DEBUG_TRACE("State MenuLevels");
 		gui.clear();
 
-		gui.addLabel("title", 36, "Select a level", {320, 40}, textCol, rn::TextAlign::Center);
+		gui.addLabel("title", 36, "Select a level", {320, 30}, textCol, rn::TextAlign::Center);
 
-		gui.addButton("play", 24, "Play", {320, 440}, textCol, backCol, selCol, 100, marginL);
-		gui.addButton("prev", 24, "<",    {200, 440}, textCol, backCol, selCol, 100, marginL);
-		gui.addButton("next", 24, ">",    {440, 440}, textCol, backCol, selCol, 100, marginL);
+		gui.addButton("play", 24, "Play", {320, 442}, textCol, backCol, selCol, 96, marginL);
+		gui.addButton("prev", 24, "<",    {216, 442}, textCol, backCol, selCol, 96, marginL);
+		gui.addButton("next", 24, ">",    {424, 442}, textCol, backCol, selCol, 96, marginL);
+		gui.addButton("back", 24, "Back", {580,  24}, textCol, backCol, selCol, 96, marginL);
 	} break;
 	case ScenePlaying: {
 		DEBUG_TRACE("State ScenePlaying");
@@ -170,9 +175,12 @@ bool Game::onStateMenuMain(
 
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
-	bool onPlay = gui.checkButton("play", scaledMouse.x, scaledMouse.y);
-	bool onOptions = gui.checkButton("options", scaledMouse.x, scaledMouse.y);
-	bool onQuit = gui.checkButton("quit", scaledMouse.x, scaledMouse.y);
+	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("play", onPlay);
+	bool onOptions = gui.checkButtonSelected("options", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("options", onOptions);
+	bool onQuit = gui.checkButtonSelected("quit", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("quit", onQuit);
 
 	if (input.getMouseL() != in::JustPressed) {
 		return true;
@@ -183,9 +191,9 @@ bool Game::onStateMenuMain(
 	}
 	if (onOptions) {
 		resource.getSound("select").play();
-		DEBUG_TRACE("GO TO OPTIONS");
+		setState(MenuOptions);
 	}
-	if (onPlay) {
+	else if (onPlay) {
 		resource.getSound("select").play();
 		currentScene = &scenes[selectedSceneIndex];
 		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
@@ -198,6 +206,23 @@ bool Game::onStateMenuMain(
 bool Game::onStateMenuOptions(
 		float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
 
+	menuCameraYaw += deltaTime / 4;
+	currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
+
+	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
+
+	bool onBack = gui.checkButtonSelected("back", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("back", onBack);
+
+	if (input.getMouseL() != in::JustPressed) {
+		return true;
+	}
+
+	if (onBack) {
+		resource.getSound("select").play();
+		setState(MenuMain);
+	}
+
 	return true;
 }
 
@@ -209,9 +234,14 @@ bool Game::onStateMenuLevels(
 
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
-	bool onPlay = gui.checkButton("play", scaledMouse.x, scaledMouse.y);
-	bool onNext = gui.checkButton("next", scaledMouse.x, scaledMouse.y);
-	bool onPrev = gui.checkButton("prev", scaledMouse.x, scaledMouse.y);
+	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("play", onPlay);
+	bool onNext = gui.checkButtonSelected("next", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("next", onNext);
+	bool onPrev = gui.checkButtonSelected("prev", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("prev", onPrev);
+	bool onBack = gui.checkButtonSelected("back", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("back", onBack);
 
 	if (input.getMouseL() != in::JustPressed) {
 		return true;
@@ -222,7 +252,7 @@ bool Game::onStateMenuLevels(
 		currentScene->restart();
 		setState(ScenePlaying);
 	}
-	if (onNext) {
+	else if (onNext) {
 		resource.getSound("select").play();
 		selectedSceneIndex++;
 		if (selectedSceneIndex >= numLoadedScenes) {
@@ -232,7 +262,7 @@ bool Game::onStateMenuLevels(
 		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 	}
-	if (onPrev) {
+	else if (onPrev) {
 		resource.getSound("select").play();
 		selectedSceneIndex--;
 		if (selectedSceneIndex < 0) {
@@ -241,6 +271,10 @@ bool Game::onStateMenuLevels(
 		currentScene = &scenes[selectedSceneIndex];
 		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+	}
+	else if (onBack) {
+		resource.getSound("select").play();
+		setState(MenuMain);
 	}
 
 	return true;
@@ -311,8 +345,10 @@ bool Game::onStateSceneWin(
 
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
-	bool onPlay = gui.checkButton("play", scaledMouse.x, scaledMouse.y);
-	bool onQuit = gui.checkButton("quit", scaledMouse.x, scaledMouse.y);
+	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("play", onPlay);
+	bool onQuit = gui.checkButtonSelected("quit", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("quit", onQuit);
 
 	if (input.getMouseL() != in::JustPressed) {
 		return true;

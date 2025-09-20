@@ -103,16 +103,28 @@ Button& GUI::addButton(const std::string& name, float size, std::string_view tex
 	return addButton(name, size, text, position, {1, 1, 1, 1}, {0, 0, 0, 1}, {1, 0, 0, 1}, {0, 0, 0, 0});
 }
 
-bool GUI::checkButton(std::string_view name, float x, float y) {
+bool GUI::checkButtonSelected(std::string_view name, float x, float y) {
 	auto value = buttons.find(name);
 	DEBUG_ASSERT(value != buttons.end(), "No button by the name of \"%s\"", name.data());
 
-	bool posInsideButton = value->second.isInside(x, y);
-	if (posInsideButton != value->second.selected) {
-		needsUpdate = true;
-		value->second.selected = posInsideButton;
-	}
+	return value->second.isInside(x, y);
+}
+
+bool GUI::getButtonSelected(std::string_view name) {
+	auto value = buttons.find(name);
+	DEBUG_ASSERT(value != buttons.end(), "No button by the name of \"%s\"", name.data());
+
 	return value->second.selected;
+}
+
+void GUI::setButtonSelected(std::string_view name, bool isSelected) {
+	auto value = buttons.find(name);
+	DEBUG_ASSERT(value != buttons.end(), "No button by the name of \"%s\"", name.data());
+
+	if (isSelected != value->second.selected) {
+		needsUpdate = true;
+		value->second.selected = isSelected;
+	}
 }
 
 void GUI::removeButton(std::string_view name) {

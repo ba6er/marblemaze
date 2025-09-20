@@ -67,7 +67,9 @@ namespace rn {
 			float size, std::string_view text, la::Vec2 position, la::Vec4 color,
 			la::Vec4 back, la::Vec4 selectedBack, float width, la::Vec2 verticalMargin);
 		Button& addButton(const std::string& name, float size, std::string_view text, la::Vec2 position);
-		bool checkButton(std::string_view name, float x, float y);
+		bool checkButtonSelected(std::string_view name, float x, float y);
+		bool getButtonSelected(std::string_view name);
+		void setButtonSelected(std::string_view name, bool isSelected);
 		void removeButton(std::string_view name);
 
 		void display();
