@@ -8,18 +8,23 @@
 using namespace gm;
 
 GameOptions GameOptions::DefaultValues() {
-	return {0.2f, 0.2f, 10.0f, 1.0f, 1.0f};
+	return {1, 0, 0.2f, 0.2f, 10.0f, 1.0f, 1.0f};
 }
 
 Game::Game()
-	: optionWholeValues({5, 5, 5, 5, 5}), options(GameOptions::DefaultValues()), state(MenuMain)
+	: rememberValues(0), fullscreen(0), optionWholeValues({5, 5, 5, 5, 5})
+	, options(GameOptions::DefaultValues()), state(MenuMain)
 	, frameSize({0, 0}), internalSize({0, 0}), gui()
 	, menuCameraYaw(0), menuCameraPitch(0), menuCameraDistance(0)
 	, selectedSceneIndex(0), numLoadedScenes(0), scenes(), menuScene(), currentScene(nullptr) {}
 
 void Game::onInit(
-		int width, int height, float internalWidth, float internalHeight,
-		rs::ResourceManager& resource, const std::array<int, 5>& initOptions) {
+		int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource,
+		bool rememberValues, bool fullscreen, const std::array<int, 5>& initOptions) {
+
+	this->rememberValues = rememberValues;
+	this->fullscreen = fullscreen;
+
 	rn::Renderer::resizeFrame(width, height);
 	frameSize = {(float)width, (float)height};
 	internalSize = {internalWidth, internalHeight};
@@ -76,6 +81,10 @@ void Game::onResize(int width, int height) {
 }
 
 bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
+	if (input.getKey(in::Fullscreen) == in::JustPressed) {
+		fullscreen = !fullscreen;
+	}
+
 	if (state == MenuMain) {
 		return onStateMenuMain(deltaTime, currentTime, resource, input);
 	}
@@ -141,10 +150,18 @@ void Game::setState(GameState newState) {
 
 		constexpr float horMargin  = 60;
 		constexpr float textMargin = 20;
+		constexpr float upBtnWidth = 320 - horMargin - 2;
 		constexpr float btnWidth   = 30;
 		constexpr float dfltWidth  = 100;
 		constexpr float valueWidth = 60;
 		constexpr float textWidth  = 640 - horMargin * 2 - btnWidth * 2 - valueWidth - dfltWidth;
+
+		constexpr float rvX = 320 - (upBtnWidth / 2 + 2);
+		constexpr float fsX = 320 + (upBtnWidth / 2 + 2);
+		std::string rvTxt = rememberValues ? "Remember options - YES" : "Remember options - NO";
+		std::string fsTxt = fullscreen ? "Fullscreen - YES" : "Fullscreen - NO";
+		gui.addButton("rv", 24, rvTxt, {rvX, 292}, textCol, backCol, selCol, upBtnWidth, margin);
+		gui.addButton("fs", 24, fsTxt, {fsX, 292}, textCol, backCol, selCol, upBtnWidth, margin);
 
 		constexpr float lX = horMargin + textMargin;
 		gui.addLabel("mx", 24, "Horizontal mouse sensitivity", {lX, 322}, textCol, rn::TextAlign::Left);
@@ -254,19 +271,18 @@ bool Game::onStateMenuMain(
 
 	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("play", onPlay);
+	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
 	bool onOpts = gui.checkButtonSelected("options", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("options", onOpts);
+	onOpts = onOpts && (input.getMouseL() == in::JustPressed);
 	bool onQuit = gui.checkButtonSelected("quit", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("quit", onQuit);
-
-	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
-	onOpts = onOpts && (input.getMouseL() == in::JustPressed);
 	onQuit = onQuit && (input.getMouseL() == in::JustPressed);
 
 	if (onQuit || input.getKey(in::Quit) == in::JustPressed) {
 		return false;
 	}
-	else if (onPlay || input.getKey(in::GamePause) == in::JustPressed) {
+	else if (onPlay || input.getKey(in::Pause) == in::JustPressed) {
 		resource.getSound("select").play();
 		currentScene = &scenes[selectedSceneIndex];
 		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
@@ -311,11 +327,24 @@ bool Game::onStateMenuOptions(
 	bool onBack = gui.checkButtonSelected("back", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("back", onBack);
 	onBack = onBack && (input.getMouseL() == in::JustPressed);
+	bool onRV = gui.checkButtonSelected("rv", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("rv", onRV);
+	bool onFS = gui.checkButtonSelected("fs", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("fs", onFS);
 
 	if (onBack || input.getKey(in::Quit) == in::JustPressed) {
 		resource.getSound("select").play();
 		setState(MenuMain);
 		return true;
+	}
+
+	if (onRV && (input.getMouseL() == in::JustPressed)) {
+		rememberValues = !rememberValues;
+		gui.setLabelText("rv", rememberValues ? "Remember options - YES" : "Remember options - NO");
+	}
+	if (onFS && (input.getMouseL() == in::JustPressed)) {
+		fullscreen = !fullscreen;
+		gui.setLabelText("fs", fullscreen ? "Fullscreen - YES" : "Fullscreen - NO");
 	}
 
 	bool optsBtnValues[15];
@@ -387,19 +416,18 @@ bool Game::onStateMenuLevels(
 
 	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("play", onPlay);
+	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
 	bool onNext = gui.checkButtonSelected("next", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("next", onNext);
+	onNext = onNext && (input.getMouseL() == in::JustPressed);
 	bool onPrev = gui.checkButtonSelected("prev", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("prev", onPrev);
+	onPrev = onPrev && (input.getMouseL() == in::JustPressed);
 	bool onBack = gui.checkButtonSelected("back", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("back", onBack);
-
-	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
-	onNext = onNext && (input.getMouseL() == in::JustPressed);
-	onPrev = onPrev && (input.getMouseL() == in::JustPressed);
 	onBack = onBack && (input.getMouseL() == in::JustPressed);
 
-	if (onPlay || input.getKey(in::GamePause) == in::JustPressed) {
+	if (onPlay || input.getKey(in::Pause) == in::JustPressed) {
 		resource.getSound("select").play();
 		currentScene->restart();
 		setState(ScenePlaying);
@@ -441,13 +469,13 @@ bool Game::onStateScenePlaying(
 	gui.setButtonSelected("pause", onPause);
 	onPause = onPause && (input.getMouseL() == in::JustPressed);
 
-	if (onPause || input.getKey(in::GamePause) == in::JustPressed || input.getKey(in::Quit) == in::JustPressed) {
+	if (onPause || input.getKey(in::Pause) == in::JustPressed || input.getKey(in::Quit) == in::JustPressed) {
 		resource.getSound("select").play();
 		setState(ScenePaused);
 		return true;
 	}
 
-	if (input.getKey(in::GameRestart) == in::JustPressed) {
+	if (input.getKey(in::Restart) == in::JustPressed) {
 		resource.getSound("select").play();
 		currentScene->restart();
 		return true;
@@ -496,20 +524,19 @@ bool Game::onStateScenePaused(
 
 	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("play", onPlay);
+	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
 	bool onRest = gui.checkButtonSelected("rest", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("rest", onRest);
+	onRest = onRest && (input.getMouseL() == in::JustPressed);
 	bool onQuit = gui.checkButtonSelected("quit", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("quit", onQuit);
-
-	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
-	onRest = onRest && (input.getMouseL() == in::JustPressed);
 	onQuit = onQuit && (input.getMouseL() == in::JustPressed);
 
-	if (onPlay || input.getKey(in::GamePause) == in::JustPressed) {
+	if (onPlay || input.getKey(in::Pause) == in::JustPressed) {
 		resource.getSound("select").play();
 		setState(ScenePlaying);
 	}
-	else if (onRest || input.getKey(in::GameRestart) == in::JustPressed) {
+	else if (onRest || input.getKey(in::Restart) == in::JustPressed) {
 		resource.getSound("select").play();
 		currentScene->restart();
 		setState(ScenePlaying);
@@ -533,13 +560,12 @@ bool Game::onStateSceneWin(
 
 	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("play", onPlay);
+	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
 	bool onQuit = gui.checkButtonSelected("quit", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("quit", onQuit);
-
-	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
 	onQuit = onQuit && (input.getMouseL() == in::JustPressed);
 
-	if (onPlay || input.getKey(in::GameRestart) == in::JustPressed) {
+	if (onPlay || input.getKey(in::Restart) == in::JustPressed) {
 		resource.getSound("select").play();
 		currentScene->restart();
 		setState(ScenePlaying);

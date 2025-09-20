@@ -33,12 +33,24 @@ int main() {
 	CRITICAL_TRACE("Initializing system");
 
 	// Load configuration file
-	int width, height;
+	int rememberValues, fullscreen, width, height;
 	std::array<int, 5> initOptionWhileValues;
 
 	try {
 		std::ifstream configIn(_RES_PATH "options.txt");
 		if (!configIn.is_open()) {
+			throw 1;
+		}
+		if (!(configIn >> rememberValues)) {
+			throw 1;
+		}
+		if (rememberValues < 0 || rememberValues > 1) {
+			throw 1;
+		}
+		if (!(configIn >> fullscreen)) {
+			throw 1;
+		}
+		if (fullscreen < 0 || fullscreen > 1) {
 			throw 1;
 		}
 		if (!(configIn >> width)) {
@@ -63,6 +75,15 @@ int main() {
 		}
 	} catch(...) {
 		DEBUG_WARNING("Failed to read from options file, loading from default configuration");
+		rememberValues = 1;
+		fullscreen = 0;
+		width = defaultWidth;
+		height = defaultHeight;
+		initOptionWhileValues = {5, 5, 5, 5, 5};
+	}
+
+	if (rememberValues == 0) {
+		fullscreen = 0;
 		width = defaultWidth;
 		height = defaultHeight;
 		initOptionWhileValues = {5, 5, 5, 5, 5};
@@ -82,7 +103,8 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	// Create the GLFW window
-	window = glfwCreateWindow(width, height, title, NULL, NULL);
+	GLFWmonitor* monitor = fullscreen ? glfwGetPrimaryMonitor() : nullptr;
+	window = glfwCreateWindow(width, height, title, monitor, nullptr);
 	if (window == nullptr) {
 		ma_engine_uninit(&audioEngine);
 		glfwTerminate();
@@ -104,7 +126,7 @@ int main() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	resource.initFromConfig(_RES_PATH "assets.txt", &audioEngine);
-	game.onInit(width, height, 640, 480, resource, initOptionWhileValues);
+	game.onInit(width, height, 640, 480, resource, rememberValues, fullscreen, initOptionWhileValues);
 
 	float tickTime     = 1.0f / fps;
 	float currentTime  = 0.0f;
@@ -153,6 +175,16 @@ int main() {
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 		input.setMousePos(mouseX, mouseY);
 
+		// Remember values check
+		if (game.rememberValues != rememberValues) {
+			rememberValues = game.rememberValues;
+		}
+		// Fullscreen check
+		if (game.fullscreen != fullscreen) {
+			fullscreen = game.fullscreen;
+			monitor = fullscreen ? glfwGetPrimaryMonitor() : nullptr;
+			glfwSetWindowMonitor(window, monitor, 0, 0, 640, 480, GLFW_DONT_CARE);
+		}
 		// Frame size
 		int newFrameWidth, newFrameHeight;
 		glfwGetFramebufferSize(window, &newFrameWidth, &newFrameHeight);
@@ -175,10 +207,20 @@ int main() {
 		glfwPollEvents();
 	}
 
+	if (rememberValues == 0) {
+		fullscreen = 0;
+		width = defaultWidth;
+		height = defaultHeight;
+		initOptionWhileValues = {5, 5, 5, 5, 5};
+	}
+
 	// Write new configuration file
 	try {
 		std::ofstream configOut(_RES_PATH "options.txt");
-		configOut << width << std::endl << height << std::endl;
+		configOut << rememberValues << std::endl;
+		configOut << fullscreen << std::endl;
+		configOut << width << std::endl;
+		configOut << height << std::endl;
 		for (int i = 0; i < 5; i++) {
 			configOut << game.optionWholeValues[i] << std::endl;
 		}
