@@ -11,6 +11,17 @@ enum gm::GameState {
 }
 hide GameState methods
 
+class gm::GameOptions {
+	{static} +DefaultValues() : GameOptions
+	..
+	+mouseSensitivityX: float
+	+mouseSensitivityY: float
+	+scrollSensitivity: float
+	+mazeYawSensitivity: float
+	+mazeRollSensitivity: float
+}
+hide GameOptions methods
+
 class gm::Game {
 	+onInit(width, height, internalWidth, internalHeight, resource)
 	+onUpdate(deltaTime, currentTime, resource, input) : bool
@@ -29,6 +40,7 @@ class gm::Game {
 	..
 	-internalPosition(x, y) : Vec2
 	..
+	-options: GameOptions
 	-state: GameState
 	..
 	-frameSize: Vec2
@@ -130,6 +142,7 @@ Maze <-down- BlockType
 Scene *-left- Maze
 Scene *-down- Marble
 
+Game <-up- GameOptions
 Game <-left- GameState
 Game <-- Scene
 

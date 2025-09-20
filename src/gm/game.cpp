@@ -7,8 +7,12 @@
 
 using namespace gm;
 
+GameOptions GameOptions::DefaultValues() {
+	return {0.2f, 0.2f, 10.0f, 1.0f, 1.0f};
+}
+
 Game::Game()
-	: state(MenuMain), frameSize({0, 0}), internalSize({0, 0}), gui()
+	: options(GameOptions::DefaultValues()), state(MenuMain), frameSize({0, 0}), internalSize({0, 0}), gui()
 	, menuCameraYaw(0), menuCameraPitch(0), menuCameraDistance(0)
 	, selectedSceneIndex(0), numLoadedScenes(0), scenes(), menuScene(), currentScene(nullptr) {}
 
@@ -206,8 +210,28 @@ bool Game::onStateMenuMain(
 bool Game::onStateMenuOptions(
 		float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
 
-	menuCameraYaw += deltaTime / 4;
-	currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
+	int pressed[] = {
+		input.getKey(in::MazeYawDecrease) == in::Pressed,
+		input.getKey(in::MazeYawIncrease) == in::Pressed,
+		input.getKey(in::MazeRollDecrease) == in::Pressed,
+		input.getKey(in::MazeRollIncrease) == in::Pressed,
+	};
+
+	if (pressed[3] || pressed[2] || pressed[1] || pressed[0]) {
+		currentScene->updateMazeRotation(
+			(pressed[1] - pressed[0]) * deltaTime * options.mazeYawSensitivity,
+			(pressed[3] - pressed[2]) * deltaTime * options.mazeRollSensitivity);
+	}
+
+	if (input.getMouseL() == in::Pressed || input.getScrollY() != 0) {
+		currentScene->updateCamera(
+			input.getDeltaMouseX() * deltaTime * options.mouseSensitivityX,
+			input.getDeltaMouseY() * deltaTime * options.mouseSensitivityY,
+			-input.getScrollY() * deltaTime * options.scrollSensitivity);
+		menuCameraYaw = currentScene->getCameraYaw();
+		menuCameraPitch = currentScene->getCameraPitch();
+		menuCameraDistance = currentScene->getCameraDistance();
+	}
 
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
@@ -220,6 +244,10 @@ bool Game::onStateMenuOptions(
 
 	if (onBack) {
 		resource.getSound("select").play();
+		currentScene->restart();
+		menuCameraDistance = currentScene->getCameraDistance();
+		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
+		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 		setState(MenuMain);
 	}
 
@@ -312,15 +340,15 @@ bool Game::onStateScenePlaying(
 
 	if (pressed[3] || pressed[2] || pressed[1] || pressed[0]) {
 		currentScene->updateMazeRotation(
-			(pressed[1] - pressed[0]) * deltaTime,
-			(pressed[3] - pressed[2]) * deltaTime);
+			(pressed[1] - pressed[0]) * deltaTime * options.mazeYawSensitivity,
+			(pressed[3] - pressed[2]) * deltaTime * options.mazeRollSensitivity);
 	}
 
 	if (input.getMouseL() == in::Pressed || input.getScrollY() != 0) {
 		currentScene->updateCamera(
-			input.getDeltaMouseX() * deltaTime * 0.2f,
-			input.getDeltaMouseY() * deltaTime * 0.2f,
-			-input.getScrollY() * deltaTime * 10);
+			input.getDeltaMouseX() * deltaTime * options.mouseSensitivityX,
+			input.getDeltaMouseY() * deltaTime * options.mouseSensitivityY,
+			-input.getScrollY() * deltaTime * options.scrollSensitivity);
 	}
 
 	currentScene->updatePhysics(deltaTime);

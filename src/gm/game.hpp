@@ -17,6 +17,18 @@ namespace gm {
 		InScene      = ScenePlaying | ScenePaused | SceneWin,
 	};
 
+	class GameOptions {
+
+	public:
+		static GameOptions DefaultValues();
+
+		float mouseSensitivityX;
+		float mouseSensitivityY;
+		float scrollSensitivity;
+		float mazeYawSensitivity;
+		float mazeRollSensitivity;
+	};
+
 	class Game {
 
 	public:
@@ -46,6 +58,7 @@ namespace gm {
 
 		la::Vec2 internalPosition(float x, float y);
 
+		GameOptions options;
 		GameState state;
 
 		la::Vec2 frameSize, internalSize;

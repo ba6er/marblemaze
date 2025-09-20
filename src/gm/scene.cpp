@@ -183,6 +183,7 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 void Scene::createMenuScene(rs::ResourceManager& resource) {
 	std::string mazeMaterialName = "copperTextured";
 	std::string marbleMaterialName = "emerald";
+	std::string finishMaterialName = "emerald";
 	std::string skyboxMaterialName = "sky";
 	size_t mazeWidth = 7, mazeDepth = 7, mazeHeight = 2;
 	BlockVector3D initBlocks = {
@@ -198,12 +199,14 @@ void Scene::createMenuScene(rs::ResourceManager& resource) {
 			"WWWWWWW",
 			"WWWWWWW",
 			"WWWWWWW",
-			"WWWWWWW",
+			"WWW.WWW",
 			"WWWWWWW",
 			"WWWWWWW",
 			"WWWWWWW",
 		}
 	};
+	start = {3, 1, 3};
+	finish = {3, 0, 3};
 
 	light = {
 		{1.0f, 9.9f, 1.0f},
@@ -216,7 +219,7 @@ void Scene::createMenuScene(rs::ResourceManager& resource) {
 	cameraDistance = 10;
 
 	maze.create(initBlocks);
-	marble.position = {3, 1, 3};
+	marble.position = start;
 
 	la::Vec3 cameraTarget = {
 		(int)(maze.getWidth() / 2) * 1.0f,
@@ -232,6 +235,11 @@ void Scene::createMenuScene(rs::ResourceManager& resource) {
 	rs::Mesh& marbleMesh = resource.createMesh("marble_menu", 960);
 	marbleMesh.addGeometry(marble.toGeometry());
 
+	ge::GeometryData finishCube = ge::GeometryGenerator::GenerateCube();
+	ge::GeometryTransform::Translate(finishCube, finish);
+	rs::Mesh& finishMesh = resource.createMesh("finish_menu", 36);
+	finishMesh.addGeometry(finishCube);
+
 	ge::GeometryData skybox = ge::GeometryGenerator::GenerateCube();
 	ge::GeometryTransform::Scale(skybox, {1000, 1000, 1000});
 	ge::GeometryTransform::Translate(skybox, cameraTarget);
@@ -243,7 +251,9 @@ void Scene::createMenuScene(rs::ResourceManager& resource) {
 	renderables.push_back(rn::Renderable());
 	renderables[1].create(marbleMesh, resource.getMaterial(marbleMaterialName), "marble");
 	renderables.push_back(rn::Renderable());
-	renderables[2].create(skyboxMesh, resource.getMaterial(skyboxMaterialName), "skybox");
+	renderables[2].create(finishMesh, resource.getMaterial(finishMaterialName), "finish");
+	renderables.push_back(rn::Renderable());
+	renderables[3].create(skyboxMesh, resource.getMaterial(skyboxMaterialName), "skybox");
 
 	updateCamera();
 	updateMazeRotation(0, 0);
@@ -408,21 +418,9 @@ void Scene::setProjection(float fov, float ratio) {
 }
 
 void Scene::display() {
-	la::Mat4 mazeTr = la::Mat4::Identity();
-	for (auto& r : renderables) {
-		if (r.tag == "maze") {
-			mazeTr = r.transform;
-			break;
-		}
-	}
-	for (auto& r : renderables) {
-		if (r.tag == "marble") {
-			r.transform = mazeTr * la::Mat4::Translate(marble.position);
-		}
-		else if (r.tag == "finish") {
-			r.transform = mazeTr;
-		}
-	}
+	// Transform marble and finish by maze's transform
+	renderables[1].transform = renderables[0].transform * la::Mat4::Translate(marble.position);
+	renderables[2].transform = renderables[0].transform;
 	rn::Renderer::render(camera, renderables, light);
 }
 
