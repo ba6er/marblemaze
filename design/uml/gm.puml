@@ -31,6 +31,7 @@ class gm::Game {
 	+getState() : GameState
 	+setState(state)
 	..
+	+rememberValues, fullscreen: bool
 	+optionWholeValues: int[]
 	--
 	-onStateMenuMain(deltaTime, currentTime, resource, input) : bool
