@@ -11,10 +11,6 @@ hide KeyState methods
 
 enum in::KeyName {
 	Quit
-	MenuSelect
-	MenuBack
-	MenuPrevious
-	MenuNext
 	GameRestart
 	GamePause
 	MazeRollDecrease

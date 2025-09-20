@@ -12,10 +12,6 @@ namespace in {
 
 	enum KeyName {
 		Quit,
-		MenuSelect,
-		MenuBack,
-		MenuPrevious,
-		MenuNext,
 		GameRestart,
 		GamePause,
 		MazeRollDecrease,
@@ -30,10 +26,6 @@ namespace in {
 	public:
 		static constexpr int KeyboardValues[KeyboardCount] = {
 			GLFW_KEY_ESCAPE, // Quit
-			GLFW_KEY_ENTER,  // MenuSelect
-			GLFW_KEY_ESCAPE, // MenuBack
-			GLFW_KEY_UP,     // MenuPrevious
-			GLFW_KEY_DOWN,   // MenuNext
 			GLFW_KEY_R,      // GameRestart
 			GLFW_KEY_P,      // GamePause
 			GLFW_KEY_A,      // MazeRollDecrease

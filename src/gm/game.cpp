@@ -76,10 +76,6 @@ void Game::onResize(int width, int height) {
 }
 
 bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
-	if (input.getKey(in::Quit) == in::JustReleased) {
-		return false;
-	}
-
 	if (state == MenuMain) {
 		return onStateMenuMain(deltaTime, currentTime, resource, input);
 	}
@@ -213,12 +209,18 @@ void Game::setState(GameState newState) {
 	case ScenePlaying: {
 		DEBUG_TRACE("State ScenePlaying");
 		gui.clear();
+
+		gui.addButton("pause", 24, "Pause", {532, 24}, textCol, backCol, selCol, 96, margin);
 	} break;
 	case ScenePaused: {
 		DEBUG_TRACE("State ScenePaused");
 		gui.clear();
 
-		gui.addLabel("paused", 36, "Press P to resume", {320, 400});
+		gui.addLabel("paused", 36, "Paused", {320, 30});
+
+		gui.addButton("play", 24, "Resume playing", {320, 382}, textCol, backCol, selCol, 192, margin);
+		gui.addButton("rest", 24, "Restart maze",   {320, 412}, textCol, backCol, selCol, 192, margin);
+		gui.addButton("quit", 24, "Quit to menu",   {320, 442}, textCol, backCol, selCol, 192, margin);
 	} break;
 	case SceneWin: {
 		DEBUG_TRACE("State SceneWin");
@@ -229,8 +231,8 @@ void Game::setState(GameState newState) {
 
 		gui.addLabel("win", 48, timeText.str(), {320, 320}, textCol, rn::TextAlign::Center);
 
-		gui.addButton("play", 24, "Play again",   {320, 360}, textCol, backCol, selCol, 200, margin);
-		gui.addButton("quit", 24, "Quit to menu", {320, 390}, textCol, backCol, selCol, 200, margin);
+		gui.addButton("play", 24, "Play again",   {320, 412}, textCol, backCol, selCol, 192, margin);
+		gui.addButton("quit", 24, "Quit to menu", {320, 442}, textCol, backCol, selCol, 192, margin);
 	} break;
 	default:
 		DEBUG_WARNING("Invalid state %d, not changing", state);
@@ -241,6 +243,10 @@ void Game::setState(GameState newState) {
 bool Game::onStateMenuMain(
 		float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
 
+	if (input.getKey(in::Quit) == in::JustPressed) {
+		return false;
+	}
+
 	menuCameraYaw += deltaTime / 4;
 	currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 
@@ -248,28 +254,28 @@ bool Game::onStateMenuMain(
 
 	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("play", onPlay);
-	bool onOptions = gui.checkButtonSelected("options", scaledMouse.x, scaledMouse.y);
-	gui.setButtonSelected("options", onOptions);
+	bool onOpts = gui.checkButtonSelected("options", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("options", onOpts);
 	bool onQuit = gui.checkButtonSelected("quit", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("quit", onQuit);
 
-	if (input.getMouseL() != in::JustPressed) {
-		return true;
-	}
+	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
+	onOpts = onOpts && (input.getMouseL() == in::JustPressed);
+	onQuit = onQuit && (input.getMouseL() == in::JustPressed);
 
-	if (onQuit) {
+	if (onQuit || input.getKey(in::Quit) == in::JustPressed) {
 		return false;
 	}
-	if (onOptions) {
-		resource.getSound("select").play();
-		setState(MenuOptions);
-	}
-	else if (onPlay) {
+	else if (onPlay || input.getKey(in::GamePause) == in::JustPressed) {
 		resource.getSound("select").play();
 		currentScene = &scenes[selectedSceneIndex];
 		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 		setState(MenuLevels);
+	}
+	else if (onOpts) {
+		resource.getSound("select").play();
+		setState(MenuOptions);
 	}
 	return true;
 }
@@ -304,6 +310,13 @@ bool Game::onStateMenuOptions(
 
 	bool onBack = gui.checkButtonSelected("back", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("back", onBack);
+	onBack = onBack && (input.getMouseL() == in::JustPressed);
+
+	if (onBack || input.getKey(in::Quit) == in::JustPressed) {
+		resource.getSound("select").play();
+		setState(MenuMain);
+		return true;
+	}
 
 	bool optsBtnValues[15];
 	for (int i = 0; i < 15; i++) {
@@ -313,11 +326,6 @@ bool Game::onStateMenuOptions(
 
 	if (input.getMouseL() != in::JustPressed) {
 		return true;
-	}
-
-	if (onBack) {
-		resource.getSound("select").play();
-		setState(MenuMain);
 	}
 
 	int optionChangeIndex = -1;
@@ -386,16 +394,17 @@ bool Game::onStateMenuLevels(
 	bool onBack = gui.checkButtonSelected("back", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("back", onBack);
 
-	if (input.getMouseL() != in::JustPressed) {
-		return true;
-	}
+	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
+	onNext = onNext && (input.getMouseL() == in::JustPressed);
+	onPrev = onPrev && (input.getMouseL() == in::JustPressed);
+	onBack = onBack && (input.getMouseL() == in::JustPressed);
 
-	if (onPlay) {
+	if (onPlay || input.getKey(in::GamePause) == in::JustPressed) {
 		resource.getSound("select").play();
 		currentScene->restart();
 		setState(ScenePlaying);
 	}
-	else if (onNext) {
+	else if (onNext || input.getKey(in::MazeRollIncrease) == in::JustPressed) {
 		resource.getSound("select").play();
 		selectedSceneIndex++;
 		if (selectedSceneIndex >= numLoadedScenes) {
@@ -405,7 +414,7 @@ bool Game::onStateMenuLevels(
 		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 	}
-	else if (onPrev) {
+	else if (onPrev || input.getKey(in::MazeRollDecrease) == in::JustPressed) {
 		resource.getSound("select").play();
 		selectedSceneIndex--;
 		if (selectedSceneIndex < 0) {
@@ -415,7 +424,7 @@ bool Game::onStateMenuLevels(
 		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 	}
-	else if (onBack) {
+	else if (onBack || input.getKey(in::Quit) == in::JustPressed) {
 		resource.getSound("select").play();
 		setState(MenuMain);
 	}
@@ -426,17 +435,25 @@ bool Game::onStateMenuLevels(
 bool Game::onStateScenePlaying(
 		float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
 
-	if (input.getKey(in::GameRestart) == in::JustPressed) {
-		resource.getSound("select").play();
-		currentScene->restart();
-	}
+	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
-	if (input.getKey(in::GamePause) == in::JustPressed) {
+	bool onPause = gui.checkButtonSelected("pause", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("pause", onPause);
+	onPause = onPause && (input.getMouseL() == in::JustPressed);
+
+	if (onPause || input.getKey(in::GamePause) == in::JustPressed || input.getKey(in::Quit) == in::JustPressed) {
+		resource.getSound("select").play();
 		setState(ScenePaused);
 		return true;
 	}
 
-	if (currentScene->checkWinCondition() || input.getKey(in::MenuSelect) == in::JustPressed) {
+	if (input.getKey(in::GameRestart) == in::JustPressed) {
+		resource.getSound("select").play();
+		currentScene->restart();
+		return true;
+	}
+
+	if (currentScene->checkWinCondition()) {
 		resource.getSound("select").play();
 		setState(SceneWin);
 		return true;
@@ -475,9 +492,35 @@ bool Game::onStateScenePlaying(
 bool Game::onStateScenePaused(
 		float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
 
-	if (input.getKey(in::GamePause) == in::JustPressed) {
+	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
+
+	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("play", onPlay);
+	bool onRest = gui.checkButtonSelected("rest", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("rest", onRest);
+	bool onQuit = gui.checkButtonSelected("quit", scaledMouse.x, scaledMouse.y);
+	gui.setButtonSelected("quit", onQuit);
+
+	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
+	onRest = onRest && (input.getMouseL() == in::JustPressed);
+	onQuit = onQuit && (input.getMouseL() == in::JustPressed);
+
+	if (onPlay || input.getKey(in::GamePause) == in::JustPressed) {
 		resource.getSound("select").play();
 		setState(ScenePlaying);
+	}
+	else if (onRest || input.getKey(in::GameRestart) == in::JustPressed) {
+		resource.getSound("select").play();
+		currentScene->restart();
+		setState(ScenePlaying);
+	}
+	else if (onQuit || input.getKey(in::Quit) == in::JustPressed) {
+		resource.getSound("select").play();
+		menuCameraYaw = currentScene->getCameraYaw();
+		menuCameraPitch = currentScene->getCameraPitch();
+		menuCameraDistance = currentScene->getCameraDistance();
+
+		setState(MenuMain);
 	}
 
 	return true;
@@ -493,15 +536,16 @@ bool Game::onStateSceneWin(
 	bool onQuit = gui.checkButtonSelected("quit", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("quit", onQuit);
 
-	if (input.getMouseL() != in::JustPressed) {
-		return true;
-	}
+	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
+	onQuit = onQuit && (input.getMouseL() == in::JustPressed);
 
-	if (onPlay) {
+	if (onPlay || input.getKey(in::GameRestart) == in::JustPressed) {
+		resource.getSound("select").play();
 		currentScene->restart();
 		setState(ScenePlaying);
 	}
-	if (onQuit) {
+	else if (onQuit || input.getKey(in::Quit) == in::JustPressed) {
+		resource.getSound("select").play();
 		menuCameraYaw = currentScene->getCameraYaw();
 		menuCameraPitch = currentScene->getCameraPitch();
 		menuCameraDistance = currentScene->getCameraDistance();
