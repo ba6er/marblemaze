@@ -199,7 +199,7 @@ void Scene::createMenuScene(rs::ResourceManager& resource) {
 			"WWWWWWW",
 			"WWWWWWW",
 			"WWWWWWW",
-			"WWW.WWW",
+			"WWWfWWW",
 			"WWWWWWW",
 			"WWWWWWW",
 			"WWWWWWW",

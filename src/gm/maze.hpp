@@ -9,10 +9,10 @@ namespace gm {
 	using BlockVector3D = std::vector<std::vector<std::string>>;
 
 	enum BlockType : uchar {
-		Empty = 0,
-		Wall,
-		Start,
-		Finish,
+		Empty  = 0,
+		Wall   = 1 << 0,
+		Start  = 1 << 1,
+		Finish = 1 << 2,
 	};
 
 	class Maze {

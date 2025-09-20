@@ -300,10 +300,6 @@ bool Game::onStateMenuOptions(
 
 	if (onBack) {
 		resource.getSound("select").play();
-		currentScene->restart();
-		menuCameraDistance = currentScene->getCameraDistance();
-		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
-		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 		setState(MenuMain);
 	}
 
@@ -311,19 +307,19 @@ bool Game::onStateMenuOptions(
 	for (int i = 0; i < 5; i++) {
 		if (optsBtnValues[i]) {
 			optionWholeValues[i % 5] = std::max(optionWholeValues[i % 5] - 1, 1);
-			optionChangeIndex =  i % 5;
+			optionChangeIndex = i % 5;
 		}
 	}
 	for (int i = 5; i < 10; i++) {
 		if (optsBtnValues[i]) {
-			optionWholeValues[i % 5] = std::min(optionWholeValues[i % 5] + 1, 20);
-			optionChangeIndex =  i % 5;
+			optionWholeValues[i % 5] = std::min(optionWholeValues[i % 5] + 1, 10);
+			optionChangeIndex = i % 5;
 		}
 	}
 	for (int i = 10; i < 15; i++) {
 		if (optsBtnValues[i]) {
 			optionWholeValues[i % 5] = 5;
-			optionChangeIndex =  i % 5;
+			optionChangeIndex = i % 5;
 		}
 	}
 

@@ -61,22 +61,22 @@ ge::GeometryData Maze::toGeometry() const {
 			for (int z = 0; z < depth; z++) {
 				if (getBlock(x, y, z) == Wall) {
 					ge::CubeFaceMask faces = ge::CubeFace::All;
-					if ((x != 0) && getBlock(x - 1, y, z) == Wall) {
+					if ((x != 0) && ((Wall | Finish) & getBlock(x - 1, y, z))) {
 						faces &= ~(ge::CubeFace::Left);
 					}
-					if ((x != width - 1) && getBlock(x + 1, y, z) == Wall) {
+					if ((x != width - 1) && ((Wall | Finish) & getBlock(x + 1, y, z))) {
 						faces &= ~(ge::CubeFace::Right);
 					}
-					if (y != 0 && getBlock(x, y - 1, z) == Wall) {
+					if (y != 0 && ((Wall | Finish) & getBlock(x, y - 1, z))) {
 						faces &= ~(ge::CubeFace::Bottom);
 					}
-					if ((y != height - 1) && getBlock(x, y + 1, z) == Wall) {
+					if ((y != height - 1) && ((Wall | Finish) & getBlock(x, y + 1, z))) {
 						faces &= ~(ge::CubeFace::Top);
 					}
-					if ((z != 0) && getBlock(x, y, z - 1) == Wall) {
+					if ((z != 0) && ((Wall | Finish) & getBlock(x, y, z - 1))) {
 						faces &= ~(ge::CubeFace::Back);
 					}
-					if ((z != depth - 1) && getBlock(x, y, z + 1) == Wall) {
+					if ((z != depth - 1) && ((Wall | Finish) & getBlock(x, y, z + 1))) {
 						faces &= ~(ge::CubeFace::Front);
 					}
 					ge::GeometryData cube = ge::GeometryGenerator::GenerateCube(faces);
