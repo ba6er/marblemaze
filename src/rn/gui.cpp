@@ -65,6 +65,27 @@ Label& GUI::addLabel(const std::string& name, float size, std::string_view text,
 	return addLabel(name, size, text, position, {1, 1, 1, 1}, Center);
 }
 
+std::string_view GUI::getLabelText(std::string_view name) {
+	auto value = labels.find(name);
+	DEBUG_ASSERT(value != labels.end(), "No label by the name of \"%s\"", name.data());
+
+	return value->second.text;
+}
+
+void GUI::setLabelText(std::string_view name, const std::string& text) {
+	auto value = labels.find(name);
+	DEBUG_ASSERT(value != labels.end(), "No label by the name of \"%s\"", name.data());
+
+	float width = 0;
+	for (char c : text) {
+		width += font->getGlyph(c).advance * value->second.size.y / font->getHeight();
+	}
+	value->second.text = text;
+	value->second.size.x = width;
+
+	needsUpdate = true;
+}
+
 void GUI::removeLabel(std::string_view name) {
 	auto value = labels.find(name);
 	if (value == labels.end()) {

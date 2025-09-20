@@ -3,6 +3,7 @@
 #include <in/input.hpp>
 #include <rn/gui.hpp>
 #include <rs/resourcemanager.hpp>
+#include <array>
 
 namespace gm {
 
@@ -58,6 +59,7 @@ namespace gm {
 
 		la::Vec2 internalPosition(float x, float y);
 
+		std::array<int, 5> optionWholeValues;
 		GameOptions options;
 		GameState state;
 

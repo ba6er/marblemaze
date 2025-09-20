@@ -6,6 +6,8 @@ class rn::GUI {
 	+setFrame(left, right, bottom, top)
 	..
 	+addLabel(name) : &Label
+	+getLabelText(name) : str
+	+setLabelText(name, text)
 	+removeLabel(name)
 	..
 	+addButton(name, ...) : &Button

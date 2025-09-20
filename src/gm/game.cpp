@@ -12,7 +12,8 @@ GameOptions GameOptions::DefaultValues() {
 }
 
 Game::Game()
-	: options(GameOptions::DefaultValues()), state(MenuMain), frameSize({0, 0}), internalSize({0, 0}), gui()
+	: optionWholeValues({5, 5, 5, 5, 5}), options(GameOptions::DefaultValues()), state(MenuMain)
+	, frameSize({0, 0}), internalSize({0, 0}), gui()
 	, menuCameraYaw(0), menuCameraPitch(0), menuCameraDistance(0)
 	, selectedSceneIndex(0), numLoadedScenes(0), scenes(), menuScene(), currentScene(nullptr) {}
 
@@ -21,7 +22,7 @@ void Game::onInit(int width, int height, float internalWidth, float internalHeig
 	frameSize = {(float)width, (float)height};
 	internalSize = {internalWidth, internalHeight};
 
-	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui", 600));
+	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui", 3072));
 	gui.setFrame(0, width, 0, height);
 
 	menuScene.createMenuScene(resource);
@@ -110,8 +111,7 @@ void Game::setState(GameState newState) {
 	constexpr la::Vec4 textCol = {1.0f, 1.0f, 1.0f, 1.0f};
 	constexpr la::Vec4 backCol = {1.0f, 1.0f, 1.0f, 0.2f};
 	constexpr la::Vec4 selCol  = {1.0f, 1.0f, 1.0f, 0.4f};
-	constexpr la::Vec2 margin  = {-6, 0};
-	constexpr la::Vec2 marginL = { 0, 2};
+	constexpr la::Vec2 margin  = {0, 2};
 
 	switch (state) {
 	case MenuMain: {
@@ -120,28 +120,78 @@ void Game::setState(GameState newState) {
 
 		gui.addLabel("title", 72, "Marble Maze", {320, 80}, textCol, rn::TextAlign::Center);
 
-		gui.addButton("play",    36, "Play",    {320, 320}, textCol, backCol, selCol, 160, margin);
-		gui.addButton("options", 36, "Options", {320, 360}, textCol, backCol, selCol, 160, margin);
-		gui.addButton("quit",    36, "Quit",    {320, 400}, textCol, backCol, selCol, 160, margin);
+		gui.addButton("play",    24, "Play",    {320, 382}, textCol, backCol, selCol, 160, margin);
+		gui.addButton("options", 24, "Options", {320, 412}, textCol, backCol, selCol, 160, margin);
+		gui.addButton("quit",    24, "Quit",    {320, 442}, textCol, backCol, selCol, 160, margin);
 	} break;
 	case MenuOptions: {
 		DEBUG_TRACE("State MenuOptions");
 		gui.clear();
 
 		gui.addLabel("title", 36, "Options", {320, 30}, textCol, rn::TextAlign::Center);
+		gui.addButton("back", 24, "Back", {532, 24}, textCol, backCol, selCol, 96, margin);
 
-		gui.addButton("back", 24, "Back", {580, 24}, textCol, backCol, selCol, 96, marginL);
+		constexpr float horMargin  = 60;
+		constexpr float textMargin = 20;
+		constexpr float btnWidth   = 30;
+		constexpr float dfltWidth  = 100;
+		constexpr float valueWidth = 60;
+		constexpr float textWidth  = 640 - horMargin * 2 - btnWidth * 2 - valueWidth - dfltWidth;
+
+		constexpr float lX = horMargin + textMargin;
+		gui.addLabel("mx", 24, "Horizontal mouse sensitivity", {lX, 322}, textCol, rn::TextAlign::Left);
+		gui.addLabel("my", 24, "Vertical mouse sensitivity",   {lX, 352}, textCol, rn::TextAlign::Left);
+		gui.addLabel("ms", 24, "Scroll-wheel sensitivity",     {lX, 382}, textCol, rn::TextAlign::Left);
+		gui.addLabel("rx", 24, "Maze horizontal sensitivity",  {lX, 412}, textCol, rn::TextAlign::Left);
+		gui.addLabel("ry", 24, "Maze Vertical sensitivity",    {lX, 442}, textCol, rn::TextAlign::Left);
+
+		// Label background hack XD
+		constexpr float bgX = horMargin + textWidth / 2;
+		gui.addButton("mxBg", 24, "", {bgX, 322}, textCol, backCol, selCol, textWidth, margin);
+		gui.addButton("myBg", 24, "", {bgX, 352}, textCol, backCol, selCol, textWidth, margin);
+		gui.addButton("msBg", 24, "", {bgX, 382}, textCol, backCol, selCol, textWidth, margin);
+		gui.addButton("rxBg", 24, "", {bgX, 412}, textCol, backCol, selCol, textWidth, margin);
+		gui.addButton("ryBg", 24, "", {bgX, 442}, textCol, backCol, selCol, textWidth, margin);
+
+		constexpr float vlX = bgX + textWidth / 2 + valueWidth / 2;
+		gui.addButton("mxVl", 24, "5", {vlX, 322}, textCol, backCol, selCol, valueWidth, margin);
+		gui.addButton("myVl", 24, "5", {vlX, 352}, textCol, backCol, selCol, valueWidth, margin);
+		gui.addButton("msVl", 24, "5", {vlX, 382}, textCol, backCol, selCol, valueWidth, margin);
+		gui.addButton("rxVl", 24, "5", {vlX, 412}, textCol, backCol, selCol, valueWidth, margin);
+		gui.addButton("ryVl", 24, "5", {vlX, 442}, textCol, backCol, selCol, valueWidth, margin);
+
+		constexpr float decX = vlX + valueWidth / 2 + btnWidth / 2;
+		gui.addButton("0", 24, "-", {decX, 322}, textCol, backCol, selCol, btnWidth, margin);
+		gui.addButton("1", 24, "-", {decX, 352}, textCol, backCol, selCol, btnWidth, margin);
+		gui.addButton("2", 24, "-", {decX, 382}, textCol, backCol, selCol, btnWidth, margin);
+		gui.addButton("3", 24, "-", {decX, 412}, textCol, backCol, selCol, btnWidth, margin);
+		gui.addButton("4", 24, "-", {decX, 442}, textCol, backCol, selCol, btnWidth, margin);
+
+		constexpr float incX = decX + btnWidth;
+		gui.addButton("5", 24, "+", {incX, 322}, textCol, backCol, selCol, btnWidth, margin);
+		gui.addButton("6", 24, "+", {incX, 352}, textCol, backCol, selCol, btnWidth, margin);
+		gui.addButton("7", 24, "+", {incX, 382}, textCol, backCol, selCol, btnWidth, margin);
+		gui.addButton("8", 24, "+", {incX, 412}, textCol, backCol, selCol, btnWidth, margin);
+		gui.addButton("9", 24, "+", {incX, 442}, textCol, backCol, selCol, btnWidth, margin);
+
+		constexpr float dfltX = incX + btnWidth / 2 + dfltWidth / 2;
+		gui.addButton("10", 24, "Default", {dfltX, 322}, textCol, backCol, selCol, dfltWidth, margin);
+		gui.addButton("11", 24, "Default", {dfltX, 352}, textCol, backCol, selCol, dfltWidth, margin);
+		gui.addButton("12", 24, "Default", {dfltX, 382}, textCol, backCol, selCol, dfltWidth, margin);
+		gui.addButton("13", 24, "Default", {dfltX, 412}, textCol, backCol, selCol, dfltWidth, margin);
+		gui.addButton("14", 24, "Default", {dfltX, 442}, textCol, backCol, selCol, dfltWidth, margin);
+
 	} break;
 	case MenuLevels: {
 		DEBUG_TRACE("State MenuLevels");
 		gui.clear();
 
 		gui.addLabel("title", 36, "Select a level", {320, 30}, textCol, rn::TextAlign::Center);
+		gui.addButton("back", 24, "Back", {532,  24}, textCol, backCol, selCol, 96, margin);
 
-		gui.addButton("play", 24, "Play", {320, 442}, textCol, backCol, selCol, 96, marginL);
-		gui.addButton("prev", 24, "<",    {216, 442}, textCol, backCol, selCol, 96, marginL);
-		gui.addButton("next", 24, ">",    {424, 442}, textCol, backCol, selCol, 96, marginL);
-		gui.addButton("back", 24, "Back", {580,  24}, textCol, backCol, selCol, 96, marginL);
+		gui.addButton("play", 24, "Play", {320, 442}, textCol, backCol, selCol, 96, margin);
+		gui.addButton("prev", 24, "<",    {216, 442}, textCol, backCol, selCol, 96, margin);
+		gui.addButton("next", 24, ">",    {424, 442}, textCol, backCol, selCol, 96, margin);
 	} break;
 	case ScenePlaying: {
 		DEBUG_TRACE("State ScenePlaying");
@@ -162,8 +212,8 @@ void Game::setState(GameState newState) {
 
 		gui.addLabel("win", 48, timeText.str(), {320, 320}, textCol, rn::TextAlign::Center);
 
-		gui.addButton("play", 36, "Play again",   {320, 360}, textCol, backCol, selCol, 200, margin);
-		gui.addButton("quit", 36, "Quit to menu", {320, 400}, textCol, backCol, selCol, 200, margin);
+		gui.addButton("play", 24, "Play again",   {320, 360}, textCol, backCol, selCol, 200, margin);
+		gui.addButton("quit", 24, "Quit to menu", {320, 390}, textCol, backCol, selCol, 200, margin);
 	} break;
 	default:
 		DEBUG_WARNING("Invalid state %d, not changing", state);
@@ -238,6 +288,12 @@ bool Game::onStateMenuOptions(
 	bool onBack = gui.checkButtonSelected("back", scaledMouse.x, scaledMouse.y);
 	gui.setButtonSelected("back", onBack);
 
+	bool optsBtnValues[15];
+	for (int i = 0; i < 15; i++) {
+		optsBtnValues[i] = gui.checkButtonSelected(std::to_string(i), scaledMouse.x, scaledMouse.y);
+		gui.setButtonSelected(std::to_string(i), optsBtnValues[i]);
+	}
+
 	if (input.getMouseL() != in::JustPressed) {
 		return true;
 	}
@@ -251,6 +307,52 @@ bool Game::onStateMenuOptions(
 		setState(MenuMain);
 	}
 
+	int optionChangeIndex = -1;
+	for (int i = 0; i < 5; i++) {
+		if (optsBtnValues[i]) {
+			optionWholeValues[i % 5] = std::max(optionWholeValues[i % 5] - 1, 1);
+			optionChangeIndex =  i % 5;
+		}
+	}
+	for (int i = 5; i < 10; i++) {
+		if (optsBtnValues[i]) {
+			optionWholeValues[i % 5] = std::min(optionWholeValues[i % 5] + 1, 20);
+			optionChangeIndex =  i % 5;
+		}
+	}
+	for (int i = 10; i < 15; i++) {
+		if (optsBtnValues[i]) {
+			optionWholeValues[i % 5] = 5;
+			optionChangeIndex =  i % 5;
+		}
+	}
+
+	if (optionChangeIndex == -1) {
+		return true;
+	}
+
+	GameOptions dfVl = GameOptions::DefaultValues();
+	int mul = optionWholeValues[optionChangeIndex];
+	if (optionChangeIndex == 0) {
+		gui.setLabelText("mxVl", std::to_string(mul));
+		options.mouseSensitivityX = dfVl.mouseSensitivityX * mul / 5;
+	}
+	else if (optionChangeIndex == 1) {
+		gui.setLabelText("myVl", std::to_string(mul));
+		options.mouseSensitivityY = dfVl.mouseSensitivityY * mul / 5;
+	}
+	else if (optionChangeIndex == 2) {
+		gui.setLabelText("msVl", std::to_string(mul));
+		options.scrollSensitivity = dfVl.scrollSensitivity * mul / 5;
+	}
+	else if (optionChangeIndex == 3) {
+		gui.setLabelText("rxVl", std::to_string(mul));
+		options.mazeRollSensitivity = dfVl.mazeRollSensitivity * mul / 5;
+	}
+	else if (optionChangeIndex == 4) {
+		gui.setLabelText("ryVl", std::to_string(mul));
+		options.mazeYawSensitivity = dfVl.mazeYawSensitivity * mul / 5;
+	}
 	return true;
 }
 

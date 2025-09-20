@@ -56,6 +56,8 @@ namespace rn {
 		Label& addLabel(
 			const std::string& name, float size, std::string_view text, la::Vec2 position, la::Vec4 color, uint align);
 		Label& addLabel(const std::string& name, float size, std::string_view text, la::Vec2 position);
+		std::string_view getLabelText(std::string_view name);
+		void setLabelText(std::string_view name, const std::string& text);
 		void removeLabel(std::string_view name);
 
 		Button& addButton(
