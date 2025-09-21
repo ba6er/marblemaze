@@ -29,6 +29,7 @@ class rn::GUI {
 	..
 	-labels: map<str, Label>
 	-buttons: map<str, Button>
+	-sortedButtons: &Button[]
 	..
 	-needsUpdate: bool
 }
@@ -56,6 +57,7 @@ class rn::Button {
 	..
 	+isInside(x, y)
 	..
+	+index: int
 	+selected: bool
 	..
 	+position, size: Vec2

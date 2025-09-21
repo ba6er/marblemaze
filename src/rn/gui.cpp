@@ -1,5 +1,6 @@
 #include <rn/gui.hpp>
 #include <glad/glad.h>
+#include <algorithm>
 #include <cmath>
 
 using namespace rn;
@@ -15,7 +16,8 @@ void Label::create(la::Vec2 size, std::string_view text, la::Vec2 position, la::
 	this->align = align;
 }
 
-Button::Button() : selected(false), position({0, 0}), size({0, 0}), back({0, 0, 0, 0}), selectedBack({0, 0, 0, 0}) {}
+Button::Button()
+	: index(0), selected(false), position({0, 0}), size({0, 0}), back({0, 0, 0, 0}), selectedBack({0, 0, 0, 0}) {}
 
 void Button::create(const Label& label, la::Vec4 back, la::Vec4 selectedBack, la::Vec4 margin) {
 	la::Vec2 marginSize = {margin.x + margin.z, margin.y + margin.w};
@@ -30,7 +32,9 @@ bool Button::isInside(float x, float y) {
 	return std::abs(position.x - x) <= (size.x / 2) && std::abs(position.y - y) <= (size.y / 2);
 }
 
-GUI::GUI() : frame({0, 0, 0, 0}), shader(nullptr), font(nullptr), mesh(nullptr), labels(), needsUpdate(false) {}
+GUI::GUI()
+	: frame({0, 0, 0, 0}), shader(nullptr), font(nullptr), mesh(nullptr)
+	, labels(), buttons(), sortedButtons(), needsUpdate(false) {}
 
 void GUI::create(Shader& shader, Font& font, Mesh& mesh) {
 	this->shader = &shader;
@@ -117,6 +121,7 @@ Button& GUI::addButton(
 
 	buttons[name] = Button();
 	buttons.at(name).create(l, back, selectedBack, margin);
+	buttons.at(name).index = buttons.size();
 	return buttons.at(name);
 }
 
@@ -180,8 +185,18 @@ void GUI::clear() {
 void GUI::updateMesh() {
 	mesh->clear();
 
-	for (auto& buttonKV : buttons) {
-		Button& b = buttonKV.second;
+	if (sortedButtons.size() != buttons.size()) {
+		sortedButtons.clear();
+		for (auto& b : buttons) {
+			sortedButtons.push_back(&b.second);
+		}
+		std::sort(sortedButtons.begin(), sortedButtons.end(), [](const Button *b1, const Button *b2) {
+			return b1->index < b2->index;
+		});
+	}
+
+	for (Button* bPtr : sortedButtons) {
+		Button& b = *bPtr;
 
 		la::Vec2 vp1 = b.position - b.size / 2;
 		la::Vec2 vp2 = b.position + b.size / 2;

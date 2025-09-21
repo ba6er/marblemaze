@@ -123,9 +123,10 @@ GameState Game::getState() {
 void Game::setState(GameState newState) {
 	state = newState;
 
-	constexpr la::Vec4 textCol = {1.0f, 1.0f, 1.0f, 1.0f};
-	constexpr la::Vec4 backCol = {1.0f, 1.0f, 1.0f, 0.2f};
-	constexpr la::Vec4 selCol  = {1.0f, 1.0f, 1.0f, 0.4f};
+	constexpr la::Vec4 frameCol = {0.1f, 0.1f, 0.15f, 0.7f};
+	constexpr la::Vec4 textCol = {1, 1, 1, 0.9f};
+	constexpr la::Vec4 backCol = {1, 1, 1, 0.3f};
+	constexpr la::Vec4 selCol  = {1, 1, 1, 0.5f};
 	constexpr la::Vec2 margin  = {0, 2};
 
 	switch (state) {
@@ -135,9 +136,10 @@ void Game::setState(GameState newState) {
 
 		gui.addLabel("title", 72, "Marble Maze", {320, 80}, textCol, rn::TextAlign::Center);
 
-		gui.addButton("play",    24, "Play",    {320, 382}, textCol, backCol, selCol, 160, margin);
-		gui.addButton("options", 24, "Options", {320, 412}, textCol, backCol, selCol, 160, margin);
-		gui.addButton("quit",    24, "Quit",    {320, 442}, textCol, backCol, selCol, 160, margin);
+		gui.addButton("frame", 90, "", {320, 412}, frameCol, frameCol, frameCol, 198, margin);
+		gui.addButton("play",    24, "Play",    {320, 382}, textCol, backCol, selCol, 192, margin);
+		gui.addButton("options", 24, "Options", {320, 412}, textCol, backCol, selCol, 192, margin);
+		gui.addButton("quit",    24, "Quit",    {320, 442}, textCol, backCol, selCol, 192, margin);
 	} break;
 	case MenuOptions: {
 		DEBUG_TRACE("State MenuOptions");
@@ -153,6 +155,9 @@ void Game::setState(GameState newState) {
 		constexpr float dfltWidth  = 100;
 		constexpr float valueWidth = 60;
 		constexpr float textWidth  = 640 - horMargin * 2 - btnWidth * 2 - valueWidth - dfltWidth;
+		constexpr float frameWidth = 640 - horMargin * 2 + 6;
+
+		gui.addButton("frame", 180, "", {320, 367}, frameCol, frameCol, frameCol, frameWidth, margin);
 
 		constexpr float rvX = 320 - (upBtnWidth / 2 + 2);
 		constexpr float fsX = 320 + (upBtnWidth / 2 + 2);
@@ -217,9 +222,14 @@ void Game::setState(GameState newState) {
 		gui.addLabel("title", 36, "Select a level", {320, 30}, textCol, rn::TextAlign::Center);
 		gui.addButton("back", 24, "Back", {532,  24}, textCol, backCol, selCol, 96, margin);
 
-		gui.addButton("play", 24, "Play", {320, 442}, textCol, backCol, selCol, 96, margin);
-		gui.addButton("prev", 24, "<",    {216, 442}, textCol, backCol, selCol, 96, margin);
-		gui.addButton("next", 24, ">",    {424, 442}, textCol, backCol, selCol, 96, margin);
+		char timeText[32] = {0};
+		std::snprintf(timeText, 32, "Best time: %.3fs", currentScene->getTime());
+
+		gui.addButton("frame", 60, "", {320, 427}, frameCol, frameCol, frameCol, 300, margin);
+		gui.addButton("time", 24, timeText, {320, 412}, textCol, backCol, selCol, 294, margin);
+		gui.addButton("play", 24, "Play",   {320, 442}, textCol, backCol, selCol, 96, margin);
+		gui.addButton("prev", 24, "<",      {221, 442}, textCol, backCol, selCol, 96, margin);
+		gui.addButton("next", 24, ">",      {419, 442}, textCol, backCol, selCol, 96, margin);
 	} break;
 	case ScenePlaying: {
 		DEBUG_TRACE("State ScenePlaying");
@@ -238,6 +248,7 @@ void Game::setState(GameState newState) {
 		std::snprintf(timeText, 32, "Time: %.3fs", currentScene->getTime());
 		gui.addLabel("time", 24, timeText, {60, 24}, textCol, rn::TextAlign::Left);
 
+		gui.addButton("frame", 90, "", {320, 412}, frameCol, frameCol, frameCol, 198, margin);
 		gui.addButton("play", 24, "Resume playing", {320, 382}, textCol, backCol, selCol, 192, margin);
 		gui.addButton("rest", 24, "Restart maze",   {320, 412}, textCol, backCol, selCol, 192, margin);
 		gui.addButton("quit", 24, "Quit to menu",   {320, 442}, textCol, backCol, selCol, 192, margin);
@@ -251,6 +262,7 @@ void Game::setState(GameState newState) {
 
 		gui.addLabel("win", 48, timeText, {320, 320}, textCol, rn::TextAlign::Center);
 
+		gui.addButton("frame", 60, "", {320, 427}, frameCol, frameCol, frameCol, 198, margin);
 		gui.addButton("play", 24, "Play again",   {320, 412}, textCol, backCol, selCol, 192, margin);
 		gui.addButton("quit", 24, "Quit to menu", {320, 442}, textCol, backCol, selCol, 192, margin);
 	} break;

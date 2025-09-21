@@ -39,6 +39,7 @@ namespace rn {
 
 		bool isInside(float x, float y);
 
+		int index;
 		bool selected;
 
 		la::Vec2 position, size;
@@ -88,6 +89,7 @@ namespace rn {
 
 		std::map<std::string, Label, std::less<>> labels;
 		std::map<std::string, Button, std::less<>> buttons;
+		std::vector<Button*> sortedButtons;
 
 		bool needsUpdate;
 	};
