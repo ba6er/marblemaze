@@ -29,15 +29,15 @@ namespace gm {
 		void updatePhysics(float deltaTime);
 		void updateTimer(float deltaTime);
 
-		std::string_view getId();
-		bool checkWinCondition();
-		float getTime();
-		float getBestTime();
+		std::string_view getId() const;
+		bool checkWinCondition() const;
+		float getTime() const;
+		float getBestTime() const;
 		void setBestTime(float bestTime);
 
-		float getCameraYaw();
-		float getCameraPitch();
-		float getCameraDistance();
+		float getCameraYaw() const;
+		float getCameraPitch() const;
+		float getCameraDistance() const;
 
 		void setProjection(float fov, float ratio);
 		void display();

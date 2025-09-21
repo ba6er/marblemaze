@@ -1,6 +1,7 @@
 #include <gm/game.hpp>
 #include <rn/renderer.hpp>
 #include <filesystem>
+#include <fstream>
 #include <set>
 
 using namespace gm;
@@ -57,6 +58,45 @@ void Game::onInit(
 			CRITICAL_ERROR("Failed to load scene from %s", fileName.c_str());
 			scenes[numLoadedScenes].destroy();
 		}
+	}
+
+	std::ifstream scoresIn(_RES_PATH "scores.txt");
+	std::map<std::string, float> sceneScores;
+	try {
+		int numSceneScores;
+
+		if (!(scoresIn >> numSceneScores)) {
+			throw 1;
+		}
+		// Hard limit of 10000 scores
+		if (numSceneScores < 0 || numSceneScores > 10000) {
+			throw 1;
+		}
+
+		for (int i = 0; i < numSceneScores; i++) {
+			std::string key;
+			float val;
+			if (!(scoresIn >> key)) {
+				throw 1;
+			}
+			if (!(scoresIn >> val)) {
+				throw 1;
+			}
+			if (val < 0 || val > 10000) {
+				throw 1;
+			}
+			sceneScores[key] = val;
+		}
+
+		for (int i = 0; i < numLoadedScenes; i++) {
+			auto sceneScore = sceneScores.find(scenes[i].getId().data());
+			if (sceneScore == sceneScores.end()) {
+				continue;
+			}
+			scenes[i].setBestTime(sceneScore->second);
+		}
+	} catch(...) {
+		DEBUG_WARNING("Failed to read init scene scores");
 	}
 
 	currentScene = &menuScene;
@@ -278,6 +318,10 @@ void Game::setState(GameState newState) {
 		DEBUG_WARNING("Invalid state %d, not changing", state);
 		break;
 	}
+}
+
+const std::vector<Scene>& gm::Game::getScenes() const {
+	return scenes;
 }
 
 bool Game::onStateMenuMain(

@@ -395,19 +395,19 @@ void Scene::updateTimer(float deltaTime) {
 	timer += deltaTime;
 }
 
-std::string_view Scene::getId() {
+std::string_view Scene::getId() const {
 	return id;
 }
 
-bool Scene::checkWinCondition() {
+bool Scene::checkWinCondition() const {
 	return DistanceSphereAABB(finish, marble.position) <= marble.radius;
 }
 
-float Scene::getTime() {
+float Scene::getTime() const {
 	return timer;
 }
 
-float Scene::getBestTime() {
+float Scene::getBestTime() const {
 	return bestTime;
 }
 
@@ -415,15 +415,15 @@ void Scene::setBestTime(float bestTime) {
 	this->bestTime = bestTime;
 }
 
-float Scene::getCameraYaw() {
+float Scene::getCameraYaw() const {
 	return cameraYaw;
 }
 
-float Scene::getCameraPitch() {
+float Scene::getCameraPitch() const {
 	return cameraPitch;
 }
 
-float Scene::getCameraDistance() {
+float Scene::getCameraDistance() const {
 	return cameraDistance;
 }
 

@@ -47,6 +47,8 @@ namespace gm {
 		GameState getState();
 		void setState(GameState newState);
 
+		const std::vector<Scene>& getScenes() const;
+
 		bool rememberValues, fullscreen;
 		std::array<int, 5> optionWholeValues;
 

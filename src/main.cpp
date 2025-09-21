@@ -207,6 +207,18 @@ int main() {
 		glfwPollEvents();
 	}
 
+	// Write scores
+	try {
+		std::ofstream scoresOut(_RES_PATH "scores.txt");
+		scoresOut << game.getScenes().size() << std::endl;
+		for (const gm::Scene& s : game.getScenes()) {
+			scoresOut << s.getId() << std::endl;
+			scoresOut << s.getBestTime() << std::endl;
+		}
+	} catch(...) {
+		DEBUG_WARNING("Failed to write scene scores");
+	}
+
 	if (rememberValues == 0) {
 		fullscreen = 0;
 		width = defaultWidth;
