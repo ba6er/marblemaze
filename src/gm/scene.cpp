@@ -8,7 +8,7 @@
 using namespace gm;
 
 Scene::Scene()
-		: id(""), timer(0), camera(), renderables()
+		: id(""), timer(0), bestTime(10000), camera(), renderables()
 		, marble(), maze(), start({0, 0, 0}), finish({0, 0, 0}), initCameraValues({0, 0, 0})
 		, cameraDistance(0), cameraYaw(0), cameraPitch(0)
 		, marbleIsTouchingWalls({false, false, false}), marbleWasTouchingWalls({false, false, false}) {
@@ -399,6 +399,14 @@ bool Scene::checkWinCondition() {
 
 float Scene::getTime() {
 	return timer;
+}
+
+float Scene::getBestTime() {
+	return bestTime;
+}
+
+void Scene::setBestTime(float bestTime) {
+	this->bestTime = bestTime;
 }
 
 float Scene::getCameraYaw() {

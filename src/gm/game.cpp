@@ -146,6 +146,8 @@ void Game::setState(GameState newState) {
 		gui.clear();
 
 		gui.addLabel("title", 36, "Options", {320, 30}, textCol, rn::TextAlign::Center);
+		gui.addLabel("help1", 24, "Use WASD to rotate the maze", {320, 60}, textCol, rn::TextAlign::Center);
+		gui.addLabel("help2", 24, "Test out the controls here", {320, 84}, textCol, rn::TextAlign::Center);
 		gui.addButton("back", 24, "Back", {532, 24}, textCol, backCol, selCol, 96, margin);
 
 		constexpr float horMargin  = 60;
@@ -223,7 +225,11 @@ void Game::setState(GameState newState) {
 		gui.addButton("back", 24, "Back", {532,  24}, textCol, backCol, selCol, 96, margin);
 
 		char timeText[32] = {0};
-		std::snprintf(timeText, 32, "Best time: %.3fs", currentScene->getTime());
+		if (currentScene->getBestTime() < 9999) {
+			std::snprintf(timeText, 32, "Best time: %.3fs", currentScene->getBestTime());
+		} else {
+			std::snprintf(timeText, 32, "Best time not set");
+		}
 
 		gui.addButton("frame", 60, "", {320, 427}, frameCol, frameCol, frameCol, 300, margin);
 		gui.addButton("time", 24, timeText, {320, 412}, textCol, backCol, selCol, 294, margin);
@@ -258,13 +264,15 @@ void Game::setState(GameState newState) {
 		gui.clear();
 
 		char timeText[32] = {0};
-		std::snprintf(timeText, 32, "Time: %.3fs", currentScene->getTime());
+		std::snprintf(timeText, 32, "Your time: %.3fs", currentScene->getTime());
+		char bestTimeText[32] = {0};
+		std::snprintf(bestTimeText, 32, "Best time: %.3fs", currentScene->getBestTime());
 
-		gui.addLabel("win", 48, timeText, {320, 320}, textCol, rn::TextAlign::Center);
-
-		gui.addButton("frame", 60, "", {320, 427}, frameCol, frameCol, frameCol, 198, margin);
-		gui.addButton("play", 24, "Play again",   {320, 412}, textCol, backCol, selCol, 192, margin);
-		gui.addButton("quit", 24, "Quit to menu", {320, 442}, textCol, backCol, selCol, 192, margin);
+		gui.addButton("frame", 120, "", {320, 397}, frameCol, frameCol, frameCol, 300, margin);
+		gui.addButton("time", 24, timeText,       {320, 352}, textCol, backCol, selCol, 294, margin);
+		gui.addButton("best", 24, bestTimeText,   {320, 382}, textCol, backCol, selCol, 294, margin);
+		gui.addButton("play", 24, "Play again",   {320, 412}, textCol, backCol, selCol, 294, margin);
+		gui.addButton("quit", 24, "Quit to menu", {320, 442}, textCol, backCol, selCol, 294, margin);
 	} break;
 	default:
 		DEBUG_WARNING("Invalid state %d, not changing", state);
@@ -456,6 +464,14 @@ bool Game::onStateMenuLevels(
 		currentScene = &scenes[selectedSceneIndex];
 		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+
+		char timeText[32] = {0};
+		if (currentScene->getBestTime() < 9999) {
+			std::snprintf(timeText, 32, "Best time: %.3fs", currentScene->getBestTime());
+		} else {
+			std::snprintf(timeText, 32, "Best time not set");
+		}
+		gui.setLabelText("time", timeText);
 	}
 	else if (onPrev || input.getKey(in::MazeRollDecrease) == in::JustPressed) {
 		resource.getSound("select").play();
@@ -466,6 +482,14 @@ bool Game::onStateMenuLevels(
 		currentScene = &scenes[selectedSceneIndex];
 		currentScene->setCameraValues(menuCameraYaw, menuCameraPitch, menuCameraDistance);
 		currentScene->setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
+
+		char timeText[32] = {0};
+		if (currentScene->getBestTime() < 9999) {
+			std::snprintf(timeText, 32, "Best time: %.3fs", currentScene->getBestTime());
+		} else {
+			std::snprintf(timeText, 32, "Best time not set");
+		}
+		gui.setLabelText("time", timeText);
 	}
 	else if (onBack || input.getKey(in::Quit) == in::JustPressed) {
 		resource.getSound("select").play();
@@ -498,6 +522,9 @@ bool Game::onStateScenePlaying(
 
 	if (currentScene->checkWinCondition()) {
 		resource.getSound("select").play();
+		if (currentScene->getTime() < currentScene->getBestTime()) {
+			currentScene->setBestTime(currentScene->getTime());
+		}
 		setState(SceneWin);
 		return true;
 	}

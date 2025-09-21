@@ -73,6 +73,8 @@ class gm::Scene {
 	+getId() : str
 	+checkWinCondition() : bool
 	+getTime() : float
+	+getBestTime() : float
+	+setBestTime(bestTime)
 	..
 	+getCameraYaw() : float
 	+getCameraPitch() : float
@@ -87,7 +89,7 @@ class gm::Scene {
 	{static} -DistanceSphereAABB(box, sphere) : float
 	..
 	-id: str
-	-timer: float
+	-timer, bestTime: float
 	..
 	-camera: Camera
 	-renderables: Renderable[]

@@ -32,6 +32,8 @@ namespace gm {
 		std::string_view getId();
 		bool checkWinCondition();
 		float getTime();
+		float getBestTime();
+		void setBestTime(float bestTime);
 
 		float getCameraYaw();
 		float getCameraPitch();
@@ -47,7 +49,7 @@ namespace gm {
 		static float DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere);
 
 		std::string id;
-		float timer;
+		float timer, bestTime;
 
 		rn::Camera camera;
 		rn::Light light;
