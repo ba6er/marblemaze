@@ -79,7 +79,10 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 			configStream >> marble.direction.x >> marble.direction.y >> marble.direction.z;
 			marble.direction = marble.direction.normalize();
 		}
-		else if (configToken == "MARBLE_SPEED") {
+		else if (configToken == "MARBLE_ACCELERATION") {
+			configStream >> marble.acceleration;
+		}
+		else if (configToken == "MARBLE_MAX_SPEED") {
 			configStream >> marble.speed;
 		}
 		else if (configToken == "MARBLE_RADIUS") {
@@ -344,7 +347,10 @@ void Scene::updateMazeRotation(float deltaYaw, float deltaRoll) {
 }
 
 void Scene::updatePhysics(float deltaTime) {
-	marble.velocity = marble.transform * marble.direction * marble.speed;
+	marble.velocity += marble.transform * marble.direction * marble.acceleration * deltaTime;
+	if (marble.velocity.length() > marble.speed) {
+		marble.velocity = marble.velocity.normalize() * marble.speed;
+	}
 
 	int minX = std::floor(marble.position.x - marble.radius);
 	int maxX = std::ceil(marble.position.x + marble.radius);
@@ -440,27 +446,61 @@ bool Scene::shouldPlaySound() {
 }
 
 void Scene::marbleBlockCollision(float x, float y, float z, float deltaTime) {
-	la::Vec3 newPosX = marble.position;
-	newPosX.x += marble.velocity.x * deltaTime;
-	float disX = DistanceSphereAABB({x, y, z}, newPosX);
-	if (disX < marble.radius) {
-		marble.velocity.x = 0;
+	la::Vec3 diff = DifferenceSphereAABB({x, y, z}, marble.position + marble.velocity * deltaTime);
+
+	if (diff.x * diff.x + diff.y * diff.y + diff.z * diff.z >= marble.radius * marble.radius) {
+		return;
+	}
+
+	if (std::abs(diff.x) > marble.radius / 2) {
+		bool pushedCorner = false;
+		if (std::abs(diff.y) > std::abs(diff.x)) {
+			float offY = std::sqrt(marble.radius * marble.radius - diff.x * diff.x) * (diff.y > 0 ? 1 : -1);
+			marble.velocity.y -= offY - diff.y;
+			pushedCorner = true;
+		}
+		if (std::abs(diff.z) > std::abs(diff.x)) {
+			float offZ = std::sqrt(marble.radius * marble.radius - diff.x * diff.x) * (diff.z > 0 ? 1 : -1);
+			marble.velocity.z -= offZ - diff.z;
+			pushedCorner = true;
+		}
+		if (!pushedCorner) {
+			marble.velocity.x = 0;
+		}
 		marbleIsTouchingWalls[0] = true;
 	}
-
-	la::Vec3 newPosY = marble.position;
-	newPosY.y += marble.velocity.y * deltaTime;
-	float disY = DistanceSphereAABB({x, y, z}, newPosY);
-	if (disY < marble.radius) {
-		marble.velocity.y = 0;
+	if (std::abs(diff.y) > marble.radius / 2) {
+		bool pushedCorner = false;
+		if (std::abs(diff.z) > std::abs(diff.y)) {
+			float offZ = std::sqrt(marble.radius * marble.radius - diff.x * diff.x) * (diff.z > 0 ? 1 : -1);
+			marble.velocity.z -= offZ - diff.z;
+			pushedCorner = true;
+		}
+		if (std::abs(diff.x) > std::abs(diff.y)) {
+			float offX = std::sqrt(marble.radius * marble.radius - diff.z * diff.z) * (diff.x > 0 ? 1 : -1);
+			marble.velocity.x -= offX - diff.x;
+			pushedCorner = true;
+		}
+		if (!pushedCorner) {
+			marble.velocity.y = 0;
+		}
 		marbleIsTouchingWalls[1] = true;
 	}
-
-	la::Vec3 newPosZ = marble.position;
-	newPosZ.z += marble.velocity.z * deltaTime;
-	float disZ = DistanceSphereAABB({x, y, z}, newPosZ);
-	if (disZ < marble.radius) {
-		marble.velocity.z = 0;
+	if (std::abs(diff.z) > marble.radius / 2) {
+		bool pushedCorner = false;
+		if (std::abs(diff.y) > std::abs(diff.z)) {
+			float offY = std::sqrt(marble.radius * marble.radius - diff.x * diff.x) * (diff.y > 0 ? 1 : -1);
+			marble.velocity.y -= offY - diff.y;
+			pushedCorner = true;
+		}
+		if (std::abs(diff.x) > std::abs(diff.z)) {
+			float offX = std::sqrt(marble.radius * marble.radius - diff.z * diff.z) * (diff.x > 0 ? 1 : -1);
+			marble.velocity.x -= offX - diff.x;
+			pushedCorner = true;
+		}
+		if (!pushedCorner) {
+			marble.velocity.z = 0;
+		}
 		marbleIsTouchingWalls[2] = true;
 	}
 }
@@ -483,4 +523,24 @@ float Scene::DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere) {
 		}
 	}
 	return std::sqrt(distanceSquared);
+}
+
+la::Vec3 Scene::DifferenceSphereAABB(la::Vec3 box, la::Vec3 sphere) {
+	float minPos[3] = {box.x - 0.5f, box.y - 0.5f, box.z - 0.5f};
+	float maxPos[3] = {box.x + 0.5f, box.y + 0.5f, box.z + 0.5f};
+	float sphPos[3] = {sphere.x, sphere.y, sphere.z};
+	float diff[3] = {0, 0, 0};
+
+	// Sphere-AABB collision
+	for (int i = 0; i < 3; i++) {
+		if (sphPos[i] < minPos[i]) {
+			diff[i] = minPos[i] - sphPos[i];
+			continue;
+		}
+		if (sphPos[i] > maxPos[i]) {
+			diff[i] = sphPos[i] - maxPos[i];
+			continue;
+		}
+	}
+	return {diff[0], diff[1], diff[2]};
 }

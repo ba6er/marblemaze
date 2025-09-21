@@ -87,6 +87,7 @@ class gm::Scene {
 	-marbleBlockCollision(x, y, z, deltaTime)
 	..
 	{static} -DistanceSphereAABB(box, sphere) : float
+	{static} -DifferenceSphereAABB(box, sphere) : Vec3
 	..
 	-id: str
 	-timer, bestTime: float
@@ -140,6 +141,7 @@ class gm::Marble {
 	+direction: Vec3
 	+radius: float
 	+speed: float
+	+acceleration: float
 }
 
 Maze <-down- BlockType

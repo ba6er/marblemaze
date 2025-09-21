@@ -29,12 +29,14 @@ MARBLE_MATERIAL emerald
 FINISH_MATERIAL emerald
 SKYBOX_MATERIAL sky
 
-# The game will apply marble's speed in it's direction.
+# The game will apply marble's acceleration in it's direction.
+# Marble's speed is capped by MARBLE_MAX_SPEED
 # The usual for gravity direction is negative Y.
 # Example: MARBLE_DIRECTION 0 -1 0
-MARBLE_DIRECTION 0 -1 0
-MARBLE_SPEED     2
-MARBLE_RADIUS    0.25
+MARBLE_DIRECTION    0 -1 0
+MARBLE_ACCELERATION 5
+MARBLE_MAX_SPEED    3
+MARBLE_RADIUS       0.25
 
 # Maze dimensions:
 # Width determines the number of characters in one line.
