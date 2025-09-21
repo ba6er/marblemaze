@@ -1,9 +1,7 @@
 #include <gm/game.hpp>
 #include <rn/renderer.hpp>
 #include <filesystem>
-#include <iomanip>
 #include <set>
-#include <sstream>
 
 using namespace gm;
 
@@ -227,6 +225,7 @@ void Game::setState(GameState newState) {
 		DEBUG_TRACE("State ScenePlaying");
 		gui.clear();
 
+		gui.addLabel("time", 24, "Time: 0.000s", {60, 24}, textCol, rn::TextAlign::Left);
 		gui.addButton("pause", 24, "Pause", {532, 24}, textCol, backCol, selCol, 96, margin);
 	} break;
 	case ScenePaused: {
@@ -234,6 +233,10 @@ void Game::setState(GameState newState) {
 		gui.clear();
 
 		gui.addLabel("paused", 36, "Paused", {320, 30});
+
+		char timeText[32] = {0};
+		std::snprintf(timeText, 32, "Time: %.3fs", currentScene->getTime());
+		gui.addLabel("time", 24, timeText, {60, 24}, textCol, rn::TextAlign::Left);
 
 		gui.addButton("play", 24, "Resume playing", {320, 382}, textCol, backCol, selCol, 192, margin);
 		gui.addButton("rest", 24, "Restart maze",   {320, 412}, textCol, backCol, selCol, 192, margin);
@@ -243,10 +246,10 @@ void Game::setState(GameState newState) {
 		DEBUG_TRACE("State SceneWin");
 		gui.clear();
 
-		std::stringstream timeText;
-		timeText << "Time: " << std::setprecision(4) << currentScene->getTime() << "s";
+		char timeText[32] = {0};
+		std::snprintf(timeText, 32, "Time: %.3fs", currentScene->getTime());
 
-		gui.addLabel("win", 48, timeText.str(), {320, 320}, textCol, rn::TextAlign::Center);
+		gui.addLabel("win", 48, timeText, {320, 320}, textCol, rn::TextAlign::Center);
 
 		gui.addButton("play", 24, "Play again",   {320, 412}, textCol, backCol, selCol, 192, margin);
 		gui.addButton("quit", 24, "Quit to menu", {320, 442}, textCol, backCol, selCol, 192, margin);
@@ -513,6 +516,10 @@ bool Game::onStateScenePlaying(
 
 	currentScene->updatePhysics(deltaTime);
 	currentScene->updateTimer(deltaTime);
+
+	char timeText[32] = {0};
+	std::snprintf(timeText, 32, "Time: %.3fs", currentScene->getTime());
+	gui.setLabelText("time", timeText);
 
 	return true;
 }
