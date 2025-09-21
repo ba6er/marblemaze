@@ -2,47 +2,38 @@
 set separator ::
 
 class la::Vec2 {
-	+x: float
-	+y: float
+	+x, y
 }
 hide Vec2 methods
 
 class la::Vec4 {
-	+x: float
-	+y: float
-	+z: float
-	+w: float
+	+x, y, z, w
 }
 hide Vec4 methods
 
 class la::Vec3 {
-	+normalize() : Vec3
-	+cross(vec) : Vec3
-	+dot(vec) : float
-	+length() : float
+	+normalize()
+	+cross()
+	+dot()
+	+length()
 	..
-	+x: float
-	+y: float
-	+z: float
+	+x, y, z
 }
 
 class la::Mat4 {
-	{static} +Identity() : Mat4
-	{static} +Scale(scale) : Mat4
-	{static} +Rotate(angle, axis) : Mat4
-	{static} +Translate(translation) : Mat4
+	{static} +Identity()
+	{static} +Scale()
+	{static} +Rotate()
+	{static} +Translate()
 	..
-	{static} +LookAt(eye, target, up) : Mat4
-	{static} +Project2d(left, right, bottom, top, near, far) : Mat4
-	{static} +Project3d(fov, aspect, near, far) : Mat4
+	{static} +LookAt()
+	{static} +Project2d()
+	{static} +Project3d()
 	..
-	{static} +FromArray(array[16]) : Mat4
-	{static} +FromArray2D(array[4][4]) : Mat4
+	+transpose()
+	+inverse()
 	..
-	+transpose() : Mat4
-	+inverse() : Mat4
-	..
-	+x1, ... , w4: float
+	+x1, ... , w4
 }
 
 @enduml

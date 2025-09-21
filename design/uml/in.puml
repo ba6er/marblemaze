@@ -22,32 +22,28 @@ enum in::KeyName {
 hide KeyName methods
 
 class in::Input {
-	{static} +KeyboardValues : int[]
+	{static} +KeyboardValues
 	..
-	+getKey(key) : KeyState
-	+getMouseL() : KeyState
-	+getMouseR() : KeyState
+	+getKey()
+	+getMouseL()
+	+getMouseR()
 	..
-	+setKey(key, state)
-	+setMouseL(state)
-	+setMouseR(state)
+	+setKey()
+	+setMouseL()
+	+setMouseR()
 	..
-	+getMouseX() : float
-	+getMouseY() : float
-	+getDeltaMouseX() : float
-	+getDeltaMouseY() : float
-	+setMousePos(x, y)
+	+getMousePos()
+	+getDeltaMousePos()
+	+setMousePos()
 	..
-	+getScrollX() : float
-	+getScrollY() : float
-	+setScroll(x, y)
+	+getScroll()
+	+setScroll()
 	--
-	-keyboard: KeyState[]
-	-mouseL: KeyState
-	-mouseR: KeyState
-	-mouseX, mouseY: float
-	-lastMouseX, lastMouseY: float
-	-scrollX, scrollY: float
+	-keyboard
+	-mouseLR
+	-mousePos
+	-lastMousePos
+	-scroll
 }
 
 Input <-left- KeyState

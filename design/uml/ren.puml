@@ -2,59 +2,53 @@
 set separator ::
 
 class rn::Renderable {
-	+create(&mesh, &material)
+	+create()
 	..
-	+tag: str
-	+mesh: &Mesh
-	+material: &Material
-	+transform: Mat4
+	+tag
+	+mesh
+	+material
+	+transform
 }
 
 class rn::Camera {
-	+project2d(left, right, bottom, top, near, far)
-	+project3d(fov, aspect, near, far)
+	+project2d()
+	+project3d()
 	..
-	+setPosition(pos)
-	+setTarget(target)
-	+setUp(up)
+	+setPosition()
+	+setTarget()
+	+setUp()
 	..
-	+getPosition() : Vec3
-	+getTarget() : Vec3
-	+getUp() : Vec3
+	+getPosition()
+	+getTarget()
+	+getUp()
 	..
-	+getViewMatrix() : Mat4
-	+getProjectionMatrix() : Mat4
+	+getViewMatrix()
+	+getProjectionMatrix()
 	--
-	-updateViewMatrix()
+	-pos, target, up
 	..
-	-pos: Vec3
-	-target: Vec3
-	-up: Vec3
-	..
-	-view: Mat4
-	-projection: Mat4
+	-view, projection
 }
 
 class rn::Light {
-	+position: Vec3
+	+position
 	..
-	+ambient: Vec3
-	+diffuse: Vec3
-	+specular: Vec3
+	+ambient
+	+diffuse
+	+specular
 }
 hide Light methods
 
 class rn::Renderer {
-	{static} +clear(red, green, blue)
-	{static} +render(&renderable)
-	{static} +render(&camera, &renderables[], &light)
+	{static} +clear()
+	{static} +render()
 	..
-	{static} +resizeFrame(width, height)
+	{static} +resizeFrame()
 }
 hide Renderer fields
 
-Renderer <-- Camera
-Renderer <-- Renderable
+Renderer <-down- Camera
+Renderer <-right- Renderable
 Renderer <-left- Light
 
 @enduml

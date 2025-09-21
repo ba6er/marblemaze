@@ -10,32 +10,25 @@ enum ge::CubeFace {
 hide CubeFace methods
 
 class ge::GeometryData {
-	+positions: Vec3[]
-	+colors: Vec3[]
-	+uvs: Vec2[]
-	+normals: Vec3[]
-	..
-	+indices: uint[]
+	+positions, colors, uvs, normals
+	+indices
 }
 hide GeometryData methods
 
 class ge::GeometryGenerator {
-	{static} +GenerateCube(faces) : GeometryData
-	{static} +GenerateIcosphere(subdivisions) : GeometryData
-	--
-	{static} -SubdivideTriangle(t) : Vec3[3][4]
-	{static} -AppendSubdivedTriangle(triangleVector, t, subdivisions)
+	{static} +GenerateCube()
+	{static} +GenerateIcosphere()
 }
 hide GeometryGenerator fields
 
 class ge::GeometryTransform {
-	{static} +ApplyMatrix(&gd, matrix)
+	{static} +ApplyMatrix()
 	..
-	{static} +Scale(&gd, scale)
-	{static} +Rotate(&gd, angle, axis)
-	{static} +Translate(&gd, translation)
+	{static} +Scale()
+	{static} +Rotate()
+	{static} +Translate()
 	..
-	{static} +ApplyColor(&gd, color)
+	{static} +ApplyColor()
 }
 hide GeometryTransform fields
 

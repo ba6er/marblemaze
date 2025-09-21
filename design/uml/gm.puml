@@ -12,99 +12,57 @@ enum gm::GameState {
 hide GameState methods
 
 class gm::GameOptions {
-	{static} +DefaultValues() : GameOptions
-	..
-	+mouseSensitivityX: float
-	+mouseSensitivityY: float
-	+scrollSensitivity: float
-	+mazeYawSensitivity: float
-	+mazeRollSensitivity: float
+	+mouseSensitivity
+	+scrollSensitivity
+	+mazeSensitivity
 }
 hide GameOptions methods
 
 class gm::Game {
-	+onInit(width, height, internalWidth, internalHeight, resource, initOptions)
-	+onUpdate(deltaTime, currentTime, resource, input) : bool
-	+onRender(deltaTime, currentTime, resource)
-	+onResize(width, height)
+	+onInit()
+	+onUpdate()
+	+onRender()
+	+onResize()
 	..
-	+getState() : GameState
-	+setState(state)
-	..
-	+getScenes() : &Scene[]
-	..
-	+rememberValues, fullscreen: bool
-	+optionWholeValues: int[]
+	+getState()
+	+setState()
 	--
-	-onStateMenuMain(deltaTime, currentTime, resource, input) : bool
-	-onStateMenuOptions(deltaTime, currentTime, resource, input) : bool
-	-onStateMenuLevels(deltaTime, currentTime, resource, input) : bool
-	-onStateScenePlaying(deltaTime, currentTime, resource, input) : bool
-	-onStateScenePaused(deltaTime, currentTime, resource, input) : bool
-	-onStateSceneWin(deltaTime, currentTime, resource, input) : bool
+	-options, state
 	..
-	-internalPosition(x, y) : Vec2
+	-frameSize, internalSize
+	-gui
 	..
-	-options: GameOptions
-	-state: GameState
-	..
-	-frameSize: Vec2
-	-internalSize: Vec2
-	-gui: GUI
-	..
-	-menuCameraYaw, menuCameraPitch, menuCameraDistance: float
-	..
-	-selectedSceneIndex, numLoadedScenes: int
-	-scenes: Scene[]
-	-menuScene: Scene
-	-currentScene: &Scene
+	-scenes
+	-currentScene
 }
 
 class gm::Scene {
-	+createFromFile(fileName, resource) : bool
-	+createMenuScene(resource)
+	+create()
 	+restart()
 	+destroy()
 	..
-	+setCameraValues(yaw, pitch, distance)
-	+updateCamera(deltaYaw, deltaPitch, deltaDistance)
-	+updateMazeRotation(deltaPitch, deltaRoll)
-	+updatePhysics(deltaTime)
-	+updateTimer(deltaTime)
+	+updateCamera()
+	+updateMazeRotation()
+	+updatePhysics()
+	+updateTimer()
 	..
-	+getId() : str
-	+checkWinCondition() : bool
-	+getTime() : float
-	+getBestTime() : float
-	+setBestTime(bestTime)
+	+checkWinCondition()
+	+getId()
+	+getTime()
+	+getBestTime()
+	+setBestTime()
 	..
-	+getCameraYaw() : float
-	+getCameraPitch() : float
-	+getCameraDistance() : float
-	..
-	+setProjection(fov, aspect)
 	+display()
-	+shoudPlaySound() : bool
 	--
-	-marbleBlockCollision(x, y, z, deltaTime)
+	-id
+	-timer, bestTime
 	..
-	{static} -DistanceSphereAABB(box, sphere) : float
-	{static} -DifferenceSphereAABB(box, sphere) : Vec3
+	-camera
+	-renderables
+	-light
 	..
-	-id: str
-	-timer, bestTime: float
-	..
-	-camera: Camera
-	-renderables: Renderable[]
-	-lights: Light[]
-	..
-	-marble: Marble
-	-maze: Maze
-	-start, finish, initCameraValues: Vec3
-	..
-	-cameraDistance, cameraYaw, cameraPitch: float
-	-marbleIsTouchingWalls: bool[3]
-	-marbleWasTouchingWalls: bool[3]
+	-marble
+	-maze
 }
 
 enum gm::BlockType {
@@ -116,34 +74,23 @@ enum gm::BlockType {
 hide BlockType methods
 
 class gm::Maze {
-	+create(initBlocks)
+	+create()
 	..
-	+getBlock(x, y, z) : BlockType
-	+setBlock(x, y, z, block)
+	+getBlock()
+	+setBlock()
 	..
-	+toGeometry() : GeometryData
-	..
-	+getWidth() : int
-	+getHeight() : int
-	+getDepth() : int
-	..
-	+transform: Mat4
+	+toGeometry()
 	--
-	-width, height, depth: int
-	-blocks: BlockType[]
+	-width, height, depth
+	-blocks
 }
 
 class gm::Marble {
-	+toGeometry() : GeometryData
+	+toGeometry()
 	..
-	+transform: Mat4
-	..
-	+position: Vec3
-	+velocity: Vec3
-	+direction: Vec3
-	+radius: float
-	+speed: float
-	+acceleration: float
+	+position, velocity, direction
+	+speed, acceleration
+	+radius
 }
 
 Maze <-down- BlockType
@@ -152,7 +99,7 @@ Scene *-left- Maze
 Scene *-down- Marble
 
 Game <-up- GameOptions
-Game <-left- GameState
-Game <-- Scene
+Game <-down- GameState
+Game <-left- Scene
 
 @enduml

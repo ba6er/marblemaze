@@ -2,36 +2,25 @@
 set separator ::
 
 class rn::GUI {
-	+create(&shader, &font, &mesh)
-	+setFrame(left, right, bottom, top)
+	+create()
+	+setFrame()
 	..
-	+addLabel(name) : &Label
-	+getLabelText(name) : str
-	+setLabelText(name, text)
-	+removeLabel(name)
+	+addLabel()
+	+getLabelText()
+	+setLabelText()
+	+removeLabel()
 	..
-	+addButton(name, ...) : &Button
-	+checkButtonSelected(name, x, y) : bool
-	+getButtonSelected(name) : bool
-	+setButtonSelected(name, isSelected)
-	+removeButton(name)
+	+addButton()
+	+checkButtonSelected()
+	+removeButton()
 	..
 	+display()
 	+clear()
 	--
-	-updateMesh()
+	-shader, font, mesh
 	..
-	-frame: Vec4
-	..
-	-shader: &Shader
-	-font: &Font
-	-mesh: &Mesh
-	..
-	-labels: map<str, Label>
-	-buttons: map<str, Button>
-	-sortedButtons: &Button[]
-	..
-	-needsUpdate: bool
+	-labels
+	-buttons
 }
 
 enum rn::TextAlign {
@@ -44,24 +33,21 @@ enum rn::TextAlign {
 hide TextAlign methods
 
 class rn::Label {
-	+create(size, text, position, color, align)
+	+create()
 	..
-	+text: string
-	+position, size: Vec2
-	+color: Vec4
-	+align: uint
+	+text
+	+position, size, color
 }
 
 class rn::Button {
-	+create(&label, back, selectedBack, margin)
+	+create()
 	..
-	+isInside(x, y)
+	+isInside()
 	..
-	+index: int
-	+selected: bool
+	+selected
 	..
-	+position, size: Vec2
-	+back, selectedBack: Vec4
+	+position, size
+	+back, selectedBack
 }
 
 Label <-- TextAlign

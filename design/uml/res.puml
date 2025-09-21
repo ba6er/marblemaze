@@ -2,63 +2,56 @@
 set separator ::
 
 class rs::Shader {
-	+create(vert, frag)
+	+create()
 	+destroy()
 	..
 	+use()
 	..
-	+setUniform(name, value)
+	+setUniform()
 	--
-	{static} -CheckCompileErrors(shader)
-	{static} -CheckLinkingErrors(program)
-	..
-	-id: uint
+	-id
 }
 
 class rs::TextureFormat {
-	+filtered: bool
-	+textureFormat: int
-	+sourceFormat: int
-	+mipmaps: int
+	+filtered
+	+textureFormat, sourceFormat
+	+mipmaps
 }
 hide TextureFormat methods
 
 class rs::Texture {
-	+create(width, height, data, format)
-	+create(fileName, filtered, mipmaps)
 	+create()
-	+destroy()
-	..
-	+use(index)
-	..
-	+getWidth() : int
-	+getHeight() : int
-	+getId() : uint
-	--
-	-width: int
-	-height: int
-	-id: uint
-}
-
-class rs::Material {
-	+create(&shader)
 	+destroy()
 	..
 	+use()
 	..
-	+addTexture(index, &texture)
-	+setUniform(name, value)
+	+getWidth()
+	+getHeight()
+	+getId()
 	--
-	-shader: &Shader
-	-textures: &Texture[]
-	-uniforms: map<str, variant>
+	-width, height
+	-id
+}
+
+class rs::Material {
+	+create()
+	+destroy()
+	..
+	+use()
+	..
+	+addTexture()
+	+setUniform()
+	--
+	-shader
+	-textures
+	-uniforms
 }
 
 class rs::Vertex {
-	+position: Vec3
-	+color: Vec3
-	+atlas: Vec2
-	+normal: Vec3
+	+position
+	+color
+	+atlas
+	+normal
 }
 hide Vertex methods
 
@@ -66,85 +59,65 @@ class rs::Mesh {
 	+create()
 	+destroy()
 	..
-	+addVertex(vertex)
-	+addGeometry(gd)
+	+addVertex()
+	+addGeometry()
 	..
 	+clear()
 	+draw()
 	--
-	-vao: uint
-	-vbo: uint
-	-vertices: Vertex[]
+	-vao, vbo
+	-vertices
 }
 
 class rs::Glyph {
-	+width: int
-	+advance: int
-	+uv: Vec4
+	+width
+	+advance
+	+uv
 }
 hide Glyph methods
 
 class rs::Font {
-	+create(&texture, fileName, size, filtered)
+	+create()
 	+destroy()
 	..
-	+getTexture() : &Texture
-	+getGlyph(c) : Glyph
-	+getWidth() : int
-	+getHeight() : int
-	+getAscent() : int
+	+getTexture()
+	+getGlyph()
 	--
-	-size, ascent: int
-	-texture: &Texture
-	-glyphs: Glyph[]
+	-size, ascent
+	-texture
+	-glyphs
 }
 
 class rs::Sound {
-	+create(fileName)
+	+create()
 	+destroy()
 	..
 	+play()
 	+loop()
 	+stop()
 	..
-	+isPlaying() : bool
-	+isLooping() : bool
+	+isPlaying()
+	+isLooping()
 	--
-	-source: ma_sound
-	-pooping: bool
-	-playing: bool
+	-source
+	-looping, playing
 }
 
 class rs::ResourceManager {
-	+initFromConfig(fileName)
-	..
-	+createShader(name, ...) : &Shader
-	+createTexture(name, ...) : &Texture
-	+createMaterial(name, ...) : &Material
-	+createMesh(name, ...) : &Mesh
-	+createFont(name, ...) : &Font
-	+createSound(name, ...) : &Sound
+	+initFromConfig()
 	+destroy()
 	..
-	+getShader(name) : &Shader
-	+getTexture(name) : &Texture
-	+getMaterial(name) : &Material
-	+getMesh(name) : &Mesh
-	+getFont(name) : &Font
-	+getSound(name) : &Sound
+	+createResource()
+	+getResource()
 	--
-	-stringToShader(configLine)
-	-stringToTexture(configLine)
-	-stringToMaterial(configLines)
-	-stringToFont(configLine)
-	-stringToSound(configLine)
+	-stringToResource()
 	..
-	-shaders: map<str, Shader>
-	-textures: map<str, Texture>
-	-materials: map<str, Material>
-	-meshes: map<str, Mesh>
-	-fonts: map<str, Font>
-	-sounds: map<str, Sound>
+	-shaders
+	-textures
+	-materials
+	-meshes
+	-fonts
+	-sounds
 }
 
 Texture <-down- TextureFormat
