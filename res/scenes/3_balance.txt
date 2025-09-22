@@ -1,0 +1,57 @@
+DISPLAY_NAME Balance
+INTERNAL_ID  balance
+
+LIGHT_POSITION  10  99  10
+LIGHT_AMBIENT  050 050 050
+LIGHT_DIFFUSE  030 030 030
+LIGHT_SPECULAR 100 100 100
+
+CAMERA_YAW      90
+CAMERA_PITCH    60
+CAMERA_DISTANCE 12
+
+MAZE_MATERIAL   copperTextured
+MARBLE_MATERIAL emerald
+FINISH_MATERIAL emerald
+SKYBOX_MATERIAL sky
+
+MARBLE_DIRECTION    0 -1 0
+MARBLE_ACCELERATION 50
+MARBLE_MAX_SPEED    5
+MARBLE_RADIUS       0.45
+
+MAZE_WIDTH  13
+MAZE_DEPTH  13
+MAZE_HEIGHT 2
+
+MAZE_BEGIN
+
+s............
+.............
+WW...........
+W............
+.............
+.............
+.....W.......
+.....W.......
+.....W.......
+.....WW.WW...
+......WWW....
+W............
+W............
+
+WWWWWWWWWWWW.
+..........WWW
+WW.........WW
+WWWWWWWW....W
+.WW...WW....W
+..WW...W....W
+...WWW.W. ..W
+....WW.W. ..W
+...WWW.W. ..W
+..WW...f. ..W
+.WW...... .WW
+WW........WWW
+WWWWWWWWWWWW.
+
+MAZE_END
