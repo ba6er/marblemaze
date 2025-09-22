@@ -184,9 +184,9 @@ bool Scene::createFromFile(std::string_view fileName, rs::ResourceManager& resou
 }
 
 void Scene::createMenuScene(rs::ResourceManager& resource) {
-	std::string mazeMaterialName = "copperTextured";
-	std::string marbleMaterialName = "emerald";
-	std::string finishMaterialName = "emerald";
+	std::string mazeMaterialName = "ceramic";
+	std::string marbleMaterialName = "redMarble";
+	std::string finishMaterialName = "redMarble";
 	std::string skyboxMaterialName = "sky";
 	size_t mazeWidth = 7, mazeDepth = 7, mazeHeight = 2;
 	BlockVector3D initBlocks = {

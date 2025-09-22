@@ -3,7 +3,7 @@
 using namespace rs;
 
 Material::Material() : shader(nullptr) {
-	for (int i = 0; i < MAX_TEXTURES; i++) {
+	for (int i = 0; i < MaxTextures; i++) {
 		textures[i] = nullptr;
 	}
 }
@@ -14,7 +14,7 @@ void Material::create(Shader& shader) {
 
 void Material::destroy() {
 	shader = nullptr;
-	for (int i = 0; i < MAX_TEXTURES; i++) {
+	for (int i = 0; i < MaxTextures; i++) {
 		textures[i] = nullptr;
 	}
 }
@@ -28,7 +28,7 @@ void Material::use() const {
 	for (auto &u : uniforms) {
 		shader->setUniform(u.first.c_str(), u.second);
 	}
-	for (int i = 0; i < MAX_TEXTURES; i++) {
+	for (int i = 0; i < MaxTextures; i++) {
 		if (textures[i] == nullptr) {
 			continue;
 		}
@@ -41,8 +41,8 @@ void Material::use() const {
 }
 
 void Material::addTexture(int index, Texture& texture) {
-	if (index >= MAX_TEXTURES) {
-		DEBUG_ERROR("Index %d is larger than maximum allowed textures %d", index, MAX_TEXTURES);
+	if (index >= MaxTextures) {
+		DEBUG_ERROR("Index %d is larger than maximum allowed textures %d", index, MaxTextures);
 		return;
 	}
 	textures[index] = &texture;

@@ -22,10 +22,10 @@ namespace rs {
 		void setUniform(const std::string& name, const UniformType& value);
 
 	private:
-		static constexpr int MAX_TEXTURES = 4;
+		static constexpr int MaxTextures = 8;
 
 		Shader* shader;
-		Texture* textures[MAX_TEXTURES];
+		Texture* textures[MaxTextures];
 		std::map<std::string, UniformType> uniforms;
 	};
 }
