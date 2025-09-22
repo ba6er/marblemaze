@@ -38,7 +38,7 @@ void Game::onInit(
 	options.mazeYawSensitivity  *= initOptions[4] / 5.0f;
 
 	float ox = (internalSize.x - width * internalSize.y / height) / 2;
-	gui.create(resource.getShader("text"), resource.getFont("noto48"), resource.createMesh("gui", 3072));
+	gui.create(resource.getShader("text"), resource.getFont("unitblock"), resource.createMesh("gui", 3072));
 	gui.setFrame(ox, internalSize.x - ox, 0, internalSize.y);
 
 	menuScene.createMenuScene(resource);
@@ -163,7 +163,7 @@ GameState Game::getState() {
 void Game::setState(GameState newState) {
 	state = newState;
 
-	constexpr la::Vec4 frameCol = {0.1f, 0.1f, 0.15f, 0.7f};
+	constexpr la::Vec4 frameCol = {0.15f, 0.1f, 0.1f, 0.7f};
 	constexpr la::Vec4 textCol = {1, 1, 1, 0.9f};
 	constexpr la::Vec4 backCol = {1, 1, 1, 0.3f};
 	constexpr la::Vec4 selCol  = {1, 1, 1, 0.5f};
@@ -337,12 +337,23 @@ bool Game::onStateMenuMain(
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
 	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
+	if (onPlay && onPlay != gui.getButtonSelected("play")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("play", onPlay);
 	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
+
 	bool onOpts = gui.checkButtonSelected("options", scaledMouse.x, scaledMouse.y);
+	if (onOpts && onOpts != gui.getButtonSelected("options")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("options", onOpts);
 	onOpts = onOpts && (input.getMouseL() == in::JustPressed);
+
 	bool onQuit = gui.checkButtonSelected("quit", scaledMouse.x, scaledMouse.y);
+	if (onQuit && onQuit != gui.getButtonSelected("quit")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("quit", onQuit);
 	onQuit = onQuit && (input.getMouseL() == in::JustPressed);
 
@@ -392,11 +403,22 @@ bool Game::onStateMenuOptions(
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
 	bool onBack = gui.checkButtonSelected("back", scaledMouse.x, scaledMouse.y);
+	if (onBack && onBack != gui.getButtonSelected("back")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("back", onBack);
 	onBack = onBack && (input.getMouseL() == in::JustPressed);
+
 	bool onRV = gui.checkButtonSelected("rv", scaledMouse.x, scaledMouse.y);
+	if (onRV && onRV != gui.getButtonSelected("rv")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("rv", onRV);
+
 	bool onFS = gui.checkButtonSelected("fs", scaledMouse.x, scaledMouse.y);
+	if (onFS && onFS != gui.getButtonSelected("fs")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("fs", onFS);
 
 	if (onBack || input.getKey(in::Quit) == in::JustPressed) {
@@ -417,6 +439,9 @@ bool Game::onStateMenuOptions(
 	bool optsBtnValues[15];
 	for (int i = 0; i < 15; i++) {
 		optsBtnValues[i] = gui.checkButtonSelected(std::to_string(i), scaledMouse.x, scaledMouse.y);
+		if (optsBtnValues[i] && optsBtnValues[i] != gui.getButtonSelected(std::to_string(i))) {
+			resource.getSound("hover").play();
+		}
 		gui.setButtonSelected(std::to_string(i), optsBtnValues[i]);
 	}
 
@@ -482,15 +507,30 @@ bool Game::onStateMenuLevels(
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
 	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
+	if (onPlay && onPlay != gui.getButtonSelected("play")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("play", onPlay);
 	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
+
 	bool onNext = gui.checkButtonSelected("next", scaledMouse.x, scaledMouse.y);
+	if (onNext && onNext != gui.getButtonSelected("next")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("next", onNext);
 	onNext = onNext && (input.getMouseL() == in::JustPressed);
+
 	bool onPrev = gui.checkButtonSelected("prev", scaledMouse.x, scaledMouse.y);
+	if (onPrev && onPrev != gui.getButtonSelected("prev")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("prev", onPrev);
 	onPrev = onPrev && (input.getMouseL() == in::JustPressed);
+
 	bool onBack = gui.checkButtonSelected("back", scaledMouse.x, scaledMouse.y);
+	if (onBack && onBack != gui.getButtonSelected("back")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("back", onBack);
 	onBack = onBack && (input.getMouseL() == in::JustPressed);
 
@@ -549,6 +589,9 @@ bool Game::onStateScenePlaying(
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
 	bool onPause = gui.checkButtonSelected("pause", scaledMouse.x, scaledMouse.y);
+	if (onPause && onPause != gui.getButtonSelected("pause")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("pause", onPause);
 	onPause = onPause && (input.getMouseL() == in::JustPressed);
 
@@ -613,12 +656,23 @@ bool Game::onStateScenePaused(
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
 	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
+	if (onPlay && onPlay != gui.getButtonSelected("play")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("play", onPlay);
 	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
+
 	bool onRest = gui.checkButtonSelected("rest", scaledMouse.x, scaledMouse.y);
+	if (onRest && onRest != gui.getButtonSelected("rest")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("rest", onRest);
 	onRest = onRest && (input.getMouseL() == in::JustPressed);
+
 	bool onQuit = gui.checkButtonSelected("quit", scaledMouse.x, scaledMouse.y);
+	if (onQuit && onQuit != gui.getButtonSelected("quit")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("quit", onQuit);
 	onQuit = onQuit && (input.getMouseL() == in::JustPressed);
 
@@ -649,9 +703,16 @@ bool Game::onStateSceneWin(
 	la::Vec2 scaledMouse = internalPosition(input.getMouseX(), input.getMouseY());
 
 	bool onPlay = gui.checkButtonSelected("play", scaledMouse.x, scaledMouse.y);
+	if (onPlay && onPlay != gui.getButtonSelected("play")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("play", onPlay);
 	onPlay = onPlay && (input.getMouseL() == in::JustPressed);
+
 	bool onQuit = gui.checkButtonSelected("quit", scaledMouse.x, scaledMouse.y);
+	if (onQuit && onQuit != gui.getButtonSelected("quit")) {
+		resource.getSound("hover").play();
+	}
 	gui.setButtonSelected("quit", onQuit);
 	onQuit = onQuit && (input.getMouseL() == in::JustPressed);
 

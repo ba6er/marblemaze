@@ -101,6 +101,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	// Create the GLFW window
 	GLFWmonitor* monitor = fullscreen ? glfwGetPrimaryMonitor() : nullptr;
@@ -122,6 +123,7 @@ int main() {
 	}
 	DEBUG_TRACE("OpenGL version: %s", glGetString(GL_VERSION));
 
+	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

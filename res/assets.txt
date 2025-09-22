@@ -49,11 +49,12 @@ FONTS
 # Fonts are located in res/font/
 # Table format for fonts:
 # name                  font source file        size in pixels          filtered (T/F)
-noto48                  notoSerif.ttf           48                      T
+unitblock               unitblock.ttf          96                      T
 
 SOUNDS
 # Sounds are located in res/sound/
 # Table format for sounds:
 # name                  sound source file
 select                  select.wav
+hover                   hover.wav
 solid                   solid.wav
