@@ -18,7 +18,6 @@ TEXTURES
 copper                  copper.png              T
 ceramic                 ceramic.png             T
 redMarble               redMarble.png           T
-whiteMarble             whiteMarble.png         T
 sb0Back                 skybox0/back.png        T
 sb0Front                skybox0/front.png       T
 sb0Left                 skybox0/left.png        T
