@@ -44,7 +44,7 @@ namespace gm {
 		bool shouldPlaySound();
 
 	private:
-		void marbleBlockCollision(float x, float y, float z, float deltaTime);
+		void marbleBlockCollision(int x, int y, int z, float deltaTime);
 
 		static float DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere);
 		static la::Vec3 DifferenceSphereAABB(la::Vec3 box, la::Vec3 sphere);

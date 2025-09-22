@@ -378,6 +378,9 @@ void Scene::updatePhysics(float deltaTime) {
 
 	marbleWasTouchingWalls = marbleIsTouchingWalls;
 	marbleIsTouchingWalls = {false, false, false};
+
+	marble.position += marble.velocity * deltaTime;
+
 	for (int y = minY; y <= maxY; y++) {
 		for (int z = minZ; z <= maxZ; z++) {
 			for (int x = minX; x <= maxX; x++) {
@@ -388,7 +391,6 @@ void Scene::updatePhysics(float deltaTime) {
 			}
 		}
 	}
-	marble.position += marble.velocity * deltaTime;
 }
 
 void Scene::updateTimer(float deltaTime) {
@@ -445,64 +447,88 @@ bool Scene::shouldPlaySound() {
 	return tx || ty || tz;
 }
 
-void Scene::marbleBlockCollision(float x, float y, float z, float deltaTime) {
-	la::Vec3 diff = DifferenceSphereAABB({x, y, z}, marble.position + marble.velocity * deltaTime);
+void Scene::marbleBlockCollision(int x, int y, int z, float deltaTime) {
+	la::Vec3 blockMin = {x - 0.5f, y - 0.5f, z - 0.5f};
+	la::Vec3 blockMax = {x + 0.5f, y + 0.5f, z + 0.5f};
 
-	if (diff.x * diff.x + diff.y * diff.y + diff.z * diff.z >= marble.radius * marble.radius) {
+	la::Vec3 closestPoint = {
+		std::max(blockMin.x, std::min(blockMax.x, marble.position.x)),
+		std::max(blockMin.y, std::min(blockMax.y, marble.position.y)),
+		std::max(blockMin.z, std::min(blockMax.z, marble.position.z)),
+	};
+	la::Vec3 diff = marble.position - closestPoint;
+	float distance = diff.length();
+
+	if (distance >= marble.radius) {
 		return;
 	}
 
-	if (std::abs(diff.x) > marble.radius / 2) {
-		bool pushedCorner = false;
-		if (std::abs(diff.y) > std::abs(diff.x)) {
-			float offY = std::sqrt(marble.radius * marble.radius - diff.x * diff.x) * (diff.y > 0 ? 1 : -1);
-			marble.velocity.y -= offY - diff.y;
-			pushedCorner = true;
-		}
-		if (std::abs(diff.z) > std::abs(diff.x)) {
-			float offZ = std::sqrt(marble.radius * marble.radius - diff.x * diff.x) * (diff.z > 0 ? 1 : -1);
-			marble.velocity.z -= offZ - diff.z;
-			pushedCorner = true;
-		}
-		if (!pushedCorner) {
+	if (distance == 0) {
+		marble.position -= marble.velocity.normalize();
+		return;
+	}
+
+	if (diff.x != 0) {
+		if (diff.y != 0 || diff.z != 0) {
+			if (marble.velocity.x > 0) {
+				if (x < (maze.getWidth() - 1) && maze.getBlock(x + 1, y, z) == gm::Wall) {
+					diff.x = 0;
+				} else {
+					marbleIsTouchingWalls[0] = true;
+				}
+			} else {
+				if (x > 0 && maze.getBlock(x - 1, y, z) == gm::Wall) {
+					diff.x = 0;
+				} else {
+					marbleIsTouchingWalls[0] = true;
+				}
+			}
+		} else {
 			marble.velocity.x = 0;
+			marbleIsTouchingWalls[0] = true;
 		}
-		marbleIsTouchingWalls[0] = true;
 	}
-	if (std::abs(diff.y) > marble.radius / 2) {
-		bool pushedCorner = false;
-		if (std::abs(diff.z) > std::abs(diff.y)) {
-			float offZ = std::sqrt(marble.radius * marble.radius - diff.x * diff.x) * (diff.z > 0 ? 1 : -1);
-			marble.velocity.z -= offZ - diff.z;
-			pushedCorner = true;
-		}
-		if (std::abs(diff.x) > std::abs(diff.y)) {
-			float offX = std::sqrt(marble.radius * marble.radius - diff.z * diff.z) * (diff.x > 0 ? 1 : -1);
-			marble.velocity.x -= offX - diff.x;
-			pushedCorner = true;
-		}
-		if (!pushedCorner) {
+	if (diff.y != 0) {
+		if (diff.x != 0 || diff.z != 0) {
+			if (marble.velocity.y > 0) {
+				if (y < (maze.getHeight() - 1) && maze.getBlock(x, y + 1, z) == gm::Wall) {
+					diff.y = 0;
+				} else {
+					marbleIsTouchingWalls[1] = true;
+				}
+			} else {
+				if (y > 0 && maze.getBlock(x, y - 1, z) == gm::Wall) {
+					diff.y = 0;
+				} else {
+					marbleIsTouchingWalls[1] = true;
+				}
+			}
+		} else {
 			marble.velocity.y = 0;
+			marbleIsTouchingWalls[1] = true;
 		}
-		marbleIsTouchingWalls[1] = true;
 	}
-	if (std::abs(diff.z) > marble.radius / 2) {
-		bool pushedCorner = false;
-		if (std::abs(diff.y) > std::abs(diff.z)) {
-			float offY = std::sqrt(marble.radius * marble.radius - diff.x * diff.x) * (diff.y > 0 ? 1 : -1);
-			marble.velocity.y -= offY - diff.y;
-			pushedCorner = true;
-		}
-		if (std::abs(diff.x) > std::abs(diff.z)) {
-			float offX = std::sqrt(marble.radius * marble.radius - diff.z * diff.z) * (diff.x > 0 ? 1 : -1);
-			marble.velocity.x -= offX - diff.x;
-			pushedCorner = true;
-		}
-		if (!pushedCorner) {
+	if (diff.z != 0) {
+		if (diff.x != 0 || diff.y != 0) {
+			if (marble.velocity.z > 0) {
+				if (z < (maze.getDepth() - 1) && maze.getBlock(x, y, z + 1) == gm::Wall) {
+					diff.z = 0;
+				} else {
+					marbleIsTouchingWalls[2] = true;
+				}
+			} else {
+				if (z > 0 && maze.getBlock(x, y, z - 1) == gm::Wall) {
+					diff.z = 0;
+				} else {
+					marbleIsTouchingWalls[2] = true;
+				}
+			}
+		} else {
 			marble.velocity.z = 0;
+			marbleIsTouchingWalls[2] = true;
 		}
-		marbleIsTouchingWalls[2] = true;
 	}
+	marble.position += diff.normalize() * (marble.radius - distance);
 }
 
 float Scene::DistanceSphereAABB(la::Vec3 box, la::Vec3 sphere) {
