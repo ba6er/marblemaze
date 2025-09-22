@@ -64,6 +64,7 @@ void Texture::create(int width, int height, void* data, TextureFormat format) {
 void Texture::create(std::string_view fileName, bool filtered, int mipmaps) {
 	int width, height, num_channels;
 	void* data = stbi_load(fileName.data(), &width, &height, &num_channels, 0);
+	CRITICAL_ASSERT(data != nullptr, "Failed to create texture from %s", fileName.data());
 	this->width = width;
 	this->height = height;
 

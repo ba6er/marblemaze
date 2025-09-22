@@ -21,7 +21,7 @@ void Font::create(Texture& texture, std::string_view fileName, int size, bool fi
 
 	stbtt_fontinfo info;
 	int success = stbtt_InitFont(&info, (uchar*)(fontBuffer.data()), 0);
-	DEBUG_ASSERT(success, "Failed to initialize font");
+	CRITICAL_ASSERT(success, "Failed to create font from %s", fileName.data());
 
 	float scale = stbtt_ScaleForPixelHeight(&info, size);
 

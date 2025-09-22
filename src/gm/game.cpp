@@ -50,12 +50,12 @@ void Game::onInit(
 	}
 	for (const auto& fileName : sceneFileNames) {
 		scenes.push_back(Scene());
-		if (scenes[numLoadedScenes].createFromFile(fileName.c_str(), resource)) {
-			DEBUG_TRACE("Loaded scene \"%s\" from %s", scenes[numLoadedScenes].getId().data(), fileName.c_str());
+		if (scenes[numLoadedScenes].createFromFile(fileName.string(), resource)) {
+			DEBUG_TRACE("Loaded scene \"%s\" from %s", scenes[numLoadedScenes].getId().data(), fileName.string().c_str());
 			scenes[numLoadedScenes].setProjection(72 * la::DegToRad, frameSize.x / frameSize.y);
 			numLoadedScenes++;
 		} else {
-			CRITICAL_ERROR("Failed to load scene from %s", fileName.c_str());
+			CRITICAL_ERROR("Failed to load scene from %s", fileName.string().c_str());
 			scenes[numLoadedScenes].destroy();
 		}
 	}
