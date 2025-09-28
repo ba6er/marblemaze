@@ -15,8 +15,7 @@ Importing into Visual Studio as a CMake project works well.
 You can also build from the terminal by running:
 ```
 cmake -S . -B build -DCMAKE_BUILD_TYPE="Debug"
-cd build
-make
+cmake --build build
 ```
 For the release build, replace `Debug` with `Release`.
 

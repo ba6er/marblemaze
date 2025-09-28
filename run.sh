@@ -10,17 +10,17 @@ fi
 case $1 in
 	"build-release")
 		cmake -S . -B build -DCMAKE_BUILD_TYPE="Release"
-		cd build && make
+		cmake --build build
 		exit 0
 		;;
 	"build-debug")
 		cmake -S . -B build -DCMAKE_BUILD_TYPE="Debug"
-		cd build && make
+		cmake --build build
 		exit 0
 		;;
 	"")
 		cmake -S . -B build -DCMAKE_BUILD_TYPE="Debug"
-		cd build && make && ./marblemaze && cd ..
+		cmake --build build && ./build/marblemaze
 		exit 0
 		;;
 	"clean")
