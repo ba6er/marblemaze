@@ -58,6 +58,18 @@ static void callbackScroll(GLFWwindow*, double x, double y) {
 	input().setScroll(x, y);
 }
 
+template <typename T>
+inline T readAndValidate(std::istream& in, T min, T max, std::string_view name) {
+	T value;
+	if (!(in >> value)) {
+		throw std::runtime_error(std::string("Failed to read ") + name.data());
+	}
+	if (value < min || value > max) {
+		throw std::runtime_error(std::string("Invalid value for ") + name.data());
+	}
+	return value;
+}
+
 int main() {
 	DEBUG_TRACE("This is a debug build");
 	CRITICAL_TRACE("Initializing system");
@@ -68,46 +80,28 @@ int main() {
 	try {
 		std::ifstream configIn(_RES_PATH "options.txt");
 		if (!configIn.is_open()) {
-			throw 1;
+			throw std::runtime_error("Could not open options file");
 		}
-		if (!(configIn >> gameOptions.rememberValues)) {
-			throw 1;
-		}
-		if (gameOptions.rememberValues < 0 || gameOptions.rememberValues > 1) {
-			throw 1;
-		}
-		if (!(configIn >> gameOptions.isFullscreen)) {
-			throw 1;
-		}
-		if (gameOptions.isFullscreen < 0 || gameOptions.isFullscreen > 1) {
-			throw 1;
-		}
-		if (!(configIn >> frameSize.x)) {
-			throw 1;
-		}
-		if (frameSize.x < 0 || frameSize.x > 8196) {
-			throw 1;
-		}
-		if (!(configIn >> frameSize.y)) {
-			throw 1;
-		}
-		if (frameSize.x < 0 || frameSize.y > 8196) {
-			throw 1;
-		}
+		gm::GameOptions opts;
+
+		opts.rememberValues = readAndValidate<int>(configIn, 0, 1, "rememberValues");
+		opts.isFullscreen   = readAndValidate<int>(configIn, 0, 1, "isFullscreen");
+		frameSize.x = readAndValidate<float>(configIn, 0, 8196, "frameSize.x");
+		frameSize.y = readAndValidate<float>(configIn, 0, 8196, "frameSize.y");
+
 		for (size_t i = 0; i < gm::GameOptions::NumWholeValues; i++) {
-			if (!(configIn >> gameOptions.wholeValues[i])) {
-				throw 1;
-			}
-			if (gameOptions.wholeValues[i] < gm::GameOptions::WholeMin) {
-				throw 1;
-			}
-			if (gameOptions.wholeValues[i] > gm::GameOptions::WholeMax) {
-				throw 1;
-			}
+			opts.wholeValues[i] = readAndValidate<int>(
+				configIn,
+				gm::GameOptions::WholeMin,
+				gm::GameOptions::WholeMax,
+				"wholeValues[" + std::to_string(i) + "]"
+			);
 		}
-	} catch(...) {
-		DEBUG_WARNING("Failed to read from options file, loading from default configuration");
-		gameOptions = gm::GameOptions();
+
+		gameOptions = opts;
+	} catch(const std::runtime_error& e) {
+		DEBUG_WARNING("Failed to read from options file, error: %s", e.what());
+		frameSize = {defaultWidth, defaultHeight};
 	}
 
 	if (gameOptions.rememberValues == 0) {
@@ -256,15 +250,16 @@ int main() {
 	// Write new configuration file
 	try {
 		std::ofstream configOut(_RES_PATH "options.txt");
+		configOut.exceptions(std::ofstream::failbit | std::ofstream::badbit);
 		configOut << gameOptions.rememberValues << std::endl;
 		configOut << gameOptions.isFullscreen << std::endl;
 		configOut << frameSize.x << std::endl;
 		configOut << frameSize.y << std::endl;
-		for (int i = 0; i < 5; i++) {
+		for (size_t i = 0; i < gm::GameOptions::NumWholeValues; i++) {
 			configOut << gameOptions.wholeValues[i] << std::endl;
 		}
-	} catch(...) {
-		DEBUG_WARNING("Failed to write to options file");
+	} catch(const std::ios_base::failure& e) {
+		DEBUG_WARNING("Failed to write to options file, error: %s", e.what());
 	}
 
 	FreeSystemResources();
