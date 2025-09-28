@@ -8,24 +8,54 @@
 #include <array>
 #include <fstream>
 
+constexpr static char title[] = "Marble Maze";
+constexpr static int  fps     = 60;
+constexpr static int  defaultWidth  = 640;
+constexpr static int  defaultHeight = 480;
+
+static ma_engine audioEngine;
+static GLFWwindow* window;
+static la::Vec2 frameSize;
+
+static rs::ResourceManager& resource() {
+	static rs::ResourceManager instance;
+	return instance;
+}
+
+static in::Input& input() {
+	static in::Input instance;
+	return instance;
+}
+
+static gm::Game& game() {
+	static gm::Game instance;
+	return instance;
+}
+
 static void callbackError(int code, const char* text) {
 	DEBUG_WARNING("GLFW error: %d, %s", code, text);
 }
 
-static const char* title = "Marble Maze";
-static const int fps     = 60;
-static const int defaultWidth  = 640;
-static const int defaultHeight = 480;
+static void callbackFramebufferSize(GLFWwindow*, int width, int height) {
+	frameSize = {(float)width, (float)height};
+	game().onResize(width, height);
+}
 
-static ma_engine audioEngine;
-static GLFWwindow* window;
+static void callbackMouseButton(GLFWwindow*, int button, int action, int mods) {
+	if (button == GLFW_MOUSE_BUTTON_LEFT) {
+		input().setMouseL(action == GLFW_PRESS ? in::JustPressed : in::JustReleased);
+	}
+	if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+		input().setMouseR(action == GLFW_PRESS ? in::JustPressed : in::JustReleased);
+	}
+}
 
-static gm::Game game;
-static in::Input input;
-static rs::ResourceManager resource;
+static void callbackCursorPos(GLFWwindow*, double x, double y) {
+	input().setMousePos(x, y);
+}
 
 static void callbackScroll(GLFWwindow*, double x, double y) {
-	input.setScroll(x, y);
+	input().setScroll(x, y);
 }
 
 int main() {
@@ -33,7 +63,7 @@ int main() {
 	CRITICAL_TRACE("Initializing system");
 
 	// Load configuration file
-	int rememberValues, fullscreen, width, height;
+	int rememberValues, fullscreen;
 	std::array<int, 5> initOptionWhileValues;
 
 	try {
@@ -53,16 +83,16 @@ int main() {
 		if (fullscreen < 0 || fullscreen > 1) {
 			throw 1;
 		}
-		if (!(configIn >> width)) {
+		if (!(configIn >> frameSize.x)) {
 			throw 1;
 		}
-		if (width < 0 || width > 8196) {
+		if (frameSize.x < 0 || frameSize.x > 8196) {
 			throw 1;
 		}
-		if (!(configIn >> height)) {
+		if (!(configIn >> frameSize.y)) {
 			throw 1;
 		}
-		if (height < 0 || height > 8196) {
+		if (frameSize.x < 0 || frameSize.y > 8196) {
 			throw 1;
 		}
 		for (int i = 0; i < 5; i++) {
@@ -77,15 +107,13 @@ int main() {
 		DEBUG_WARNING("Failed to read from options file, loading from default configuration");
 		rememberValues = 1;
 		fullscreen = 0;
-		width = defaultWidth;
-		height = defaultHeight;
+		frameSize = {defaultWidth, defaultHeight};
 		initOptionWhileValues = {5, 5, 5, 5, 5};
 	}
 
 	if (rememberValues == 0) {
 		fullscreen = 0;
-		width = defaultWidth;
-		height = defaultHeight;
+		frameSize = {defaultWidth, defaultHeight};
 		initOptionWhileValues = {5, 5, 5, 5, 5};
 	}
 
@@ -105,13 +133,21 @@ int main() {
 
 	// Create the GLFW window
 	GLFWmonitor* monitor = fullscreen ? glfwGetPrimaryMonitor() : nullptr;
-	window = glfwCreateWindow(width, height, title, monitor, nullptr);
+	if (fullscreen) {
+		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+		frameSize.x = mode->width;
+		frameSize.y = mode->height;
+	}
+	window = glfwCreateWindow(frameSize.x, frameSize.y, title, monitor, nullptr);
 	if (window == nullptr) {
 		ma_engine_uninit(&audioEngine);
 		glfwTerminate();
 		return 1;
 	}
 	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, callbackFramebufferSize);
+	glfwSetMouseButtonCallback(window, callbackMouseButton);
+	glfwSetCursorPosCallback(window, callbackCursorPos);
 	glfwSetScrollCallback(window, callbackScroll);
 
 	// Loading OpenGL functions via glad
@@ -127,8 +163,8 @@ int main() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	resource.initFromConfig(_RES_PATH "assets.txt", &audioEngine);
-	game.onInit(width, height, 640, 480, resource, rememberValues, fullscreen, initOptionWhileValues);
+	resource().initFromConfig(_RES_PATH "assets.txt", &audioEngine);
+	game().onInit(frameSize, {640, 480}, resource(), rememberValues, fullscreen, initOptionWhileValues);
 
 	float tickTime     = 1.0f / fps;
 	float currentTime  = 0.0f;
@@ -145,75 +181,63 @@ int main() {
 		previousTime = currentTime;
 		lagTime     += deltaTime;
 
-		// Input
+		// Activate input callbacks
+		if (input().getMouseL() == in::JustPressed) {
+			input().setMouseL(in::Pressed);
+		}
+		if (input().getMouseL() == in::JustReleased) {
+			input().setMouseL(in::Released);
+		}
+		if (input().getMouseR() == in::JustPressed) {
+			input().setMouseR(in::Pressed);
+		}
+		if (input().getMouseR() == in::JustReleased) {
+			input().setMouseR(in::Released);
+		}
+		input().setMousePos(input().getMouseX(), input().getMouseY());
+		input().setScroll(0, 0);
+		glfwPollEvents();
 		for (int i = 0; i < in::KeyboardCount; i++) {
 			int keyState = glfwGetKey(window, in::Input::KeyboardValues[i]);
-			if (input.getKey(i) == keyState) {
+			if (input().getKey(i) == keyState) {
 				continue;
 			}
-			if (keyState == GLFW_PRESS) {
-				input.setKey(i, input.getKey(i) == in::JustPressed ? in::Pressed : in::JustPressed);
-			} else {
-				input.setKey(i, input.getKey(i) == in::JustReleased ? in::Released : in::JustReleased);
+			in::KeyState desired = input().getKey(i) == in::JustPressed ? in::Pressed : in::JustPressed;
+			if (keyState == GLFW_RELEASE) {
+				desired = input().getKey(i) == in::JustReleased ? in::Released : in::JustReleased;
 			}
+			input().setKey(i, desired);
 		}
-		int mouseLeftState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-		if (input.getMouseL() != mouseLeftState) {
-			if (mouseLeftState == GLFW_PRESS) {
-				input.setMouseL(input.getMouseL() == in::JustPressed ? in::Pressed : in::JustPressed);
-			} else {
-				input.setMouseL(input.getMouseL() == in::JustReleased ? in::Released : in::JustReleased);
-			}
-		}
-		int mouseRightState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
-		if (input.getMouseR() != mouseRightState) {
-			if (mouseRightState == GLFW_PRESS) {
-				input.setMouseR(input.getMouseR() == in::JustPressed ? in::Pressed : in::JustPressed);
-			} else {
-				input.setMouseR(input.getMouseR() == in::JustReleased ? in::Released : in::JustReleased);
-			}
-		}
-		double mouseX, mouseY;
-		glfwGetCursorPos(window, &mouseX, &mouseY);
-		input.setMousePos(mouseX, mouseY);
 
-		// Remember values check
-		if (game.rememberValues != rememberValues) {
-			rememberValues = game.rememberValues;
-		}
 		// Fullscreen check
-		if (game.fullscreen != fullscreen) {
-			fullscreen = game.fullscreen;
-			monitor = fullscreen ? glfwGetPrimaryMonitor() : nullptr;
-			glfwSetWindowMonitor(window, monitor, 0, 0, 640, 480, GLFW_DONT_CARE);
-		}
-		// Frame size
-		int newFrameWidth, newFrameHeight;
-		glfwGetFramebufferSize(window, &newFrameWidth, &newFrameHeight);
-		if (width != newFrameWidth || height != newFrameHeight) {
-			width = newFrameWidth;
-			height = newFrameHeight;
-			game.onResize(width, height);
+		if (game().fullscreen != fullscreen) {
+			fullscreen = game().fullscreen;
+			if (fullscreen) {
+				monitor = glfwGetPrimaryMonitor();
+				const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+				frameSize = {(float)mode->width, (float)mode->height};
+				glfwSetWindowSize(window, mode->width, mode->height);
+			} else {
+				monitor = nullptr;
+			}
+			glfwSetWindowMonitor(window, monitor, 0, 0, frameSize.x, frameSize.y, GLFW_DONT_CARE);
+			game().onResize(frameSize.x, frameSize.y);
 		}
 
 		// Update and render the game
 		while (lagTime > tickTime) {
-			isRunning = game.onUpdate(tickTime, currentTime, resource, input);
+			isRunning = game().onUpdate(tickTime, currentTime, resource(), input());
 			lagTime -= tickTime;
 		}
-		game.onRender(deltaTime, currentTime, resource);
-
-		// Update system
+		game().onRender(deltaTime, currentTime, resource());
 		glfwSwapBuffers(window);
-		input.setScroll(0, 0);
-		glfwPollEvents();
 	}
 
 	// Write scores
 	try {
 		std::ofstream scoresOut(_RES_PATH "scores.txt");
-		scoresOut << game.getScenes().size() << std::endl;
-		for (const gm::Scene& s : game.getScenes()) {
+		scoresOut << game().getScenes().size() << std::endl;
+		for (const gm::Scene& s : game().getScenes()) {
 			scoresOut << s.getId() << std::endl;
 			scoresOut << s.getBestTime() << std::endl;
 		}
@@ -221,10 +245,10 @@ int main() {
 		DEBUG_WARNING("Failed to write scene scores");
 	}
 
+	rememberValues = game().rememberValues;
 	if (rememberValues == 0) {
 		fullscreen = 0;
-		width = defaultWidth;
-		height = defaultHeight;
+		frameSize = {defaultWidth, defaultHeight};
 		initOptionWhileValues = {5, 5, 5, 5, 5};
 	}
 
@@ -233,10 +257,10 @@ int main() {
 		std::ofstream configOut(_RES_PATH "options.txt");
 		configOut << rememberValues << std::endl;
 		configOut << fullscreen << std::endl;
-		configOut << width << std::endl;
-		configOut << height << std::endl;
+		configOut << frameSize.x << std::endl;
+		configOut << frameSize.y << std::endl;
 		for (int i = 0; i < 5; i++) {
-			configOut << game.optionWholeValues[i] << std::endl;
+			configOut << game().optionWholeValues[i] << std::endl;
 		}
 	} catch(...) {
 		DEBUG_WARNING("Failed to write to options file");
@@ -251,7 +275,7 @@ void FreeSystemResources() {
 	CRITICAL_TRACE("Freeing system resources");
 
 	// Free render assets
-	resource.destroy();
+	resource().destroy();
 
 	// Free GLFW objects
 	glfwDestroyWindow(window);

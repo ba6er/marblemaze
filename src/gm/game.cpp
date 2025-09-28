@@ -18,15 +18,15 @@ Game::Game()
 	, selectedSceneIndex(0), numLoadedScenes(0), scenes(), menuScene(), currentScene(nullptr) {}
 
 void Game::onInit(
-		int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource,
+		la::Vec2 frameSize, la::Vec2 internalSize, rs::ResourceManager& resource,
 		bool rememberValues, bool fullscreen, const std::array<int, 5>& initOptions) {
 
 	this->rememberValues = rememberValues;
 	this->fullscreen = fullscreen;
 
-	rn::Renderer::resizeFrame(width, height);
-	frameSize = {(float)width, (float)height};
-	internalSize = {internalWidth, internalHeight};
+	rn::Renderer::resizeFrame(frameSize.x, frameSize.y);
+	this->frameSize = frameSize;
+	this->internalSize = internalSize;
 
 	for (int i = 0; i < 5; i++) {
 		optionWholeValues[i] = initOptions[i];
@@ -37,7 +37,7 @@ void Game::onInit(
 	options.mazeRollSensitivity *= initOptions[3] / 5.0f;
 	options.mazeYawSensitivity  *= initOptions[4] / 5.0f;
 
-	float ox = (internalSize.x - width * internalSize.y / height) / 2;
+	float ox = (internalSize.x - frameSize.x * internalSize.y / frameSize.y) / 2;
 	gui.create(resource.getShader("text"), resource.getFont("unitblock"), resource.createMesh("gui", 3072));
 	gui.setFrame(ox, internalSize.x - ox, 0, internalSize.y);
 
@@ -391,9 +391,10 @@ bool Game::onStateMenuOptions(
 	}
 
 	if (input.getMouseL() == in::Pressed || input.getScrollY() != 0) {
+		float moveMul = input.getMouseL() == in::Pressed ? 1 : 0;
 		currentScene->updateCamera(
-			input.getDeltaMouseX() * deltaTime * options.mouseSensitivityX,
-			input.getDeltaMouseY() * deltaTime * options.mouseSensitivityY,
+			input.getDeltaMouseX() * deltaTime * options.mouseSensitivityX * moveMul,
+			input.getDeltaMouseY() * deltaTime * options.mouseSensitivityY * moveMul,
 			-input.getScrollY() * deltaTime * options.scrollSensitivity);
 		menuCameraYaw = currentScene->getCameraYaw();
 		menuCameraPitch = currentScene->getCameraPitch();
@@ -634,9 +635,10 @@ bool Game::onStateScenePlaying(
 	}
 
 	if (input.getMouseL() == in::Pressed || input.getScrollY() != 0) {
+		float moveMul = input.getMouseL() == in::Pressed ? 1 : 0;
 		currentScene->updateCamera(
-			input.getDeltaMouseX() * deltaTime * options.mouseSensitivityX,
-			input.getDeltaMouseY() * deltaTime * options.mouseSensitivityY,
+			input.getDeltaMouseX() * deltaTime * options.mouseSensitivityX * moveMul,
+			input.getDeltaMouseY() * deltaTime * options.mouseSensitivityY * moveMul,
 			-input.getScrollY() * deltaTime * options.scrollSensitivity);
 	}
 

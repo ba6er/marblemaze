@@ -38,7 +38,7 @@ namespace gm {
 		Game();
 
 		void onInit(
-			int width, int height, float internalWidth, float internalHeight, rs::ResourceManager& resource,
+			la::Vec2 frameSize, la::Vec2 internalSize, rs::ResourceManager& resource,
 			bool rememberValues, bool fullscreen, const std::array<int, 5>& initOptions);
 		bool onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input);
 		void onRender(float deltaTime, float currentTime, rs::ResourceManager& resource);
