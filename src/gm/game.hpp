@@ -21,7 +21,12 @@ namespace gm {
 	class GameOptions {
 
 	public:
-		static GameOptions DefaultValues();
+		static constexpr float WholeMin = 1;
+		static constexpr float WholeMax = 10;
+		static constexpr float WholeDefault = 5;
+		static constexpr size_t NumWholeValues = 5;
+
+		GameOptions();
 
 		int rememberValues;
 		int isFullscreen;
@@ -30,6 +35,7 @@ namespace gm {
 		float scrollSensitivity;
 		float mazeYawSensitivity;
 		float mazeRollSensitivity;
+		std::array<int, NumWholeValues> wholeValues;
 	};
 
 	class Game {
@@ -37,9 +43,7 @@ namespace gm {
 	public:
 		Game();
 
-		void onInit(
-			la::Vec2 frameSize, la::Vec2 internalSize, rs::ResourceManager& resource,
-			bool rememberValues, bool fullscreen, const std::array<int, 5>& initOptions);
+		void onInit(la::Vec2 frameSize, la::Vec2 internalSize, rs::ResourceManager& resource, const GameOptions& options);
 		bool onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input);
 		void onRender(float deltaTime, float currentTime, rs::ResourceManager& resource);
 		void onResize(int width, int height);
@@ -49,8 +53,7 @@ namespace gm {
 
 		const std::vector<Scene>& getScenes() const;
 
-		bool rememberValues, fullscreen;
-		std::array<int, 5> optionWholeValues;
+		GameOptions options;
 
 	private:
 		bool onStateMenuMain(
@@ -68,7 +71,6 @@ namespace gm {
 
 		la::Vec2 internalPosition(float x, float y);
 
-		GameOptions options;
 		GameState state;
 
 		la::Vec2 frameSize, internalSize;

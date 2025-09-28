@@ -63,24 +63,23 @@ int main() {
 	CRITICAL_TRACE("Initializing system");
 
 	// Load configuration file
-	int rememberValues, fullscreen;
-	std::array<int, 5> initOptionWhileValues;
+	gm::GameOptions gameOptions;
 
 	try {
 		std::ifstream configIn(_RES_PATH "options.txt");
 		if (!configIn.is_open()) {
 			throw 1;
 		}
-		if (!(configIn >> rememberValues)) {
+		if (!(configIn >> gameOptions.rememberValues)) {
 			throw 1;
 		}
-		if (rememberValues < 0 || rememberValues > 1) {
+		if (gameOptions.rememberValues < 0 || gameOptions.rememberValues > 1) {
 			throw 1;
 		}
-		if (!(configIn >> fullscreen)) {
+		if (!(configIn >> gameOptions.isFullscreen)) {
 			throw 1;
 		}
-		if (fullscreen < 0 || fullscreen > 1) {
+		if (gameOptions.isFullscreen < 0 || gameOptions.isFullscreen > 1) {
 			throw 1;
 		}
 		if (!(configIn >> frameSize.x)) {
@@ -95,26 +94,26 @@ int main() {
 		if (frameSize.x < 0 || frameSize.y > 8196) {
 			throw 1;
 		}
-		for (int i = 0; i < 5; i++) {
-			if (!(configIn >> initOptionWhileValues[i])) {
+		for (size_t i = 0; i < gm::GameOptions::NumWholeValues; i++) {
+			if (!(configIn >> gameOptions.wholeValues[i])) {
 				throw 1;
 			}
-			if (initOptionWhileValues[i] < 1 || initOptionWhileValues[i] > 10) {
+			if (gameOptions.wholeValues[i] < gm::GameOptions::WholeMin) {
+				throw 1;
+			}
+			if (gameOptions.wholeValues[i] > gm::GameOptions::WholeMax) {
 				throw 1;
 			}
 		}
 	} catch(...) {
 		DEBUG_WARNING("Failed to read from options file, loading from default configuration");
-		rememberValues = 1;
-		fullscreen = 0;
-		frameSize = {defaultWidth, defaultHeight};
-		initOptionWhileValues = {5, 5, 5, 5, 5};
+		gameOptions = gm::GameOptions();
 	}
 
-	if (rememberValues == 0) {
-		fullscreen = 0;
+	if (gameOptions.rememberValues == 0) {
 		frameSize = {defaultWidth, defaultHeight};
-		initOptionWhileValues = {5, 5, 5, 5, 5};
+		gameOptions = gm::GameOptions();
+		gameOptions.rememberValues = 0;
 	}
 
 	// Initialize miniaudio
@@ -132,8 +131,8 @@ int main() {
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	// Create the GLFW window
-	GLFWmonitor* monitor = fullscreen ? glfwGetPrimaryMonitor() : nullptr;
-	if (fullscreen) {
+	GLFWmonitor* monitor = gameOptions.isFullscreen ? glfwGetPrimaryMonitor() : nullptr;
+	if (gameOptions.isFullscreen) {
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 		frameSize.x = mode->width;
 		frameSize.y = mode->height;
@@ -164,7 +163,7 @@ int main() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	resource().initFromConfig(_RES_PATH "assets.txt", &audioEngine);
-	game().onInit(frameSize, {640, 480}, resource(), rememberValues, fullscreen, initOptionWhileValues);
+	game().onInit(frameSize, {640, 480}, resource(), gameOptions);
 
 	float tickTime     = 1.0f / fps;
 	float currentTime  = 0.0f;
@@ -210,9 +209,9 @@ int main() {
 		}
 
 		// Fullscreen check
-		if (game().fullscreen != fullscreen) {
-			fullscreen = game().fullscreen;
-			if (fullscreen) {
+		if (game().options.isFullscreen != gameOptions.isFullscreen) {
+			gameOptions.isFullscreen = game().options.isFullscreen;
+			if (gameOptions.isFullscreen) {
 				monitor = glfwGetPrimaryMonitor();
 				const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 				frameSize = {(float)mode->width, (float)mode->height};
@@ -245,22 +244,24 @@ int main() {
 		DEBUG_WARNING("Failed to write scene scores");
 	}
 
-	rememberValues = game().rememberValues;
-	if (rememberValues == 0) {
-		fullscreen = 0;
+	gameOptions.rememberValues = game().options.rememberValues;
+	if (gameOptions.rememberValues == 0) {
+		gameOptions = gm::GameOptions();
+		gameOptions.rememberValues = 0;
 		frameSize = {defaultWidth, defaultHeight};
-		initOptionWhileValues = {5, 5, 5, 5, 5};
+	} else {
+		gameOptions.wholeValues = game().options.wholeValues;
 	}
 
 	// Write new configuration file
 	try {
 		std::ofstream configOut(_RES_PATH "options.txt");
-		configOut << rememberValues << std::endl;
-		configOut << fullscreen << std::endl;
+		configOut << gameOptions.rememberValues << std::endl;
+		configOut << gameOptions.isFullscreen << std::endl;
 		configOut << frameSize.x << std::endl;
 		configOut << frameSize.y << std::endl;
 		for (int i = 0; i < 5; i++) {
-			configOut << game().optionWholeValues[i] << std::endl;
+			configOut << gameOptions.wholeValues[i] << std::endl;
 		}
 	} catch(...) {
 		DEBUG_WARNING("Failed to write to options file");

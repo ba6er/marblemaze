@@ -6,36 +6,32 @@
 
 using namespace gm;
 
-GameOptions GameOptions::DefaultValues() {
-	return {1, 0, 0.2f, 0.2f, 10.0f, 1.0f, 1.0f};
-}
+GameOptions::GameOptions()
+	: rememberValues(1), isFullscreen(0)
+	, mouseSensitivityX(0.2f), mouseSensitivityY(0.2f), scrollSensitivity(10.0f)
+	, mazeYawSensitivity(1.0f), mazeRollSensitivity(1.0f)
+	, wholeValues({5, 5, 5, 5, 5}) {}
 
 Game::Game()
-	: rememberValues(0), fullscreen(0), optionWholeValues({5, 5, 5, 5, 5})
-	, options(GameOptions::DefaultValues()), state(MenuMain)
+	: options(), state(MenuMain)
 	, frameSize({0, 0}), internalSize({0, 0}), gui()
 	, menuCameraYaw(0), menuCameraPitch(0), menuCameraDistance(0)
 	, selectedSceneIndex(0), numLoadedScenes(0), scenes(), menuScene(), currentScene(nullptr) {}
 
 void Game::onInit(
-		la::Vec2 frameSize, la::Vec2 internalSize, rs::ResourceManager& resource,
-		bool rememberValues, bool fullscreen, const std::array<int, 5>& initOptions) {
+		la::Vec2 frameSize, la::Vec2 internalSize, rs::ResourceManager& resource, const GameOptions& options) {
 
-	this->rememberValues = rememberValues;
-	this->fullscreen = fullscreen;
+	this->options = options;
 
 	rn::Renderer::resizeFrame(frameSize.x, frameSize.y);
 	this->frameSize = frameSize;
 	this->internalSize = internalSize;
 
-	for (int i = 0; i < 5; i++) {
-		optionWholeValues[i] = initOptions[i];
-	}
-	options.mouseSensitivityX   *= initOptions[0] / 5.0f;
-	options.mouseSensitivityY   *= initOptions[1] / 5.0f;
-	options.scrollSensitivity   *= initOptions[2] / 5.0f;
-	options.mazeRollSensitivity *= initOptions[3] / 5.0f;
-	options.mazeYawSensitivity  *= initOptions[4] / 5.0f;
+	this->options.mouseSensitivityX   *= options.wholeValues[0] / GameOptions::WholeDefault;
+	this->options.mouseSensitivityY   *= options.wholeValues[1] / GameOptions::WholeDefault;
+	this->options.scrollSensitivity   *= options.wholeValues[2] / GameOptions::WholeDefault;
+	this->options.mazeRollSensitivity *= options.wholeValues[3] / GameOptions::WholeDefault;
+	this->options.mazeYawSensitivity  *= options.wholeValues[4] / GameOptions::WholeDefault;
 
 	float ox = (internalSize.x - frameSize.x * internalSize.y / frameSize.y) / 2;
 	gui.create(resource.getShader("text"), resource.getFont("unitblock"), resource.createMesh("gui", 3072));
@@ -120,7 +116,7 @@ void Game::onResize(int width, int height) {
 
 bool Game::onUpdate(float deltaTime, float currentTime, rs::ResourceManager& resource, const in::Input& input) {
 	if (input.getKey(in::Fullscreen) == in::JustPressed) {
-		fullscreen = !fullscreen;
+		options.isFullscreen = !options.isFullscreen;
 	}
 
 	if (state == MenuMain) {
@@ -203,8 +199,8 @@ void Game::setState(GameState newState) {
 
 		constexpr float rvX = 320 - (upBtnWidth / 2 + 2);
 		constexpr float fsX = 320 + (upBtnWidth / 2 + 2);
-		std::string rvTxt = rememberValues ? "Remember options - YES" : "Remember options - NO";
-		std::string fsTxt = fullscreen ? "Fullscreen - YES" : "Fullscreen - NO";
+		std::string rvTxt = options.rememberValues ? "Remember options - YES" : "Remember options - NO";
+		std::string fsTxt = options.isFullscreen ? "Fullscreen - YES" : "Fullscreen - NO";
 		gui.addButton("rv", 24, rvTxt, {rvX, 292}, textCol, backCol, selCol, upBtnWidth, margin);
 		gui.addButton("fs", 24, fsTxt, {fsX, 292}, textCol, backCol, selCol, upBtnWidth, margin);
 
@@ -225,15 +221,35 @@ void Game::setState(GameState newState) {
 
 		constexpr float vlX = bgX + textWidth / 2 + valueWidth / 2;
 		gui.addButton(
-			"mxVl", 24, std::to_string(optionWholeValues[0]), {vlX, 322}, textCol, backCol, selCol, valueWidth, margin);
+			"mxVl",
+			24,
+			std::to_string(options.wholeValues[0]),
+			{vlX, 322},
+			textCol, backCol, selCol, valueWidth, margin);
 		gui.addButton(
-			"myVl", 24, std::to_string(optionWholeValues[1]), {vlX, 352}, textCol, backCol, selCol, valueWidth, margin);
+			"myVl",
+			24,
+			std::to_string(options.wholeValues[1]),
+			{vlX, 352},
+			textCol, backCol, selCol, valueWidth, margin);
 		gui.addButton(
-			"msVl", 24, std::to_string(optionWholeValues[2]), {vlX, 382}, textCol, backCol, selCol, valueWidth, margin);
+			"msVl",
+			24,
+			std::to_string(options.wholeValues[2]),
+			{vlX, 382},
+			textCol, backCol, selCol, valueWidth, margin);
 		gui.addButton(
-			"rxVl", 24, std::to_string(optionWholeValues[3]), {vlX, 412}, textCol, backCol, selCol, valueWidth, margin);
+			"rxVl",
+			24,
+			std::to_string(options.wholeValues[3]),
+			{vlX, 412},
+			textCol, backCol, selCol, valueWidth, margin);
 		gui.addButton(
-			"ryVl", 24, std::to_string(optionWholeValues[4]), {vlX, 442}, textCol, backCol, selCol, valueWidth, margin);
+			"ryVl",
+			24,
+			std::to_string(options.wholeValues[4]),
+			{vlX, 442},
+			textCol, backCol, selCol, valueWidth, margin);
 
 		constexpr float decX = vlX + valueWidth / 2 + btnWidth / 2;
 		gui.addButton("0", 24, "-", {decX, 322}, textCol, backCol, selCol, btnWidth, margin);
@@ -429,16 +445,16 @@ bool Game::onStateMenuOptions(
 	}
 
 	if (onRV && (input.getMouseL() == in::JustPressed)) {
-		rememberValues = !rememberValues;
-		gui.setLabelText("rv", rememberValues ? "Remember options - YES" : "Remember options - NO");
+		options.rememberValues = !options.rememberValues;
+		gui.setLabelText("rv", options.rememberValues ? "Remember options - YES" : "Remember options - NO");
 	}
 	if (onFS && (input.getMouseL() == in::JustPressed)) {
-		fullscreen = !fullscreen;
-		gui.setLabelText("fs", fullscreen ? "Fullscreen - YES" : "Fullscreen - NO");
+		options.isFullscreen = !options.isFullscreen;
+		gui.setLabelText("fs", options.isFullscreen ? "Fullscreen - YES" : "Fullscreen - NO");
 	}
 
-	bool optsBtnValues[15];
-	for (int i = 0; i < 15; i++) {
+	bool optsBtnValues[GameOptions::NumWholeValues * 3];
+	for (size_t i = 0; i < GameOptions::NumWholeValues * 3; i++) {
 		optsBtnValues[i] = gui.checkButtonSelected(std::to_string(i), scaledMouse.x, scaledMouse.y);
 		if (optsBtnValues[i] && optsBtnValues[i] != gui.getButtonSelected(std::to_string(i))) {
 			resource.getSound("hover").play();
@@ -450,51 +466,57 @@ bool Game::onStateMenuOptions(
 		return true;
 	}
 
-	int optionChangeIndex = -1;
-	for (int i = 0; i < 5; i++) {
+	size_t optionChangeIndex = GameOptions::NumWholeValues * 3;
+	for (size_t i = 0; i < GameOptions::NumWholeValues; i++) {
 		if (optsBtnValues[i]) {
-			optionWholeValues[i % 5] = std::max(optionWholeValues[i % 5] - 1, 1);
 			optionChangeIndex = i % 5;
+			options.wholeValues[optionChangeIndex]--;
+			if (options.wholeValues[optionChangeIndex] < GameOptions::WholeMin) {
+				options.wholeValues[optionChangeIndex] = GameOptions::WholeMin;
+			}
 		}
 	}
-	for (int i = 5; i < 10; i++) {
+	for (size_t i = GameOptions::NumWholeValues; i < GameOptions::NumWholeValues * 2; i++) {
 		if (optsBtnValues[i]) {
-			optionWholeValues[i % 5] = std::min(optionWholeValues[i % 5] + 1, 10);
 			optionChangeIndex = i % 5;
+			options.wholeValues[optionChangeIndex]++;
+			if (options.wholeValues[optionChangeIndex] > GameOptions::WholeMax) {
+				options.wholeValues[optionChangeIndex] = GameOptions::WholeMax;
+			}
 		}
 	}
-	for (int i = 10; i < 15; i++) {
+	for (size_t i = GameOptions::NumWholeValues * 2; i < GameOptions::NumWholeValues * 3; i++) {
 		if (optsBtnValues[i]) {
-			optionWholeValues[i % 5] = 5;
 			optionChangeIndex = i % 5;
+			options.wholeValues[optionChangeIndex] = GameOptions::WholeDefault;
 		}
 	}
 
-	if (optionChangeIndex == -1) {
+	if (optionChangeIndex >= GameOptions::NumWholeValues * 3) {
 		return true;
 	}
 
-	GameOptions dfVl = GameOptions::DefaultValues();
-	int mul = optionWholeValues[optionChangeIndex];
+	GameOptions dfVl;
+	int mul = options.wholeValues[optionChangeIndex];
 	if (optionChangeIndex == 0) {
 		gui.setLabelText("mxVl", std::to_string(mul));
-		options.mouseSensitivityX = dfVl.mouseSensitivityX * mul / 5;
+		options.mouseSensitivityX = dfVl.mouseSensitivityX * mul / GameOptions::WholeDefault;
 	}
 	else if (optionChangeIndex == 1) {
 		gui.setLabelText("myVl", std::to_string(mul));
-		options.mouseSensitivityY = dfVl.mouseSensitivityY * mul / 5;
+		options.mouseSensitivityY = dfVl.mouseSensitivityY * mul / GameOptions::WholeDefault;
 	}
 	else if (optionChangeIndex == 2) {
 		gui.setLabelText("msVl", std::to_string(mul));
-		options.scrollSensitivity = dfVl.scrollSensitivity * mul / 5;
+		options.scrollSensitivity = dfVl.scrollSensitivity * mul / GameOptions::WholeDefault;
 	}
 	else if (optionChangeIndex == 3) {
 		gui.setLabelText("rxVl", std::to_string(mul));
-		options.mazeRollSensitivity = dfVl.mazeRollSensitivity * mul / 5;
+		options.mazeRollSensitivity = dfVl.mazeRollSensitivity * mul / GameOptions::WholeDefault;
 	}
 	else if (optionChangeIndex == 4) {
 		gui.setLabelText("ryVl", std::to_string(mul));
-		options.mazeYawSensitivity = dfVl.mazeYawSensitivity * mul / 5;
+		options.mazeYawSensitivity = dfVl.mazeYawSensitivity * mul / GameOptions::WholeDefault;
 	}
 	return true;
 }
