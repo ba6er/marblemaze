@@ -41,15 +41,6 @@ static void callbackFramebufferSize(GLFWwindow*, int width, int height) {
 	game().onResize(width, height);
 }
 
-static void callbackMouseButton(GLFWwindow*, int button, int action, int mods) {
-	if (button == GLFW_MOUSE_BUTTON_LEFT) {
-		input().setMouseL(action == GLFW_PRESS ? in::JustPressed : in::JustReleased);
-	}
-	if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-		input().setMouseR(action == GLFW_PRESS ? in::JustPressed : in::JustReleased);
-	}
-}
-
 static void callbackCursorPos(GLFWwindow*, double x, double y) {
 	input().setMousePos(x, y);
 }
@@ -139,7 +130,6 @@ int main() {
 	}
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, callbackFramebufferSize);
-	glfwSetMouseButtonCallback(window, callbackMouseButton);
 	glfwSetCursorPosCallback(window, callbackCursorPos);
 	glfwSetScrollCallback(window, callbackScroll);
 
@@ -175,32 +165,9 @@ int main() {
 		lagTime     += deltaTime;
 
 		// Activate input callbacks
-		if (input().getMouseL() == in::JustPressed) {
-			input().setMouseL(in::Pressed);
-		}
-		if (input().getMouseL() == in::JustReleased) {
-			input().setMouseL(in::Released);
-		}
-		if (input().getMouseR() == in::JustPressed) {
-			input().setMouseR(in::Pressed);
-		}
-		if (input().getMouseR() == in::JustReleased) {
-			input().setMouseR(in::Released);
-		}
 		input().setMousePos(input().getMouseX(), input().getMouseY());
 		input().setScroll(0, 0);
 		glfwPollEvents();
-		for (int i = 0; i < in::KeyboardCount; i++) {
-			int keyState = glfwGetKey(window, in::Input::KeyboardValues[i]);
-			if (input().getKey(i) == keyState) {
-				continue;
-			}
-			in::KeyState desired = input().getKey(i) == in::JustPressed ? in::Pressed : in::JustPressed;
-			if (keyState == GLFW_RELEASE) {
-				desired = input().getKey(i) == in::JustReleased ? in::Released : in::JustReleased;
-			}
-			input().setKey(i, desired);
-		}
 
 		// Fullscreen check
 		if (game().options.isFullscreen != gameOptions.isFullscreen) {
@@ -219,6 +186,48 @@ int main() {
 
 		// Update and render the game
 		while (lagTime > tickTime) {
+			if (input().getMouseL() == in::JustPressed) {
+				input().setMouseL(in::Pressed);
+			}
+			if (input().getMouseL() == in::JustReleased) {
+				input().setMouseL(in::Released);
+			}
+			int mouseLState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+			if (input().getMouseL() != mouseLState) {
+				in::KeyState desired = input().getMouseL() == in::JustPressed ? in::Pressed : in::JustPressed;
+				if (mouseLState == GLFW_RELEASE) {
+					desired = input().getMouseL() == in::JustReleased ? in::Released : in::JustReleased;
+				}
+				input().setMouseL(desired);
+			}
+
+			if (input().getMouseR() == in::JustPressed) {
+				input().setMouseR(in::Pressed);
+			}
+			if (input().getMouseR() == in::JustReleased) {
+				input().setMouseR(in::Released);
+			}
+			int mouseRState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
+			if (input().getMouseR() != mouseRState) {
+				in::KeyState desired = input().getMouseR() == in::JustPressed ? in::Pressed : in::JustPressed;
+				if (mouseRState == GLFW_RELEASE) {
+					desired = input().getMouseR() == in::JustReleased ? in::Released : in::JustReleased;
+				}
+				input().setMouseR(desired);
+			}
+
+			for (int i = 0; i < in::KeyboardCount; i++) {
+				int keyState = glfwGetKey(window, in::Input::KeyboardValues[i]);
+				if (input().getKey(i) == keyState) {
+					continue;
+				}
+				in::KeyState desired = input().getKey(i) == in::JustPressed ? in::Pressed : in::JustPressed;
+				if (keyState == GLFW_RELEASE) {
+					desired = input().getKey(i) == in::JustReleased ? in::Released : in::JustReleased;
+				}
+				input().setKey(i, desired);
+			}
+
 			isRunning = game().onUpdate(tickTime, currentTime, resource(), input());
 			lagTime -= tickTime;
 		}
